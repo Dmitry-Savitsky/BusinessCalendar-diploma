@@ -1,0 +1,6 @@
+@BusinessCalendar_HostAddress = http://localhost:5221
+
+GET {{BusinessCalendar_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
