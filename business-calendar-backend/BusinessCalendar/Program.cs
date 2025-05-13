@@ -34,11 +34,15 @@ builder.Services.AddScoped<IExecutorRepository, ExecutorRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IExecutorHasServiceRepository, ExecutorHasServiceRepository>();
 
+builder.Services.AddScoped<IExecutorWorkTimeRepository, ExecutorWorkTimeRepository>();
+
+
 
 
 builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<ExecutorService>();
 builder.Services.AddScoped<ServiceService>();
+builder.Services.AddScoped<ExecutorHasServiceService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

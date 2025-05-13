@@ -9,5 +9,7 @@ namespace BusinessCalendar.Core.Interfaces
 
         Task<Executor?> GetByPhoneAsync(string phone);
 
+        Task<List<Executor>> GetAllByCompanyIdAsync(int companyId);
+
     }
 }

@@ -17,11 +17,10 @@ namespace BusinessCalendar.Core.Entities
         // До регистрации — null
         public string? Password { get; set; }
 
+        public string? Description { get; set; }
+
         public int CompanyId { get; set; }
         public Company Company { get; set; } = null!;
-
-        public string? WorkTimeBegin { get; set; }
-        public string? WorkTimeEnd { get; set; }
 
         public string ImgPath { get; set; } = string.Empty;
 

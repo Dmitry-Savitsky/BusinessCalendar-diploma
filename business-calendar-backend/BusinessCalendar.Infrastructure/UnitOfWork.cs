@@ -26,6 +26,7 @@ namespace BusinessCalendar.Infrastructure.Persistence
         public IServiceRepository ServiceRepository { get; }
         public IOrderRepository OrderRepository { get; }
         public IExecutorHasServiceRepository ExecutorHasServiceRepository { get; }
+        public IExecutorWorkTimeRepository ExecutorWorkTimeRepository { get; }
 
         public UnitOfWork(
             BusinessCalendarDbContext context,
@@ -45,7 +46,8 @@ namespace BusinessCalendar.Infrastructure.Persistence
             IExecutorRepository executorRepository,
             IServiceRepository serviceRepository,
             IOrderRepository orderRepository,
-            IExecutorHasServiceRepository executorHasServiceRepository
+            IExecutorHasServiceRepository executorHasServiceRepository,
+            IExecutorWorkTimeRepository executorWorkTimeRepository
         )
         {
             _context = context;
@@ -66,6 +68,7 @@ namespace BusinessCalendar.Infrastructure.Persistence
             ServiceRepository = serviceRepository;
             OrderRepository = orderRepository;
             ExecutorHasServiceRepository = executorHasServiceRepository;
+            ExecutorWorkTimeRepository = executorWorkTimeRepository;
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();

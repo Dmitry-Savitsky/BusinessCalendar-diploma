@@ -1,7 +1,7 @@
-﻿using BusinessCalendar.Application.DTOs;
-using BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos;
+﻿using BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos;
 using BusinessCalendar.Core.Entities;
 using BusinessCalendar.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,23 +17,22 @@ namespace BusinessCalendar.Application.Services
             _uow = uow;
         }
 
-        /// <summary>
-        /// Создание связи executor-service (только компания)
-        /// </summary>
-        public async Task AddAsync(int companyId, ExecutorHasServiceCreateDto dto)
+        public async Task AddAsync(string companyGuid, ExecutorHasServiceCreateDto dto)
         {
-            // валидируем принадлежность
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid));
+            if (company == null)
+                throw new UnauthorizedAccessException("Компания не найдена");
+
             var exec = await _uow.Executors.GetByIdAsync(dto.ExecutorId);
             var serv = await _uow.Services.GetByIdAsync(dto.ServiceId);
 
             if (exec == null || serv == null
-                || exec.CompanyId != companyId
-                || serv.CompanyId != companyId)
+                || exec.CompanyId != company.Id
+                || serv.CompanyId != company.Id)
             {
                 throw new UnauthorizedAccessException("Исполнитель или услуга не принадлежат вашей компании");
             }
 
-            // проверяем дубликат
             var exist = await _uow.ExecutorHasServiceRepository
                 .GetByExecutorAndServiceAsync(dto.ExecutorId, dto.ServiceId);
             if (exist != null)
@@ -49,32 +48,40 @@ namespace BusinessCalendar.Application.Services
             await _uow.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Удаление связи (только компания)
-        /// </summary>
-        public async Task DeleteAsync(int companyId, int executorId, int serviceId)
+        public async Task DeleteAsync(string companyGuid, Guid executorGuid, Guid serviceGuid)
         {
-            var link = await _uow.ExecutorHasServiceRepository
-                .GetByExecutorAndServiceAsync(executorId, serviceId);
-            if (link == null)
-                throw new KeyNotFoundException("Связь не найдена");
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid));
+            if (company == null)
+                throw new UnauthorizedAccessException("Компания не найдена");
 
-            if (link.Executor.CompanyId != companyId
-                || link.Service.CompanyId != companyId)
+            var exec = await _uow.ExecutorRepository.GetByGuidAsync(executorGuid);
+            var serv = await _uow.ServiceRepository.GetByGuidAsync(serviceGuid);
+
+            if (exec == null || serv == null
+                || exec.CompanyId != company.Id
+                || serv.CompanyId != company.Id)
             {
                 throw new UnauthorizedAccessException("Нет прав на удаление этой связи");
             }
+
+            var link = await _uow.ExecutorHasServiceRepository
+                .GetByExecutorAndServiceAsync(exec.Id, serv.Id);
+
+            if (link == null)
+                throw new KeyNotFoundException("Связь не найдена");
 
             _uow.ExecutorHasServices.Delete(link);
             await _uow.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Просмотр связей для компании
-        /// </summary>
-        public async Task<List<ExecutorHasServiceDto>> GetForCompanyAsync(int companyId)
+        public async Task<List<ExecutorHasServiceDto>> GetForCompanyAsync(string companyGuid)
         {
-            var list = await _uow.ExecutorHasServiceRepository.GetByCompanyIdAsync(companyId);
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid));
+            if (company == null)
+                throw new UnauthorizedAccessException("Компания не найдена");
+
+            var list = await _uow.ExecutorHasServiceRepository.GetByCompanyIdAsync(company.Id);
+
             return list.Select(x => new ExecutorHasServiceDto
             {
                 ExecutorPublicId = x.Executor.PublicId,
@@ -88,12 +95,14 @@ namespace BusinessCalendar.Application.Services
             }).ToList();
         }
 
-        /// <summary>
-        /// Просмотр связей для исполнителя
-        /// </summary>
-        public async Task<List<ExecutorHasServiceDto>> GetForExecutorAsync(int executorId)
+        public async Task<List<ExecutorHasServiceDto>> GetForExecutorAsync(string executorGuid)
         {
-            var list = await _uow.ExecutorHasServiceRepository.GetByExecutorIdAsync(executorId);
+            var executor = await _uow.ExecutorRepository.GetByGuidAsync(Guid.Parse(executorGuid));
+            if (executor == null)
+                throw new UnauthorizedAccessException("Исполнитель не найден");
+
+            var list = await _uow.ExecutorHasServiceRepository.GetByExecutorIdAsync(executor.Id);
+
             return list.Select(x => new ExecutorHasServiceDto
             {
                 ExecutorPublicId = x.Executor.PublicId,

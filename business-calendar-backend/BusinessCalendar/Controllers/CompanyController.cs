@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using BusinessCalendar.Application.Helpers;
 
 namespace BusinessCalendar.Presentation.Controllers
 {
@@ -50,15 +51,21 @@ namespace BusinessCalendar.Presentation.Controllers
             [FromForm] CompanyUpdateDto dto,
             IFormFile? image)
         {
-            // Сохраняем файл и получаем относительный путь
+            // 🔐 Проверка, что companyGuid из токена совпадает с тем, что в URL
+            var companyGuidFromToken = User.GetCompanyGuid();
+            if (companyGuidFromToken != companyGuid)
+            {
+                return Forbid("You are not allowed to update another company.");
+            }
+
             var imagePath = image != null
                 ? await SaveImageAsync(image)
                 : string.Empty;
 
-            // Вызываем сервис
             await _companyService.UpdateCompanyAsync(companyGuid, dto, imagePath);
             return NoContent();
         }
+
 
         private async Task<string> SaveImageAsync(IFormFile image)
         {

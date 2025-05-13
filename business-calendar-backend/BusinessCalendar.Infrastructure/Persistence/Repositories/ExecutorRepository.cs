@@ -30,5 +30,15 @@ namespace BusinessCalendar.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.ExecutorPhone == phone);
         }
 
+
+        public async Task<List<Executor>> GetAllByCompanyIdAsync(int companyId)
+        {
+            return await _context.Executors
+                .Where(e => e.CompanyId == companyId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+
     }
 }

@@ -1,10 +1,11 @@
-﻿using BusinessCalendar.Application.DTOs;
-using BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos;
+﻿using BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos;
+using BusinessCalendar.Application.Helpers;
 using BusinessCalendar.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 
 namespace BusinessCalendar.Presentation.Controllers
 {
@@ -21,20 +22,20 @@ namespace BusinessCalendar.Presentation.Controllers
 
         // ----- GET -----
         [HttpGet]
-        [Authorize(Policy = "ExecutorPolicy")]
+        [Authorize]
         public async Task<IActionResult> Get()
         {
             var role = User.FindFirstValue(ClaimTypes.Role);
             if (role == "Company")
             {
-                var cid = int.Parse(User.FindFirstValue("CompanyId"));
-                var list = await _service.GetForCompanyAsync(cid);
+                var companyGuid = User.GetCompanyGuid();
+                var list = await _service.GetForCompanyAsync(companyGuid);
                 return Ok(list);
             }
             else // Executor
             {
-                var eid = int.Parse(User.FindFirstValue("ExecutorId"));
-                var list = await _service.GetForExecutorAsync(eid);
+                var executorGuid = User.GetExecutorGuid();
+                var list = await _service.GetForExecutorAsync(executorGuid);
                 return Ok(list);
             }
         }
@@ -44,18 +45,18 @@ namespace BusinessCalendar.Presentation.Controllers
         [Authorize(Policy = "CompanyPolicy")]
         public async Task<IActionResult> Post([FromBody] ExecutorHasServiceCreateDto dto)
         {
-            var companyId = int.Parse(User.FindFirstValue("CompanyId"));
-            await _service.AddAsync(companyId, dto);
+            var companyGuid = User.GetCompanyGuid();
+            await _service.AddAsync(companyGuid, dto);
             return Ok(new { Message = "Связь создана" });
         }
 
         // ----- DELETE -----
-        [HttpDelete("{executorId:int}/{serviceId:int}")]
+        [HttpDelete("{executorGuid:guid}/{serviceGuid:guid}")]
         [Authorize(Policy = "CompanyPolicy")]
-        public async Task<IActionResult> Delete(int executorId, int serviceId)
+        public async Task<IActionResult> Delete(Guid executorGuid, Guid serviceGuid)
         {
-            var companyId = int.Parse(User.FindFirstValue("CompanyId"));
-            await _service.DeleteAsync(companyId, executorId, serviceId);
+            var companyGuid = User.GetCompanyGuid();
+            await _service.DeleteAsync(companyGuid, executorGuid, serviceGuid);
             return NoContent();
         }
     }

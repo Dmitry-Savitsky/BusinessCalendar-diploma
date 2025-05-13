@@ -28,6 +28,7 @@ namespace BusinessCalendar.Core.Interfaces
         IOrderRepository OrderRepository { get; }
 
         IExecutorHasServiceRepository ExecutorHasServiceRepository { get; }
+        IExecutorWorkTimeRepository ExecutorWorkTimeRepository { get; }
 
         Task<int> SaveChangesAsync();
     }
