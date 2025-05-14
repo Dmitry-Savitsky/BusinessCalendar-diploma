@@ -8,6 +8,7 @@ namespace BusinessCalendar.Core.Entities
 {
     public class ServiceInOrder
     {
+        public int Id { get; set; }
         public int OrderId { get; set; }
         public Order Order { get; set; } = null!;
         public int ServiceId { get; set; }

@@ -33,9 +33,10 @@ public class ServiceService
         {
             PublicId = service.PublicId,
             ServiceName = service.ServiceName,
-            ServicePrice = service.ServicePrice,
             ServiceType = service.ServiceType,
-            DurationMinutes = service.DurationMinutes
+            ServicePrice = service.ServicePrice,
+            DurationMinutes = service.DurationMinutes,
+            RequiresAddress = service.RequiresAddress
         };
     }
 
@@ -52,9 +53,10 @@ public class ServiceService
         {
             PublicId = service.PublicId,
             ServiceName = service.ServiceName,
-            ServicePrice = service.ServicePrice,
             ServiceType = service.ServiceType,
-            DurationMinutes = service.DurationMinutes
+            ServicePrice = service.ServicePrice,
+            DurationMinutes = service.DurationMinutes,
+            RequiresAddress = service.RequiresAddress
         };
     }
 
@@ -70,6 +72,7 @@ public class ServiceService
             ServiceType = dto.ServiceType,
             ServicePrice = dto.ServicePrice,
             DurationMinutes = dto.DurationMinutes,
+            RequiresAddress = false,       // всегда false при создании
             CompanyId = company.Id
         };
 
@@ -97,6 +100,8 @@ public class ServiceService
             service.ServicePrice = dto.ServicePrice.Value;
         if (dto.DurationMinutes.HasValue)
             service.DurationMinutes = dto.DurationMinutes.Value;
+        if (dto.RequiresAddress.HasValue)
+            service.RequiresAddress = dto.RequiresAddress.Value;
 
         _unitOfWork.Services.Update(service);
         await _unitOfWork.SaveChangesAsync();
@@ -118,3 +123,4 @@ public class ServiceService
         await _unitOfWork.SaveChangesAsync();
     }
 }
+

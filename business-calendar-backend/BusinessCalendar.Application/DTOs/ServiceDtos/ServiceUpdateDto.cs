@@ -12,5 +12,8 @@ namespace BusinessCalendar.Application.DTOs.ServiceDtos
         public int? ServiceType { get; set; }
         public int? ServicePrice { get; set; }
         public int? DurationMinutes { get; set; }
+
+        // Позволяет включать или выключать
+        public bool? RequiresAddress { get; set; }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using BusinessCalendar.Core.Entities;
 using BusinessCalendar.Core.Interfaces;
 
-public interface IServiceRepository : IRepository<Service>
+public interface IServiceInOrderRepository : IRepository<ServiceInOrder>
 {
-    Task<Service?> GetByGuidAsync(Guid publicId);
-    Task<List<Service>> GetByCompanyIdAsync(int companyId);
+    // подтв. брони для исполнителя в период
+    Task<List<ServiceInOrder>> GetConfirmedForExecutorAsync(int executorId, DateTime from, DateTime to);
 
-
-    Task<Service?> GetByPublicIdForCompanyAsync(Guid publicId, int companyId);
-    Task<Service?> GetByPublicIdForExecutorAsync(Guid publicId, int executorId);
+    /// <summary>
+    /// Проверяет, существует ли у данного исполнителя хотя бы один подтверждённый заказ,
+    /// пересекающийся с интервалом [startUtc, endUtc).
+    /// </summary>
+    Task<bool> ExistsConflictAsync(int executorId, DateTime startUtc, DateTime endUtc);
 }

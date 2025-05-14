@@ -13,6 +13,9 @@ namespace BusinessCalendar.Core.Entities
         public string ClientName { get; set; } = string.Empty;
         public string ClientPhone { get; set; } = string.Empty;
 
+        public int CompanyId { get; set; }
+        public Company Company { get; set; } = null!;
+
         public ICollection<ClientAddress> Addresses { get; set; } = new List<ClientAddress>();
         public ICollection<Order> Orders { get; set; } = new List<Order>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();

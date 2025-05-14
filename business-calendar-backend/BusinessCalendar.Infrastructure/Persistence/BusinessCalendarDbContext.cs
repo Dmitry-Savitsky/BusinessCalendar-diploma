@@ -48,22 +48,26 @@ namespace BusinessCalendar.Infrastructure.Persistence
         private void ConfigureServiceInOrder(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ServiceInOrder>()
-                .HasKey(sio => new { sio.OrderId, sio.ServiceId, sio.ExecutorId });
+                .HasKey(sio => sio.Id);
 
             modelBuilder.Entity<ServiceInOrder>()
                 .HasOne(sio => sio.Order)
                 .WithMany(o => o.Services)
-                .HasForeignKey(sio => sio.OrderId);
+                .HasForeignKey(sio => sio.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ServiceInOrder>()
                 .HasOne(sio => sio.Service)
                 .WithMany(s => s.ServiceInOrders)
-                .HasForeignKey(sio => sio.ServiceId);
+                .HasForeignKey(sio => sio.ServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ServiceInOrder>()
                 .HasOne(sio => sio.Executor)
                 .WithMany(e => e.ServiceInOrders)
-                .HasForeignKey(sio => sio.ExecutorId);
+                .HasForeignKey(sio => sio.ExecutorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

@@ -15,6 +15,7 @@ namespace BusinessCalendar.Core.Entities
         public int ServiceType { get; set; }
         public int? ServicePrice { get; set; }
         public int? DurationMinutes { get; set; }
+        public bool RequiresAddress { get; set; }
         public int CompanyId { get; set; }
 
         public Company Company { get; set; } = null!;
