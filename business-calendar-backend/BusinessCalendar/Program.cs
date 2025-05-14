@@ -33,16 +33,17 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IExecutorRepository, ExecutorRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IExecutorHasServiceRepository, ExecutorHasServiceRepository>();
-
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IExecutorWorkTimeRepository, ExecutorWorkTimeRepository>();
-
-
+builder.Services.AddScoped<IServiceInOrderRepository, ServiceInOrderRepository>();
 
 
 builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<ExecutorService>();
 builder.Services.AddScoped<ServiceService>();
 builder.Services.AddScoped<ExecutorHasServiceService>();
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<BookingService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
