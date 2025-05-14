@@ -169,6 +169,131 @@ namespace BusinessCalendar.Application.Services
             }
         }
 
+        // ***************** rud for order *******************
+
+        public async Task<List<OrderDetailDto>> GetAllForCompanyAsync(string companyGuid)
+        {
+            var company = await _uow.CompanyRepository
+                                   .GetByGuidAsync(Guid.Parse(companyGuid))
+                         ?? throw new NotFoundException("Компания не найдена");
+
+            // В репозитории OrderRepository.GetAllByCompanyIdAsync 
+            // нужно Ensure.Include(s => s.Services).ThenInclude(si => si.Service / si.Executor)
+
+            var orders = await _uow.OrderRepository.GetAllByCompanyIdAsync(company.Id);
+
+            return orders.Select(o => new OrderDetailDto
+            {
+                PublicId = o.PublicId,
+                Comment = o.OrderComment,
+                Confirmed = o.Confirmed,
+                Completed = o.Completed,
+                OrderStart = o.OrderStart,
+                OrderEnd = o.OrderEnd,
+
+                Items = o.Services.Select(sio => new OrderItemDetailDto
+                {
+                    // услуга
+                    ServiceGuid = sio.Service.PublicId,
+                    ServiceName = sio.Service.ServiceName,
+                    ServiceType = sio.Service.ServiceType,
+                    ServicePrice = sio.Service.ServicePrice,
+
+                    // исполнитель
+                    ExecutorGuid = sio.Executor.PublicId,
+                    ExecutorName = sio.Executor.ExecutorName,
+                    ExecutorImgPath = sio.Executor.ImgPath,
+
+                    // слот
+                    Start = new DateTimeOffset(sio.ServiceStart!.Value, TimeSpan.Zero),
+                    RequiresAddress = sio.Service.RequiresAddress
+                }).ToList()
+            }).ToList();
+        }
+
+        public async Task<OrderDetailDto> GetByPublicIdAsync(string companyGuid, Guid orderGuid)
+        {
+            var company = await _uow.CompanyRepository
+                                   .GetByGuidAsync(Guid.Parse(companyGuid))
+                         ?? throw new NotFoundException("Компания не найдена");
+
+            var order = await _uow.OrderRepository.GetByPublicIdAsync(orderGuid)
+                        ?? throw new NotFoundException("Заказ не найден");
+
+            if (order.CompanyId != company.Id)
+                throw new UnauthorizedException("Нет доступа к этому заказу");
+
+            return new OrderDetailDto
+            {
+                PublicId = order.PublicId,
+                Comment = order.OrderComment,
+                Confirmed = order.Confirmed,
+                Completed = order.Completed,
+                OrderStart = order.OrderStart,
+                OrderEnd = order.OrderEnd,
+
+                Items = order.Services.Select(sio => new OrderItemDetailDto
+                {
+                    ServiceGuid = sio.Service.PublicId,
+                    ServiceName = sio.Service.ServiceName,
+                    ServiceType = sio.Service.ServiceType,
+                    ServicePrice = sio.Service.ServicePrice,
+
+                    ExecutorGuid = sio.Executor.PublicId,
+                    ExecutorName = sio.Executor.ExecutorName,
+                    ExecutorImgPath = sio.Executor.ImgPath,
+
+                    Start = new DateTimeOffset(sio.ServiceStart!.Value, TimeSpan.Zero),
+                    RequiresAddress = sio.Service.RequiresAddress
+                }).ToList()
+            };
+        }
+
+        /// <summary>
+        /// Обновить только поля Confirmed и Completed.
+        /// </summary>
+        public async Task UpdateAsync(string companyGuid, Guid orderGuid, OrderUpdateDto dto)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                         ?? throw new NotFoundException("Компания не найдена");
+
+            var order = await _uow.OrderRepository.GetByPublicIdAsync(orderGuid)
+                        ?? throw new NotFoundException("Заказ не найден");
+
+            if (order.CompanyId != company.Id)
+                throw new UnauthorizedException("Нет доступа к этому заказу");
+
+            if (dto.Confirmed.HasValue)
+                order.Confirmed = dto.Confirmed;
+            if (dto.Completed.HasValue)
+                order.Completed = dto.Completed;
+
+            await _uow.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Удалить заказ и все позиции ServiceInOrder.
+        /// </summary>
+        public async Task DeleteAsync(string companyGuid, Guid orderGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                         ?? throw new NotFoundException("Компания не найдена");
+
+            var order = await _uow.OrderRepository.GetByPublicIdAsync(orderGuid)
+                        ?? throw new NotFoundException("Заказ не найден");
+
+            if (order.CompanyId != company.Id)
+                throw new UnauthorizedException("Нет доступа к этому заказу");
+
+            // Сначала удаляем все позиции
+            foreach (var sio in order.Services.ToList())
+                _uow.ServiceInOrders.Delete(sio);
+
+            // Затем сам заказ
+            _uow.Orders.Delete(order);
+
+            await _uow.SaveChangesAsync();
+        }
 
     }
 }

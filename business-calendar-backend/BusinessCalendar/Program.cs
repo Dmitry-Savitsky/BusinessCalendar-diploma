@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BusinessCalendar.Presentation.Middleware;
+using Microsoft.OpenApi.Models;
 //using BusinessCalendar.Application.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,42 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BusinessCalendar API", Version = "v1" });
+
+    // 🔐 Добавление схемы авторизации
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme.\r\n\r\n" +
+                      "Введите 'Bearer' [пробел] и затем ваш токен.\r\n\r\n" +
+                      "Пример: \"Bearer eyJhbGciOi...\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    // 🔒 Применение авторизации ко всем операциям
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
+
 
 var connectionString = builder.Configuration.GetConnectionString("BusinessCalendarConnectionString");
 builder.Services.AddDbContext<BusinessCalendarDbContext>(options =>
@@ -36,6 +72,7 @@ builder.Services.AddScoped<IExecutorHasServiceRepository, ExecutorHasServiceRepo
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IExecutorWorkTimeRepository, ExecutorWorkTimeRepository>();
 builder.Services.AddScoped<IServiceInOrderRepository, ServiceInOrderRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 
 builder.Services.AddScoped<CompanyService>();
@@ -44,6 +81,7 @@ builder.Services.AddScoped<ServiceService>();
 builder.Services.AddScoped<ExecutorHasServiceService>();
 builder.Services.AddScoped<ClientService>();
 builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<OrderService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

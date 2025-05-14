@@ -61,4 +61,52 @@ namespace BusinessCalendar.Application.DTOs.OrdersDtos
         /// <summary>Комментарий заказчика</summary>
         public string? Comment { get; set; }
     }
+
+
+    /// <summary>
+    /// DTO для обновления полей Confirmed/Completed
+    /// </summary>
+    public class OrderUpdateDto
+    {
+        public bool? Confirmed { get; set; }
+        public bool? Completed { get; set; }
+    }
+
+    /// <summary>
+    /// DTO для одной позиции заказа (детально, для GET)
+    /// </summary>
+    public class OrderItemDetailDto
+    {
+        // — Service —
+        public Guid ServiceGuid { get; set; }
+        public string ServiceName { get; set; } = string.Empty;
+        public int ServiceType { get; set; }
+        public int? ServicePrice { get; set; }
+
+        // — Executor —
+        public Guid ExecutorGuid { get; set; }
+        public string ExecutorName { get; set; } = string.Empty;
+        public string ExecutorImgPath { get; set; } = string.Empty;
+
+        // — Slot & misc —
+        public DateTimeOffset Start { get; set; }
+        public bool RequiresAddress { get; set; }
+    }
+
+    /// <summary>
+    /// Детальная информация по заказу (для GET).
+    /// </summary>
+    public class OrderDetailDto
+    {
+        public Guid PublicId { get; set; }
+        public string? Comment { get; set; }
+        public bool? Confirmed { get; set; }
+        public bool? Completed { get; set; }
+        public DateTime OrderStart { get; set; }
+        public DateTime? OrderEnd { get; set; }
+
+        /// <summary>Детальные позиции заказа (услуга+исполнитель+время)</summary>
+        public List<OrderItemDetailDto> Items { get; set; } = new();
+    }
+
 }
