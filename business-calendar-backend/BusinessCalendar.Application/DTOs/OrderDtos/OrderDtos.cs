@@ -77,21 +77,20 @@ namespace BusinessCalendar.Application.DTOs.OrdersDtos
     /// </summary>
     public class OrderItemDetailDto
     {
-        // — Service —
         public Guid ServiceGuid { get; set; }
         public string ServiceName { get; set; } = string.Empty;
         public int ServiceType { get; set; }
         public int? ServicePrice { get; set; }
 
-        // — Executor —
         public Guid ExecutorGuid { get; set; }
         public string ExecutorName { get; set; } = string.Empty;
         public string ExecutorImgPath { get; set; } = string.Empty;
 
-        // — Slot & misc —
+        // тоже DateTimeOffset
         public DateTimeOffset Start { get; set; }
         public bool RequiresAddress { get; set; }
     }
+
 
     /// <summary>
     /// Детальная информация по заказу (для GET).
@@ -102,11 +101,13 @@ namespace BusinessCalendar.Application.DTOs.OrdersDtos
         public string? Comment { get; set; }
         public bool? Confirmed { get; set; }
         public bool? Completed { get; set; }
-        public DateTime OrderStart { get; set; }
-        public DateTime? OrderEnd { get; set; }
 
-        /// <summary>Детальные позиции заказа (услуга+исполнитель+время)</summary>
+        // теперь — DateTimeOffset
+        public DateTimeOffset OrderStart { get; set; }
+        public DateTimeOffset? OrderEnd { get; set; }
+
         public List<OrderItemDetailDto> Items { get; set; } = new();
     }
+
 
 }

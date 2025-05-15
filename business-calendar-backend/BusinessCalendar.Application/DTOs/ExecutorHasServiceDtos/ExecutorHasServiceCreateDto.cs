@@ -8,7 +8,9 @@ namespace BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos
 {
     public class ExecutorHasServiceCreateDto
     {
-        public int ExecutorId { get; set; }
-        public int ServiceId { get; set; }
+        /// <summary>Публичный GUID исполнителя</summary>
+        public Guid ExecutorGuid { get; set; }
+        /// <summary>Публичный GUID услуги</summary>
+        public Guid ServiceGuid { get; set; }
     }
 }

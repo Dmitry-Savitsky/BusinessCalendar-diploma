@@ -78,10 +78,15 @@ namespace BusinessCalendar.Application.Services
                 .GetConfirmedForExecutorAsync(executor.Id, fromUtc, toUtc);
 
             var reserved = existing
-                .Select(sio => {
-                    var sUtc = sio.ServiceStart!.Value;
-                    var sLocal = TimeZoneInfo.ConvertTime(sUtc, _tz);
-                    return (Start: sLocal, End: sLocal.AddMinutes(duration));
+                .Where(sio => sio.ServiceStart.HasValue && sio.ServiceEnd.HasValue)
+                .Select(sio =>
+                {
+                    // переводим оба конца из UTC в локальное время
+                    var startLocal = TimeZoneInfo.ConvertTime(
+                        new DateTimeOffset(sio.ServiceStart!.Value, TimeSpan.Zero), _tz);
+                    var endLocal = TimeZoneInfo.ConvertTime(
+                        new DateTimeOffset(sio.ServiceEnd!.Value, TimeSpan.Zero), _tz);
+                    return (Start: startLocal, End: endLocal);
                 })
                 .ToList();
 
@@ -107,16 +112,6 @@ namespace BusinessCalendar.Application.Services
             return slots;
         }
 
-        /// <summary>
-        /// При создании заказа — в транзакции проверить, что слот всё ещё свободен.
-        /// </summary>
-        //public async Task CreateOrderAsync(/* параметры заказа и выбранный слот */)
-        //{
-                //using var tx = await _uow.BeginTransactionAsync();
-            // повторить проверку пересечения на выбранном слоте
-            // если свободен — сохранить Order + ServiceInOrder + tx.Commit()
-            // иначе — бросить ошибку
-        //}
     }
 
 }

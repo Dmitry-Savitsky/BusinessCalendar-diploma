@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using BusinessCalendar.Application.Common;
 using System.Threading.Tasks;
 using BusinessCalendar.Application.DTOs.ExecutorDtos;
-using BusinessCalendar.Application.DTOs.ExecutorWorkTimeDtos.BusinessCalendar.Application.DTOs;
+using BusinessCalendar.Application.DTOs.ExecutorWorkTimeDtos;
 
 namespace BusinessCalendar.Application.Services
 {
@@ -158,25 +158,46 @@ namespace BusinessCalendar.Application.Services
             }).ToList();
         }
 
-        public async Task UpdateWorkTimeAsync(string companyGuid, string executorGuid, List<ExecutorWorkTimeDto> dto)
+        /// <summary>
+        /// Обновить расписание исполнителя. Компания может менять только своё.
+        /// </summary>
+        public async Task UpdateWorkTimeAsync(
+            string companyGuid,
+            string executorGuid,
+            List<ExecutorWorkTimeDto> dto)
         {
-            var executor = await _unitOfWork.ExecutorRepository.GetByGuidAsync(Guid.Parse(executorGuid));
-            if (executor == null) throw new NotFoundException("Исполнитель не найден.");
-            if (executor.Company.PublicId.ToString() != companyGuid)
-                throw new Exception("Нет доступа к расписанию этого исполнителя.");
+            // 1. Найти исполнителя
+            var executor = await _unitOfWork.ExecutorRepository
+                .GetByGuidAsync(Guid.Parse(executorGuid))
+                ?? throw new NotFoundException("Исполнитель не найден.");
 
-            var existing = await _unitOfWork.ExecutorWorkTimeRepository.GetByExecutorIdAsync(executor.Id);
-            foreach (var wt in dto)
+            // 2. Проверить, что исполнитель принадлежит компании:
+            if (executor.Company.PublicId.ToString() != companyGuid)
+                throw new UnauthorizedException("Нет доступа к расписанию этого исполнителя.");
+
+            // 3. Загрузить все существующие записи расписания
+            var existing = await _unitOfWork.ExecutorWorkTimeRepository
+                .GetByExecutorIdAsync(executor.Id);
+
+            // 4. Пройти по DTO и обновить каждую запись
+            foreach (var wtDto in dto)
             {
-                var w = existing.FirstOrDefault(x => x.DayNo == wt.DayNo);
-                if (w == null) continue;
-                w.IsWorking = wt.IsWorking;
-                w.FromTime = wt.FromTime;
-                w.TillTime = wt.TillTime;
-                w.BreakStart = wt.BreakStart;
-                w.BreakEnd = wt.BreakEnd;
-                _unitOfWork.ExecutorWorkTimeRepository.Update(w);
+                // ищем запись по дню недели
+                var record = existing.FirstOrDefault(x => x.DayNo == wtDto.DayNo);
+                if (record == null)
+                    continue; // если нет записи на этот день — пропустить
+
+                // обновляем
+                record.IsWorking = wtDto.IsWorking;
+                record.FromTime = wtDto.FromTime;
+                record.TillTime = wtDto.TillTime;
+                record.BreakStart = wtDto.BreakStart;
+                record.BreakEnd = wtDto.BreakEnd;
+
+                _unitOfWork.ExecutorWorkTimeRepository.Update(record);
             }
+
+            // 5. Сохраняем изменения
             await _unitOfWork.SaveChangesAsync();
         }
 

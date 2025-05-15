@@ -11,13 +11,23 @@ public class ServiceService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<List<Service>> GetAllForCompanyAsync(string companyGuid)
+    public async Task<List<ServiceDto>> GetAllForCompanyAsync(string companyGuid)
     {
         var company = await _unitOfWork.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid));
         if (company == null)
             throw new UnauthorizedAccessException("Компания не найдена.");
 
-        return await _unitOfWork.ServiceRepository.GetByCompanyIdAsync(company.Id);
+        var services = await _unitOfWork.ServiceRepository.GetByCompanyIdAsync(company.Id);
+
+        return services.Select(service => new ServiceDto
+        {
+            PublicId = service.PublicId,
+            ServiceName = service.ServiceName,
+            ServiceType = service.ServiceType,
+            ServicePrice = service.ServicePrice,
+            DurationMinutes = service.DurationMinutes,
+            RequiresAddress = service.RequiresAddress
+        }).ToList();
     }
 
     public async Task<ServiceDto?> GetByPublicIdForCompanyAsync(Guid publicId, string companyGuid)

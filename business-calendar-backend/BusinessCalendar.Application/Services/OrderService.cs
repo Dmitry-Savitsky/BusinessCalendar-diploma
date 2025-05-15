@@ -6,16 +6,21 @@ using BusinessCalendar.Core.Entities;
 using BusinessCalendar.Core.Exceptions;
 using BusinessCalendar.Core.Interfaces;
 using BusinessCalendar.Application.DTOs.OrdersDtos;
+using Microsoft.Extensions.Logging; 
 
 namespace BusinessCalendar.Application.Services
 {
     public class OrderService
     {
         private readonly IUnitOfWork _uow;
+        private readonly ILogger<OrderService> _logger;
+        private readonly BookingService _booking;
 
-        public OrderService(IUnitOfWork uow)
+        public OrderService(IUnitOfWork uow, ILogger<OrderService> logger, BookingService booking)
         {
             _uow = uow;
+            _logger = logger;
+            _booking = booking;
         }
 
         /// <summary>
@@ -23,108 +28,119 @@ namespace BusinessCalendar.Application.Services
         /// </summary>
         public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto)
         {
-            // 1. Проверяем компанию
-            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(dto.CompanyGuid));
-            if (company == null)
-                throw new UnauthorizedException("Компания не найдена");
-
-            // 2. Ищем клиента в базе или создаём
-            var client = await _uow.ClientRepository.GetByPhoneAndCompanyAsync(dto.ClientPhone, company.Id)
-             ?? await CreateClientAsync(company.PublicId, dto.ClientName, dto.ClientPhone);
-
-
-            // 3. Если нужна хотя бы одна адресная услуга — проверяем dto.ClientAddress
-            int? addressId = null;
-            if (dto.Items.Any(i => i.RequiresAddress))
+            try
             {
-                if (string.IsNullOrWhiteSpace(dto.ClientAddress))
-                    throw new BadRequestException("Не задан адрес клиента для требуемой услуги");
+                // 1. Проверяем компанию
+                var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(dto.CompanyGuid));
+                if (company == null)
+                    throw new UnauthorizedException("Компания не найдена");
 
-                var addr = new ClientAddress
+                // 2. Ищем клиента в базе или создаём
+                var client = await _uow.ClientRepository.GetByPhoneAndCompanyAsync(dto.ClientPhone, company.Id)
+                 ?? await CreateClientAsync(company.PublicId, dto.ClientName, dto.ClientPhone);
+
+                
+                // 3. Если нужна хотя бы одна адресная услуга — проверяем dto.ClientAddress
+                int? addressId = null;
+                if (dto.Items.Any(i => i.RequiresAddress))
+                {
+                    if (string.IsNullOrWhiteSpace(dto.ClientAddress))
+                        throw new BadRequestException("Не задан адрес клиента для требуемой услуги");
+
+                    var addr = new ClientAddress
+                    {
+                        ClientId = client.Id,
+                        Address = dto.ClientAddress!
+                    };
+                    await _uow.ClientAddresses.AddAsync(addr);
+                    await _uow.SaveChangesAsync();
+                    addressId = addr.Id;
+                }
+
+                // 4. Составляем список интервалов и выполняем все проверки
+                var intervals = new List<(DateTime Start, DateTime End)>();
+                foreach (var item in dto.Items)
+                {
+                    // 4.1 Проверяем сущности
+                    var service = await _uow.ServiceRepository.GetByGuidAsync(item.ServiceGuid)
+                                   ?? throw new NotFoundException($"Сервис {item.ServiceGuid} не найден");
+                    var executor = await _uow.ExecutorRepository.GetByGuidAsync(item.ExecutorGuid)
+                                   ?? throw new NotFoundException($"Исполнитель {item.ExecutorGuid} не найден");
+
+                    if (service.CompanyId != company.Id || executor.CompanyId != company.Id)
+                        throw new UnauthorizedException("Услуга или исполнитель не вашей компании");
+
+                    // 4.2 Длительность и конец
+                    var startUtc = item.Start.UtcDateTime;
+                    var dur = service.DurationMinutes
+                                   ?? throw new BadRequestException("У услуги не задана длительность");
+                    var endUtc = startUtc.AddMinutes(dur);
+
+                    // 4.3 **Проверка через BookingService**:
+                    //    передаём в GetSlotsAsync именно начало слота
+                    var availableSlots = await _booking.GetSlotsAsync(
+                        dto.CompanyGuid, item.ServiceGuid, item.ExecutorGuid, item.Start);
+
+                    // если в списке нет ровно такой метки Available==true — отказ
+                    if (!availableSlots.Any(s => s.Time == item.Start && s.Available))
+                        throw new ConflictException($"Слот {item.Start:O} недоступен");
+
+                    intervals.Add((startUtc, endUtc));
+                }
+
+                // 5. Создаём и сохраняем Order
+                var order = new Order
                 {
                     ClientId = client.Id,
-                    Address = dto.ClientAddress!
+                    ClientAddressId = addressId,
+                    CompanyId = company.Id,
+                    OrderStart = intervals.Min(t => t.Start),
+                    OrderEnd = intervals.Max(t => t.End),
+                    Confirmed = true,
+                    OrderComment = dto.Comment
                 };
-                await _uow.ClientAddresses.AddAsync(addr);
+                await _uow.Orders.AddAsync(order);
                 await _uow.SaveChangesAsync();
-                addressId = addr.Id;
-            }
 
-            // 4. Составляем список интервалов и выполняем все проверки
-            var intervals = new List<(DateTime Start, DateTime End)>();
-            foreach (var item in dto.Items)
-            {
-                var service = await _uow.ServiceRepository.GetByGuidAsync(item.ServiceGuid)
-                              ?? throw new NotFoundException($"Сервис {item.ServiceGuid} не найден");
-                var executor = await _uow.ExecutorRepository.GetByGuidAsync(item.ExecutorGuid)
-                                ?? throw new NotFoundException($"Исполнитель {item.ExecutorGuid} не найден");
-
-                if (service.CompanyId != company.Id || executor.CompanyId != company.Id)
-                    throw new UnauthorizedException("Услуга или исполнитель не вашей компании");
-
-                var startUtc = item.Start.UtcDateTime;
-                var dur = service.DurationMinutes
-                          ?? throw new BadRequestException("У услуги не задана длительность");
-                var endUtc = startUtc.AddMinutes(dur);
-
-                CheckExecutorAvailability(executor, startUtc, endUtc);
-
-                // проверяем конфликты с уже записанными заказами
-                bool taken = await _uow.ServiceInOrderRepository.ExistsConflictAsync(
-                    executor.Id, startUtc, endUtc);
-                if (taken)
-                    throw new ConflictException("Выбранный слот уже занят");
-
-                intervals.Add((startUtc, endUtc));
-            }
-
-            // 5. Создаём и сохраняем Order
-            var order = new Order
-            {
-                ClientId = client.Id,
-                ClientAddressId = addressId,
-                CompanyId = company.Id,
-                OrderStart = intervals.Min(t => t.Start),
-                OrderEnd = intervals.Max(t => t.End),
-                Confirmed = true,
-                OrderComment = dto.Comment
-            };
-            await _uow.Orders.AddAsync(order);
-            await _uow.SaveChangesAsync();
-
-            // 6. Создаём ServiceInOrder
-            foreach (var item in dto.Items)
-            {
-                var svc = await _uow.ServiceRepository.GetByGuidAsync(item.ServiceGuid);
-                var exe = await _uow.ExecutorRepository.GetByGuidAsync(item.ExecutorGuid);
-                var sUtc = item.Start.UtcDateTime;
-                var eUtc = sUtc.AddMinutes(svc.DurationMinutes!.Value);
-
-                var sio = new ServiceInOrder
+                // 6. Создаём ServiceInOrder
+                foreach (var item in dto.Items)
                 {
-                    OrderId = order.Id,
-                    ServiceId = svc.Id,
-                    ExecutorId = exe.Id,
-                    ServiceStart = sUtc,
-                    ServiceEnd = eUtc
+                    var svc = await _uow.ServiceRepository.GetByGuidAsync(item.ServiceGuid);
+                    var exe = await _uow.ExecutorRepository.GetByGuidAsync(item.ExecutorGuid);
+                    var sUtc = item.Start.UtcDateTime;
+                    var eUtc = sUtc.AddMinutes(svc.DurationMinutes!.Value);
+
+                    var sio = new ServiceInOrder
+                    {
+                        OrderId = order.Id,
+                        ServiceId = svc.Id,
+                        ExecutorId = exe.Id,
+                        ServiceStart = sUtc,
+                        ServiceEnd = eUtc
+                    };
+                    await _uow.ServiceInOrders.AddAsync(sio);
+                }
+                await _uow.SaveChangesAsync();
+
+                // 7. Формируем и возвращаем DTO
+                return new OrderDto
+                {
+                    PublicId = order.PublicId,
+                    Comment = order.OrderComment,
+                    Items = dto.Items.Select(i => new OrderItemDto
+                    {
+                        ServiceGuid = i.ServiceGuid,
+                        ExecutorGuid = i.ExecutorGuid,
+                        Start = i.Start,            // DateTimeOffset локальный
+                        RequiresAddress = i.RequiresAddress,
+                    }).ToList()
                 };
-                await _uow.ServiceInOrders.AddAsync(sio);
             }
-            await _uow.SaveChangesAsync();
-
-            // 7. Формируем и возвращаем DTO
-            return new OrderDto
+            catch (Exception ex)
             {
-                PublicId = order.PublicId,
-                Comment = order.OrderComment,
-                Items = dto.Items.Select(i => new OrderItemDto
-                {
-                    ServiceGuid = i.ServiceGuid,
-                    ExecutorGuid = i.ExecutorGuid,
-                    Start = i.Start,
-                    RequiresAddress = i.RequiresAddress
-                }).ToList()
-            };
+                _logger.LogError(ex, "Error in CreateOrderAsync for CompanyGuid={CompanyGuid}", dto.CompanyGuid);
+                throw;  // или перехватить и обернуть в пользовательское
+            }
         }
 
         private async Task<Client> CreateClientAsync(Guid companyGuid, string name, string phone)
@@ -174,42 +190,58 @@ namespace BusinessCalendar.Application.Services
         public async Task<List<OrderDetailDto>> GetAllForCompanyAsync(string companyGuid)
         {
             var company = await _uow.CompanyRepository
-                                   .GetByGuidAsync(Guid.Parse(companyGuid))
-                         ?? throw new NotFoundException("Компания не найдена");
+                .GetByGuidAsync(Guid.Parse(companyGuid))
+              ?? throw new NotFoundException("Компания не найдена");
 
-            // В репозитории OrderRepository.GetAllByCompanyIdAsync 
-            // нужно Ensure.Include(s => s.Services).ThenInclude(si => si.Service / si.Executor)
-
+            // Не забудь, что тут репозиторий должен Include Services→Service + Executor
             var orders = await _uow.OrderRepository.GetAllByCompanyIdAsync(company.Id);
 
-            return orders.Select(o => new OrderDetailDto
-            {
-                PublicId = o.PublicId,
-                Comment = o.OrderComment,
-                Confirmed = o.Confirmed,
-                Completed = o.Completed,
-                OrderStart = o.OrderStart,
-                OrderEnd = o.OrderEnd,
+            // получаем tz once
+            var tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Minsk");
 
-                Items = o.Services.Select(sio => new OrderItemDetailDto
+            return orders.Select(o => {
+                // конвертим начало/конец в локальное время Минска
+                var startOffset = TimeZoneInfo
+                    .ConvertTime(new DateTimeOffset(o.OrderStart, TimeSpan.Zero), tz);
+                var endOffset = o.OrderEnd.HasValue
+                    ? TimeZoneInfo.ConvertTime(new DateTimeOffset(o.OrderEnd.Value, TimeSpan.Zero), tz)
+                    : (DateTimeOffset?)null;
+
+                return new OrderDetailDto
                 {
-                    // услуга
-                    ServiceGuid = sio.Service.PublicId,
-                    ServiceName = sio.Service.ServiceName,
-                    ServiceType = sio.Service.ServiceType,
-                    ServicePrice = sio.Service.ServicePrice,
+                    PublicId = o.PublicId,
+                    Comment = o.OrderComment,
+                    Confirmed = o.Confirmed,
+                    Completed = o.Completed,
+                    OrderStart = startOffset,
+                    OrderEnd = endOffset,
 
-                    // исполнитель
-                    ExecutorGuid = sio.Executor.PublicId,
-                    ExecutorName = sio.Executor.ExecutorName,
-                    ExecutorImgPath = sio.Executor.ImgPath,
+                    Items = o.Services.Select(sio => {
+                        // UTC из базы
+                        var utcStart = sio.ServiceStart!.Value;
+                        // конвертация
+                        var localStart = TimeZoneInfo.ConvertTime(
+                            new DateTimeOffset(utcStart, TimeSpan.Zero), tz);
 
-                    // слот
-                    Start = new DateTimeOffset(sio.ServiceStart!.Value, TimeSpan.Zero),
-                    RequiresAddress = sio.Service.RequiresAddress
-                }).ToList()
+                        return new OrderItemDetailDto
+                        {
+                            ServiceGuid = sio.Service.PublicId,
+                            ServiceName = sio.Service.ServiceName,
+                            ServiceType = sio.Service.ServiceType,
+                            ServicePrice = sio.Service.ServicePrice,
+
+                            ExecutorGuid = sio.Executor.PublicId,
+                            ExecutorName = sio.Executor.ExecutorName,
+                            ExecutorImgPath = sio.Executor.ImgPath,
+
+                            Start = localStart,
+                            RequiresAddress = sio.Service.RequiresAddress
+                        };
+                    }).ToList()
+                };
             }).ToList();
         }
+
 
         public async Task<OrderDetailDto> GetByPublicIdAsync(string companyGuid, Guid orderGuid)
         {

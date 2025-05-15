@@ -9,7 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using BusinessCalendar.Application.Helpers;
-using BusinessCalendar.Application.DTOs.ExecutorWorkTimeDtos.BusinessCalendar.Application.DTOs;
+using BusinessCalendar.Application.DTOs.ExecutorWorkTimeDtos;
 
 namespace BusinessCalendar.Presentation.Controllers
 {
@@ -152,17 +152,24 @@ namespace BusinessCalendar.Presentation.Controllers
             return Ok(list);
         }
 
-        // PUT обновить расписание
+        /// <summary>
+        /// Обновить расписание исполнителя.
+        /// PUT /api/company/{companyGuid}/executor/{executorGuid}/worktime
+        /// </summary>
         [HttpPut("{companyGuid}/executor/{executorGuid}/worktime")]
         public async Task<IActionResult> UpdateWorkTime(
             string companyGuid,
             string executorGuid,
             [FromBody] List<ExecutorWorkTimeDto> dto)
         {
+            // 0. Проверяем, что companyGuid в токене совпадает
             if (User.GetCompanyGuid() != companyGuid)
                 return Forbid();
 
+            // 1. Вызываем сервис
             await _executorService.UpdateWorkTimeAsync(companyGuid, executorGuid, dto);
+
+            // 2. Возвращаем 204 No Content
             return NoContent();
         }
     }

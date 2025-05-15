@@ -21,9 +21,9 @@ public class ServiceController : ControllerBase
     [Authorize(Policy = "CompanyPolicy")]
     public async Task<IActionResult> GetAll()
     {
-        string companyGuid = User.GetCompanyGuid();
-        var services = await _serviceService.GetAllForCompanyAsync(companyGuid);
-        return Ok(services);
+        var companyGuid = User.GetCompanyGuid();
+        List<ServiceDto> dtos = await _serviceService.GetAllForCompanyAsync(companyGuid);
+        return Ok(dtos);
     }
 
     [Authorize(Policy = "ExecutorPolicy")]

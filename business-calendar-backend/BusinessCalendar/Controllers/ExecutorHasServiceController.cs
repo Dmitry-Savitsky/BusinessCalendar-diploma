@@ -16,33 +16,27 @@ namespace BusinessCalendar.Presentation.Controllers
         private readonly ExecutorHasServiceService _service;
 
         public ExecutorHasServiceController(ExecutorHasServiceService service)
-        {
-            _service = service;
-        }
+            => _service = service;
 
-        // ----- GET -----
-        [HttpGet]
-        [Authorize]
+        // GET: все связи для текущей роли
+        [HttpGet, Authorize]
         public async Task<IActionResult> Get()
         {
             var role = User.FindFirstValue(ClaimTypes.Role);
             if (role == "Company")
             {
                 var companyGuid = User.GetCompanyGuid();
-                var list = await _service.GetForCompanyAsync(companyGuid);
-                return Ok(list);
+                return Ok(await _service.GetForCompanyAsync(companyGuid));
             }
-            else // Executor
+            else
             {
                 var executorGuid = User.GetExecutorGuid();
-                var list = await _service.GetForExecutorAsync(executorGuid);
-                return Ok(list);
+                return Ok(await _service.GetForExecutorAsync(executorGuid));
             }
         }
 
-        // ----- POST -----
-        [HttpPost]
-        [Authorize(Policy = "CompanyPolicy")]
+        // POST: добавить связь (Company only)
+        [HttpPost, Authorize(Policy = "CompanyPolicy")]
         public async Task<IActionResult> Post([FromBody] ExecutorHasServiceCreateDto dto)
         {
             var companyGuid = User.GetCompanyGuid();
@@ -50,7 +44,7 @@ namespace BusinessCalendar.Presentation.Controllers
             return Ok(new { Message = "Связь создана" });
         }
 
-        // ----- DELETE -----
+        // DELETE: удалить связь по публичным GUID (Company only)
         [HttpDelete("{executorGuid:guid}/{serviceGuid:guid}")]
         [Authorize(Policy = "CompanyPolicy")]
         public async Task<IActionResult> Delete(Guid executorGuid, Guid serviceGuid)
@@ -60,4 +54,5 @@ namespace BusinessCalendar.Presentation.Controllers
             return NoContent();
         }
     }
+
 }

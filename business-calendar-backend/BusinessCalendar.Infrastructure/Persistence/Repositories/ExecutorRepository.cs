@@ -20,6 +20,7 @@ namespace BusinessCalendar.Infrastructure.Repositories
         {
             return await _context.Executors
                 .AsNoTracking()
+                .Include(e => e.Company)
                 .FirstOrDefaultAsync(c => c.PublicId == guid);
         }
 
