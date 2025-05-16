@@ -1,4 +1,5 @@
-﻿using BusinessCalendar.Application.Services;
+﻿using BusinessCalendar.Application.Helpers;
+using BusinessCalendar.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,11 +32,12 @@ namespace BusinessCalendar.Presentation.Controllers
         [HttpGet("slots")]
         [Authorize(Policy = "CompanyPolicy")]
         public async Task<IActionResult> GetSlotsForCompany(
-            [FromQuery] string companyGuid,
             [FromQuery] Guid serviceGuid,
             [FromQuery] Guid executorGuid,
             [FromQuery] DateTimeOffset date)
         {
+
+            var companyGuid = User.GetCompanyGuid();
             // companyGuid проверяется внутри сервиса
             var slots = await _svc.GetSlotsAsync(companyGuid, serviceGuid, executorGuid, date);
             return Ok(slots);

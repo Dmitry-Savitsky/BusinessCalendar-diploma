@@ -21,87 +21,63 @@ namespace BusinessCalendar.Presentation.Controllers
         // 1) Company — CRUD & статус
         // -----------------------------------------------------
 
-        /// <summary>
-        /// Получить все заказы компании
-        /// GET /api/orders?companyGuid=...
-        /// </summary>
+        /// <summary>Получить все заказы компании</summary>
+        /// GET /api/orders
         [HttpGet]
         [Authorize(Policy = "CompanyPolicy")]
-        public async Task<IActionResult> GetAll([FromQuery] string companyGuid)
+        public async Task<IActionResult> GetAll()
         {
-            // Проверяем, что токен содержит тот же companyGuid
-            if (User.GetCompanyGuid() != companyGuid)
-                return Forbid();
-
+            var companyGuid = User.GetCompanyGuid();
             var list = await _orderService.GetAllForCompanyAsync(companyGuid);
             return Ok(list);
         }
 
-        /// <summary>
-        /// Получить один заказ по его GUID
-        /// GET /api/orders/{orderGuid}?companyGuid=...
-        /// </summary>
+        /// <summary>Получить один заказ по его GUID</summary>
+        /// GET /api/orders/{orderGuid}
         [HttpGet("{orderGuid:guid}")]
         [Authorize(Policy = "CompanyPolicy")]
-        public async Task<IActionResult> GetById(
-            [FromRoute] Guid orderGuid,
-            [FromQuery] string companyGuid)
+        public async Task<IActionResult> GetById(Guid orderGuid)
         {
-            if (User.GetCompanyGuid() != companyGuid)
-                return Forbid();
-
+            var companyGuid = User.GetCompanyGuid();
             var dto = await _orderService.GetByPublicIdAsync(companyGuid, orderGuid);
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Создать заказ (CRM)
+        /// <summary>Создать заказ (CRM)</summary>
         /// POST /api/orders/company
-        /// </summary>
         [HttpPost("company")]
         [Authorize(Policy = "CompanyPolicy")]
-        public async Task<IActionResult> CreateByCompany(
-            [FromBody] OrderCreateDto dto)
+        public async Task<IActionResult> CreateByCompany([FromBody] OrderCreateDto dto)
         {
-            // dto.CompanyGuid тоже проверится внутри сервиса
+            // companyGuid будет проверён внутри сервиса
+            dto.CompanyGuid = User.GetCompanyGuid();
             var result = await _orderService.CreateOrderAsync(dto);
             return CreatedAtAction(
                 nameof(GetById),
-                new { orderGuid = result.PublicId, companyGuid = dto.CompanyGuid },
+                new { orderGuid = result.PublicId },
                 result);
         }
 
-        /// <summary>
-        /// Обновить только флаги Confirmed/Completed
-        /// PUT /api/orders/{orderGuid}?companyGuid=...
-        /// </summary>
+        /// <summary>Обновить только флаги Confirmed/Completed</summary>
+        /// PUT /api/orders/{orderGuid}
         [HttpPut("{orderGuid:guid}")]
         [Authorize(Policy = "CompanyPolicy")]
         public async Task<IActionResult> UpdateStatus(
-            [FromRoute] Guid orderGuid,
-            [FromQuery] string companyGuid,
+            Guid orderGuid,
             [FromBody] OrderUpdateDto dto)
         {
-            if (User.GetCompanyGuid() != companyGuid)
-                return Forbid();
-
+            var companyGuid = User.GetCompanyGuid();
             await _orderService.UpdateAsync(companyGuid, orderGuid, dto);
             return NoContent();
         }
 
-        /// <summary>
-        /// Удалить заказ
-        /// DELETE /api/orders/{orderGuid}?companyGuid=...
-        /// </summary>
+        /// <summary>Удалить заказ</summary>
+        /// DELETE /api/orders/{orderGuid}
         [HttpDelete("{orderGuid:guid}")]
         [Authorize(Policy = "CompanyPolicy")]
-        public async Task<IActionResult> Delete(
-            [FromRoute] Guid orderGuid,
-            [FromQuery] string companyGuid)
+        public async Task<IActionResult> Delete(Guid orderGuid)
         {
-            if (User.GetCompanyGuid() != companyGuid)
-                return Forbid();
-
+            var companyGuid = User.GetCompanyGuid();
             await _orderService.DeleteAsync(companyGuid, orderGuid);
             return NoContent();
         }
@@ -110,16 +86,13 @@ namespace BusinessCalendar.Presentation.Controllers
         // 2) Widget (No policy) — только создание
         // -----------------------------------------------------
 
-        /// <summary>
-        /// Создать заказ из публичного виджета
+        /// <summary>Создать заказ из публичного виджета</summary>
         /// POST /api/orders/widget
-        /// </summary>
         [HttpPost("widget")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateByWidget(
-            [FromBody] OrderCreateDto dto)
+        public async Task<IActionResult> CreateByWidget([FromBody] OrderCreateDto dto)
         {
-            // В dto.CompanyGuid приходит из data‑attribute виджета
+            // dto.CompanyGuid приходит из data‑attribute виджета
             var result = await _orderService.CreateOrderAsync(dto);
             return Ok(result);
         }

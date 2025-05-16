@@ -45,18 +45,12 @@ namespace BusinessCalendar.Presentation.Controllers
         }
 
         [Authorize(Policy = "CompanyPolicy")]
-        [HttpPut("update/{companyGuid}")]
+        [HttpPut("update")]
         public async Task<IActionResult> Update(
-            string companyGuid,
             [FromForm] CompanyUpdateDto dto,
             IFormFile? image)
         {
-            // 🔐 Проверка, что companyGuid из токена совпадает с тем, что в URL
-            var companyGuidFromToken = User.GetCompanyGuid();
-            if (companyGuidFromToken != companyGuid)
-            {
-                return Forbid("You are not allowed to update another company.");
-            }
+            var companyGuid = User.GetCompanyGuid();
 
             var imagePath = image != null
                 ? await SaveImageAsync(image)
@@ -65,6 +59,7 @@ namespace BusinessCalendar.Presentation.Controllers
             await _companyService.UpdateCompanyAsync(companyGuid, dto, imagePath);
             return NoContent();
         }
+
 
 
         private async Task<string> SaveImageAsync(IFormFile image)

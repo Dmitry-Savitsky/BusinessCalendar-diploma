@@ -85,52 +85,45 @@ namespace BusinessCalendar.Presentation.Controllers
             return "/images/" + uniqueFileName;
         }
 
+        // POST /api/executor              (CompanyPolicy)
         [Authorize(Policy = "CompanyPolicy")]
-        [HttpPost("{companyGuid}/add")]
-        public async Task<IActionResult> AddExecutor(string companyGuid, [FromBody] ExecutorAddDto dto)
+        [HttpPost("add")]
+        public async Task<IActionResult> AddExecutor([FromBody] ExecutorAddDto dto)
         {
-            var tokenCompanyGuid = User.GetCompanyGuid();
-            if (tokenCompanyGuid != companyGuid)
-                return Forbid("Нельзя добавлять исполнителей для другой компании.");
-
+            // companyGuid теперь достаём из токена
+            var companyGuid = User.GetCompanyGuid();
             await _executorService.AddExecutorAsync(companyGuid, dto);
             return Ok();
         }
 
+        // DELETE /api/executor/{executorGuid}    (CompanyPolicy)
         [Authorize(Policy = "CompanyPolicy")]
-        [HttpDelete("{companyGuid}/delete/{executorGuid}")]
-        public async Task<IActionResult> DeleteExecutor(string companyGuid, string executorGuid)
+        [HttpDelete("{executorGuid:guid}")]
+        public async Task<IActionResult> DeleteExecutor(Guid executorGuid)
         {
-            var tokenCompanyGuid = User.GetCompanyGuid();
-            if (tokenCompanyGuid != companyGuid)
-                return Forbid("Нельзя удалять исполнителей другой компании.");
-
-            await _executorService.DeleteExecutorAsync(companyGuid, executorGuid);
-            return Ok();
+            var companyGuid = User.GetCompanyGuid();
+            await _executorService.DeleteExecutorAsync(companyGuid, executorGuid.ToString());
+            return NoContent();
         }
 
+        // GET /api/executor                 (CompanyPolicy) — список всех
         [Authorize(Policy = "CompanyPolicy")]
-        [HttpGet("{companyGuid}/all")]
-        public async Task<IActionResult> GetExecutors(string companyGuid)
+        [HttpGet]
+        public async Task<IActionResult> GetExecutors()
         {
-            var tokenCompanyGuid = User.GetCompanyGuid();
-            if (tokenCompanyGuid != companyGuid)
-                return Forbid("Нельзя получить исполнителей другой компании.");
-
-            var executors = await _executorService.GetExecutorsForCompanyAsync(companyGuid);
-            return Ok(executors);
+            var companyGuid = User.GetCompanyGuid();
+            var list = await _executorService.GetExecutorsForCompanyAsync(companyGuid);
+            return Ok(list);
         }
 
+        // GET /api/executor/{executorGuid}    (CompanyPolicy) — один
         [Authorize(Policy = "CompanyPolicy")]
-        [HttpGet("{companyGuid}/executor/{executorGuid}")]
-        public async Task<IActionResult> GetExecutor(string companyGuid, string executorGuid)
+        [HttpGet("{executorGuid:guid}")]
+        public async Task<IActionResult> GetExecutor(Guid executorGuid)
         {
-            var tokenCompanyGuid = User.GetCompanyGuid();
-            if (tokenCompanyGuid != companyGuid)
-                return Forbid("Нельзя получить информацию о чужом исполнителе.");
-
-            var executor = await _executorService.GetExecutorByGuidAsync(executorGuid, companyGuid);
-            return Ok(executor);
+            var companyGuid = User.GetCompanyGuid();
+            var dto = await _executorService.GetExecutorByGuidAsync(executorGuid.ToString(), companyGuid);
+            return Ok(dto);
         }
 
         [Authorize(Policy = "ExecutorPolicy")]
@@ -142,34 +135,25 @@ namespace BusinessCalendar.Presentation.Controllers
             return Ok(executor);
         }
 
-        [HttpGet("{companyGuid}/executor/{executorGuid}/worktime")]
-        public async Task<IActionResult> GetWorkTime(string companyGuid, string executorGuid)
+        // GET /api/executor/{executorGuid}/worktime    (CompanyPolicy)
+        [Authorize(Policy = "CompanyPolicy")]
+        [HttpGet("{executorGuid:guid}/worktime")]
+        public async Task<IActionResult> GetWorkTime(Guid executorGuid)
         {
-            if (User.GetCompanyGuid() != companyGuid)
-                return Forbid();
-
-            var list = await _executorService.GetWorkTimeAsync(companyGuid, executorGuid);
+            var companyGuid = User.GetCompanyGuid();
+            var list = await _executorService.GetWorkTimeAsync(companyGuid, executorGuid.ToString());
             return Ok(list);
         }
 
-        /// <summary>
-        /// Обновить расписание исполнителя.
-        /// PUT /api/company/{companyGuid}/executor/{executorGuid}/worktime
-        /// </summary>
-        [HttpPut("{companyGuid}/executor/{executorGuid}/worktime")]
+        // PUT /api/executor/{executorGuid}/worktime    (CompanyPolicy)
+        [Authorize(Policy = "CompanyPolicy")]
+        [HttpPut("{executorGuid:guid}/worktime")]
         public async Task<IActionResult> UpdateWorkTime(
-            string companyGuid,
-            string executorGuid,
+            Guid executorGuid,
             [FromBody] List<ExecutorWorkTimeDto> dto)
         {
-            // 0. Проверяем, что companyGuid в токене совпадает
-            if (User.GetCompanyGuid() != companyGuid)
-                return Forbid();
-
-            // 1. Вызываем сервис
-            await _executorService.UpdateWorkTimeAsync(companyGuid, executorGuid, dto);
-
-            // 2. Возвращаем 204 No Content
+            var companyGuid = User.GetCompanyGuid();
+            await _executorService.UpdateWorkTimeAsync(companyGuid, executorGuid.ToString(), dto);
             return NoContent();
         }
     }

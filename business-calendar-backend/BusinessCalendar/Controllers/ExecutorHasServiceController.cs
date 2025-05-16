@@ -18,9 +18,9 @@ namespace BusinessCalendar.Presentation.Controllers
         public ExecutorHasServiceController(ExecutorHasServiceService service)
             => _service = service;
 
-        // GET: все связи для текущей роли
+        // GET /api/executor-services
         [HttpGet, Authorize]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             var role = User.FindFirstValue(ClaimTypes.Role);
             if (role == "Company")
@@ -35,16 +35,16 @@ namespace BusinessCalendar.Presentation.Controllers
             }
         }
 
-        // POST: добавить связь (Company only)
+        // POST /api/executor-services    (CompanyPolicy)
         [HttpPost, Authorize(Policy = "CompanyPolicy")]
-        public async Task<IActionResult> Post([FromBody] ExecutorHasServiceCreateDto dto)
+        public async Task<IActionResult> Create([FromBody] ExecutorHasServiceCreateDto dto)
         {
             var companyGuid = User.GetCompanyGuid();
             await _service.AddAsync(companyGuid, dto);
             return Ok(new { Message = "Связь создана" });
         }
 
-        // DELETE: удалить связь по публичным GUID (Company only)
+        // DELETE /api/executor-services/{executorGuid}/{serviceGuid}    (CompanyPolicy)
         [HttpDelete("{executorGuid:guid}/{serviceGuid:guid}")]
         [Authorize(Policy = "CompanyPolicy")]
         public async Task<IActionResult> Delete(Guid executorGuid, Guid serviceGuid)

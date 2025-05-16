@@ -1,88 +1,86 @@
 ﻿using BusinessCalendar.Application.DTOs.ServiceDtos;
+using BusinessCalendar.Application.Helpers;
 using BusinessCalendar.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Security.Claims;
-using BusinessCalendar.Application.Helpers;
+using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ServiceController : ControllerBase
+namespace BusinessCalendar.Presentation.Controllers
 {
-    private readonly ServiceService _serviceService;
-
-    public ServiceController(ServiceService serviceService)
+    [ApiController]
+    [Route("api/service")]
+    public class ServiceController : ControllerBase
     {
-        _serviceService = serviceService;
-    }
+        private readonly ServiceService _serviceService;
 
-    // Получить все услуги текущей компании
-    [HttpGet]
-    [Authorize(Policy = "CompanyPolicy")]
-    public async Task<IActionResult> GetAll()
-    {
-        var companyGuid = User.GetCompanyGuid();
-        List<ServiceDto> dtos = await _serviceService.GetAllForCompanyAsync(companyGuid);
-        return Ok(dtos);
-    }
+        public ServiceController(ServiceService serviceService)
+            => _serviceService = serviceService;
 
-    [Authorize(Policy = "ExecutorPolicy")]
-    [HttpGet("{publicId:guid}")]
-    public async Task<IActionResult> GetByGuid(Guid publicId)
-    {
-        var role = User.FindFirst(ClaimTypes.Role)?.Value;
-
-        if (role == "Company")
+        // GET /api/service
+        [HttpGet]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> GetAll()
         {
             var companyGuid = User.GetCompanyGuid();
-            var service = await _serviceService.GetByPublicIdForCompanyAsync(publicId, companyGuid);
-
-            if (service == null)
-                return Forbid();
-
-            return Ok(service);
+            List<ServiceDto> dtos = await _serviceService.GetAllForCompanyAsync(companyGuid);
+            return Ok(dtos);
         }
-        else if (role == "Executor")
+
+        // GET /api/service/{publicId}
+        [HttpGet("{publicId:guid}")]
+        [Authorize] // обе роли
+        public async Task<IActionResult> GetByGuid(Guid publicId)
         {
-            var executorGuid = User.GetExecutorGuid();
-            var service = await _serviceService.GetByPublicIdForExecutorAsync(publicId, executorGuid);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            if (role == "Company")
+            {
+                var companyGuid = User.GetCompanyGuid();
+                var service = await _serviceService.GetByPublicIdForCompanyAsync(publicId, companyGuid);
+                if (service == null) return Forbid();
+                return Ok(service);
+            }
+            else if (role == "Executor")
+            {
+                var executorGuid = User.GetExecutorGuid();
+                var service = await _serviceService.GetByPublicIdForExecutorAsync(publicId, executorGuid);
+                if (service == null) return Forbid();
+                return Ok(service);
+            }
 
-            if (service == null)
-                return Forbid();
-
-            return Ok(service);
+            return Forbid();
         }
 
-        return Forbid();
-    }
+        // POST /api/service
+        [HttpPost]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> Create([FromBody] ServiceCreateDto dto)
+        {
+            var companyGuid = User.GetCompanyGuid();
+            var created = await _serviceService.CreateServiceAsync(companyGuid, dto);
+            return CreatedAtAction(nameof(GetAll), new { /* no route‑params */ }, created);
+        }
 
-    // Создание новой услуги
-    [HttpPost]
-    [Authorize(Policy = "CompanyPolicy")]
-    public async Task<IActionResult> Create([FromBody] ServiceCreateDto dto)
-    {
-        var companyGuid = User.GetCompanyGuid();
-        var created = await _serviceService.CreateServiceAsync(companyGuid, dto);
-        return CreatedAtAction(nameof(GetAll), new { id = created.PublicId }, created);
-    }
+        // PUT /api/service/{publicId}
+        [HttpPut("{publicId:guid}")]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> Update(Guid publicId, [FromBody] ServiceUpdateDto dto)
+        {
+            var companyGuid = User.GetCompanyGuid();
+            var updated = await _serviceService.UpdateServiceAsync(publicId, companyGuid, dto);
+            return Ok(updated);
+        }
 
-    // Обновление услуги
-    [HttpPut("{publicId}")]
-    [Authorize(Policy = "CompanyPolicy")]
-    public async Task<IActionResult> Update(Guid publicId, [FromBody] ServiceUpdateDto dto)
-    {
-        var companyGuid = User.GetCompanyGuid();
-        var updated = await _serviceService.UpdateServiceAsync(publicId, companyGuid, dto);
-        return Ok(updated);
-    }
-
-    // Удаление услуги
-    [HttpDelete("{publicId}")]
-    [Authorize(Policy = "CompanyPolicy")]
-    public async Task<IActionResult> Delete(Guid publicId)
-    {
-        var companyGuid = User.GetCompanyGuid();
-        await _serviceService.DeleteServiceAsync(publicId, companyGuid);
-        return NoContent();
+        // DELETE /api/service/{publicId}
+        [HttpDelete("{publicId:guid}")]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> Delete(Guid publicId)
+        {
+            var companyGuid = User.GetCompanyGuid();
+            await _serviceService.DeleteServiceAsync(publicId, companyGuid);
+            return NoContent();
+        }
     }
 }
