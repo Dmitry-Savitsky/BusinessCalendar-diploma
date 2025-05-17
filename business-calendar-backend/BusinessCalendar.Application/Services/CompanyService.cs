@@ -80,5 +80,28 @@ namespace BusinessCalendar.Application.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
+        // <summary>
+        /// Получить информацию о компании (своей), guid берётся из токена
+        /// </summary>
+        public async Task<CompanyDetailDto> GetSelfAsync(string companyGuid)
+        {
+            if (!Guid.TryParse(companyGuid, out var parsedGuid))
+                throw new ArgumentException("Некорректный формат GUID компании.");
+
+            var company = await _unitOfWork.CompanyRepository.GetByGuidAsync(parsedGuid);
+            if (company == null)
+                throw new NotFoundException("Компания не найдена.");
+
+            return new CompanyDetailDto
+            {
+                PublicId = company.PublicId,
+                CompanyName = company.CompanyName,
+                CompanyPhone = company.CompanyPhone,
+                CompanyAddress = company.CompanyAddress,
+                ImgPath = company.ImgPath,
+                Login = company.Login
+            };
+        }
+
     }
 }

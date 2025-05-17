@@ -60,6 +60,20 @@ namespace BusinessCalendar.Presentation.Controllers
             return NoContent();
         }
 
+        // <summary>
+        /// GET /api/company/me
+        /// Получить свой профиль компании
+        /// </summary>
+        [HttpGet("me")]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> GetSelf()
+        {
+            // извлекаем companyGuid из токена (уже гарантированно есть и валиден, т.к. Policy пропустил)
+            var companyGuid = User.GetCompanyGuid();
+            var dto = await _companyService.GetSelfAsync(companyGuid);
+            return Ok(dto);
+        }
+
 
 
         private async Task<string> SaveImageAsync(IFormFile image)

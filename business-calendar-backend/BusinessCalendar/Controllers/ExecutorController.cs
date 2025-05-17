@@ -46,27 +46,26 @@ namespace BusinessCalendar.Presentation.Controllers
             return Ok(new { Token = result.Token });
         }
 
-        [Authorize(Policy = "ExecutorPolicy")]
         [HttpPut("update/{executorGuid}")]
+        [Authorize]
         public async Task<IActionResult> Update(
             string executorGuid,
             [FromForm] ExecutorUpdateDto dto,
             IFormFile? image)
         {
-            // 🔐 Проверка, что executorGuid из токена совпадает с тем, что в URL
-            var executorGuidFromToken = User.GetExecutorGuid();
-            if (executorGuidFromToken != executorGuid)
-            {
-                return Forbid("You are not allowed to update another executor.");
-            }
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var userCompanyGuid = User.GetCompanyGuidOrNull(); // вернёт null, если это не компания
+            var userExecutorGuid = User.GetExecutorGuidOrNull(); // вернёт null, если это не исполнитель
 
             var imagePath = image != null
                 ? await SaveImageAsync(image)
                 : string.Empty;
 
-            await _executorService.UpdateExecutorAsync(executorGuid, dto, imagePath);
+            await _executorService.UpdateExecutorAsync(executorGuid, dto, imagePath, role, userCompanyGuid, userExecutorGuid);
+
             return NoContent();
         }
+
 
 
         private async Task<string> SaveImageAsync(IFormFile image)

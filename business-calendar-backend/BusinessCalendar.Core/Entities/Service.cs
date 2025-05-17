@@ -21,6 +21,7 @@ namespace BusinessCalendar.Core.Entities
         [JsonIgnore]
         public int CompanyId { get; set; }
 
+        [JsonIgnore]
         public Company Company { get; set; } = null!;
         public ICollection<ExecutorHasService> ExecutorServices { get; set; } = new List<ExecutorHasService>(); // под вопросом
         public ICollection<ServiceInOrder> ServiceInOrders { get; set; } = new List<ServiceInOrder>();

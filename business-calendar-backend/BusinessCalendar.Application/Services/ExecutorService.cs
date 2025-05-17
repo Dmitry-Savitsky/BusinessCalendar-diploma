@@ -59,20 +59,41 @@ namespace BusinessCalendar.Application.Services
         }
 
 
-        public async Task UpdateExecutorAsync(string executorGuid, ExecutorUpdateDto dto, string imagePath)
+        public async Task UpdateExecutorAsync(
+            string executorGuid,
+            ExecutorUpdateDto dto,
+            string imagePath,
+            string role,
+            string? companyGuidFromToken,
+            string? executorGuidFromToken)
         {
             if (!Guid.TryParse(executorGuid, out var parsedGuid))
                 throw new ArgumentException("Некорректный формат GUID исполнителя.");
 
             var executor = await _unitOfWork.ExecutorRepository.GetByGuidAsync(parsedGuid);
             if (executor == null)
-                throw new NotFoundException($"Executor с GUID={executorGuid} не найден.");
+                throw new NotFoundException($"Исполнитель с GUID={executorGuid} не найден.");
+
+            if (role == "Executor")
+            {
+                if (executor.PublicId.ToString() != executorGuidFromToken)
+                    throw new Exception("Вы не можете изменить другого исполнителя.");
+            }
+            else if (role == "Company")
+            {
+                if (executor.Company.PublicId.ToString() != companyGuidFromToken)
+                    throw new Exception("Вы не можете изменить исполнителя другой компании.");
+            }
+            else
+            {
+                throw new Exception("Недопустимая роль.");
+            }
 
             if (!string.IsNullOrEmpty(dto.ExecutorName))
                 executor.ExecutorName = dto.ExecutorName;
             if (!string.IsNullOrEmpty(dto.ExecutorPhone))
                 executor.ExecutorPhone = dto.ExecutorPhone;
-            if(!string.IsNullOrEmpty(dto.Description)) 
+            if (!string.IsNullOrEmpty(dto.Description))
                 executor.Description = dto.Description;
 
             if (!string.IsNullOrEmpty(imagePath))
@@ -81,6 +102,7 @@ namespace BusinessCalendar.Application.Services
             _unitOfWork.Executors.Update(executor);
             await _unitOfWork.SaveChangesAsync();
         }
+
 
         private static readonly ExecutorWorkTimeDto[] _defaultSchedule = Enumerable.Range(0, 7)
         .Select(d => new ExecutorWorkTimeDto

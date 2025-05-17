@@ -14,5 +14,16 @@ namespace BusinessCalendar.Application.Helpers
 
         public static string GetExecutorGuid(this ClaimsPrincipal user) =>
             user.FindFirst("ExecutorGuid")?.Value ?? throw new UnauthorizedAccessException("Executor GUID not found.");
+
+        public static string? GetCompanyGuidOrNull(this ClaimsPrincipal user)
+        {
+            return user.IsInRole("Company") ? user.FindFirst("CompanyGuid")?.Value : null;
+        }
+
+        public static string? GetExecutorGuidOrNull(this ClaimsPrincipal user)
+        {
+            return user.IsInRole("Executor") ? user.FindFirst("CompanyGuid")?.Value : null;
+        }
+
     }
 }
