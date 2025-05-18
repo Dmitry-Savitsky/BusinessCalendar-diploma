@@ -15,20 +15,21 @@ namespace BusinessCalendar.Infrastructure.Repositories
         private readonly BusinessCalendarDbContext _context;
 
         public OrderRepository(BusinessCalendarDbContext context) : base(context)
-        {
-            _context = context;
-        }
+            => _context = context;
 
         /// <summary>
-        /// Возвращает все заказы указанной компании вместе с позициями,
-        /// услугами и исполнителями.
+        /// Возвращает все заказы указанной компании вместе с
+        /// клиентом, адресом, позициями, услугами и исполнителями.
         /// </summary>
         public async Task<List<Order>> GetAllByCompanyIdAsync(int companyId)
         {
             return await _context.Orders
                 .AsNoTracking()
                 .Where(o => o.CompanyId == companyId)
-                // Включаем навигационные свойства ServiceInOrder → Service, Executor
+                // Клиент и его актуальный адрес
+                .Include(o => o.Client)
+                .Include(o => o.ClientAddress)
+                // Позиции заказа
                 .Include(o => o.Services)
                     .ThenInclude(sio => sio.Service)
                 .Include(o => o.Services)
@@ -38,13 +39,15 @@ namespace BusinessCalendar.Infrastructure.Repositories
 
         /// <summary>
         /// Возвращает один заказ по его публичному GUID,
-        /// вместе с позициями, услугами и исполнителями.
+        /// вместе с клиентом, адресом, позициями, услугами и исполнителями.
         /// </summary>
         public async Task<Order?> GetByPublicIdAsync(Guid publicId)
         {
             return await _context.Orders
                 .AsNoTracking()
                 .Where(o => o.PublicId == publicId)
+                .Include(o => o.Client)
+                .Include(o => o.ClientAddress)
                 .Include(o => o.Services)
                     .ThenInclude(sio => sio.Service)
                 .Include(o => o.Services)

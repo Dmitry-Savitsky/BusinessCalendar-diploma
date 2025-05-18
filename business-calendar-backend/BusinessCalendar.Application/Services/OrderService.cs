@@ -187,22 +187,127 @@ namespace BusinessCalendar.Application.Services
 
         // ***************** rud for order *******************
 
+        /// <summary>
+        /// Все заказы текущей компании (CRM), детально.
+        /// </summary>
         public async Task<List<OrderDetailDto>> GetAllForCompanyAsync(string companyGuid)
         {
             var company = await _uow.CompanyRepository
-                .GetByGuidAsync(Guid.Parse(companyGuid))
-              ?? throw new NotFoundException("Компания не найдена");
+                               .GetByGuidAsync(Guid.Parse(companyGuid))
+                         ?? throw new NotFoundException("Компания не найдена");
 
-            // Не забудь, что тут репозиторий должен Include Services→Service + Executor
             var orders = await _uow.OrderRepository.GetAllByCompanyIdAsync(company.Id);
+            return MapToDetailDtos(orders);
+        }
 
-            // получаем tz once
+        public async Task<OrderDetailDto> GetByPublicIdAsync(string companyGuid, Guid orderGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                         ?? throw new NotFoundException("Компания не найдена");
+
+            var order = await _uow.OrderRepository
+                .GetByPublicIdAsync(orderGuid)              // должны Include(o => o.Client, o => o.ClientAddress, o => o.Services).ThenInclude(...)
+                ?? throw new NotFoundException("Заказ не найден");
+
+            if (order.CompanyId != company.Id)
+                throw new UnauthorizedException("Нет доступа к этому заказу");
+
+            // часовой пояс Минска
             var tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Minsk");
 
-            return orders.Select(o => {
-                // конвертим начало/конец в локальное время Минска
-                var startOffset = TimeZoneInfo
-                    .ConvertTime(new DateTimeOffset(o.OrderStart, TimeSpan.Zero), tz);
+            // конвертация начала/конца
+            var startOffset = TimeZoneInfo.ConvertTime(
+                new DateTimeOffset(order.OrderStart, TimeSpan.Zero), tz);
+            var endOffset = order.OrderEnd.HasValue
+                ? TimeZoneInfo.ConvertTime(new DateTimeOffset(order.OrderEnd.Value, TimeSpan.Zero), tz)
+                : (DateTimeOffset?)null;
+
+            return new OrderDetailDto
+            {
+                PublicId = order.PublicId,
+                Comment = order.OrderComment,
+                Confirmed = order.Confirmed,
+                Completed = order.Completed,
+                OrderStart = startOffset,
+                OrderEnd = endOffset,
+
+                // заполняем данные клиента
+                ClientPublicId = order.Client.PublicId,
+                ClientName = order.Client.ClientName,
+                ClientPhone = order.Client.ClientPhone,
+                ClientAddress = order.ClientAddress?.Address,
+
+                Items = order.Services.Select(sio =>
+                {
+                    // конвертим начало каждой услуги
+                    var utcStart = sio.ServiceStart!.Value;
+                    var localStart = TimeZoneInfo.ConvertTime(
+                        new DateTimeOffset(utcStart, TimeSpan.Zero), tz);
+
+                    return new OrderItemDetailDto
+                    {
+                        ServiceGuid = sio.Service.PublicId,
+                        ServiceName = sio.Service.ServiceName,
+                        ServiceType = sio.Service.ServiceType,
+                        ServicePrice = sio.Service.ServicePrice,
+
+                        ExecutorGuid = sio.Executor.PublicId,
+                        ExecutorName = sio.Executor.ExecutorName,
+                        ExecutorImgPath = sio.Executor.ImgPath,
+
+                        Start = localStart,
+                        RequiresAddress = sio.Service.RequiresAddress
+                    };
+                }).ToList()
+            };
+        }
+
+        /// <summary>
+        /// Все заказы текущей компании, в которых встречается услуга serviceGuid.
+        /// </summary>
+        public async Task<List<OrderDetailDto>> GetAllForCompanyByServiceAsync(string companyGuid, Guid serviceGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                          ?? throw new NotFoundException("Компания не найдена");
+
+            // загружаем все
+            var orders = await _uow.OrderRepository.GetAllByCompanyIdAsync(company.Id);
+
+            // фильтрация по serviceGuid
+            var filtered = orders
+                .Where(o => o.Services.Any(sio => sio.Service.PublicId == serviceGuid))
+                .ToList();
+
+            // маппинг в OrderDetailDto (в точности как в GetAllForCompanyAsync)
+            return MapToDetailDtos(filtered);
+        }
+
+        /// <summary>
+        /// Все заказы текущей компании, в которых участвует исполнитель executorGuid.
+        /// </summary>
+        public async Task<List<OrderDetailDto>> GetAllForCompanyByExecutorAsync(string companyGuid, Guid executorGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                          ?? throw new NotFoundException("Компания не найдена");
+
+            var orders = await _uow.OrderRepository.GetAllByCompanyIdAsync(company.Id);
+
+            var filtered = orders
+                .Where(o => o.Services.Any(sio => sio.Executor.PublicId == executorGuid))
+                .ToList();
+
+            return MapToDetailDtos(filtered);
+        }
+
+
+        // Вынесем общий маппинг в приватный метод
+        private List<OrderDetailDto> MapToDetailDtos(List<Order> orders)
+        {
+            var tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Minsk");
+
+            return orders.Select(o =>
+            {
+                var startOffset = TimeZoneInfo.ConvertTime(new DateTimeOffset(o.OrderStart, TimeSpan.Zero), tz);
                 var endOffset = o.OrderEnd.HasValue
                     ? TimeZoneInfo.ConvertTime(new DateTimeOffset(o.OrderEnd.Value, TimeSpan.Zero), tz)
                     : (DateTimeOffset?)null;
@@ -216,10 +321,14 @@ namespace BusinessCalendar.Application.Services
                     OrderStart = startOffset,
                     OrderEnd = endOffset,
 
-                    Items = o.Services.Select(sio => {
-                        // UTC из базы
+                    ClientPublicId = o.Client.PublicId,
+                    ClientName = o.Client.ClientName,
+                    ClientPhone = o.Client.ClientPhone,
+                    ClientAddress = o.ClientAddress?.Address,
+
+                    Items = o.Services.Select(sio =>
+                    {
                         var utcStart = sio.ServiceStart!.Value;
-                        // конвертация
                         var localStart = TimeZoneInfo.ConvertTime(
                             new DateTimeOffset(utcStart, TimeSpan.Zero), tz);
 
@@ -242,44 +351,6 @@ namespace BusinessCalendar.Application.Services
             }).ToList();
         }
 
-
-        public async Task<OrderDetailDto> GetByPublicIdAsync(string companyGuid, Guid orderGuid)
-        {
-            var company = await _uow.CompanyRepository
-                                   .GetByGuidAsync(Guid.Parse(companyGuid))
-                         ?? throw new NotFoundException("Компания не найдена");
-
-            var order = await _uow.OrderRepository.GetByPublicIdAsync(orderGuid)
-                        ?? throw new NotFoundException("Заказ не найден");
-
-            if (order.CompanyId != company.Id)
-                throw new UnauthorizedException("Нет доступа к этому заказу");
-
-            return new OrderDetailDto
-            {
-                PublicId = order.PublicId,
-                Comment = order.OrderComment,
-                Confirmed = order.Confirmed,
-                Completed = order.Completed,
-                OrderStart = order.OrderStart,
-                OrderEnd = order.OrderEnd,
-
-                Items = order.Services.Select(sio => new OrderItemDetailDto
-                {
-                    ServiceGuid = sio.Service.PublicId,
-                    ServiceName = sio.Service.ServiceName,
-                    ServiceType = sio.Service.ServiceType,
-                    ServicePrice = sio.Service.ServicePrice,
-
-                    ExecutorGuid = sio.Executor.PublicId,
-                    ExecutorName = sio.Executor.ExecutorName,
-                    ExecutorImgPath = sio.Executor.ImgPath,
-
-                    Start = new DateTimeOffset(sio.ServiceStart!.Value, TimeSpan.Zero),
-                    RequiresAddress = sio.Service.RequiresAddress
-                }).ToList()
-            };
-        }
 
         /// <summary>
         /// Обновить только поля Confirmed и Completed.

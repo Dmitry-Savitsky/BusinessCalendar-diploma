@@ -82,6 +82,32 @@ namespace BusinessCalendar.Presentation.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Все заказы компании, где есть указанная услуга.
+        /// GET /api/orders/by-service/{serviceGuid}
+        /// </summary>
+        [HttpGet("by-service/{serviceGuid:guid}")]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> GetByService(Guid serviceGuid)
+        {
+            var companyGuid = User.GetCompanyGuid();
+            var list = await _orderService.GetAllForCompanyByServiceAsync(companyGuid, serviceGuid);
+            return Ok(list);
+        }
+
+        /// <summary>
+        /// Все заказы компании, где участвует указанный исполнитель.
+        /// GET /api/orders/by-executor/{executorGuid}
+        /// </summary>
+        [HttpGet("by-executor/{executorGuid:guid}")]
+        [Authorize(Policy = "CompanyPolicy")]
+        public async Task<IActionResult> GetByExecutor(Guid executorGuid)
+        {
+            var companyGuid = User.GetCompanyGuid();
+            var list = await _orderService.GetAllForCompanyByExecutorAsync(companyGuid, executorGuid);
+            return Ok(list);
+        }
+
         // -----------------------------------------------------
         // 2) Widget (No policy) — только создание
         // -----------------------------------------------------

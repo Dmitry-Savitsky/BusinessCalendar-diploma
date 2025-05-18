@@ -115,6 +115,85 @@ namespace BusinessCalendar.Application.Services
                 DurationMinutes = x.Service.DurationMinutes
             }).ToList();
         }
+
+        /// <summary>
+        /// Компания получает исполнителей для своей услуги.
+        /// </summary>
+        public async Task<List<ExecutorHasServiceDto>> GetByServicePublicIdAsync(string companyGuid, Guid serviceGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                          ?? throw new UnauthorizedAccessException("Компания не найдена.");
+
+            var service = await _uow.ServiceRepository.GetByGuidAsync(serviceGuid)
+                         ?? throw new NotFoundException("Услуга не найдена.");
+
+            if (service.CompanyId != company.Id)
+                throw new UnauthorizedAccessException("Нет прав.");
+
+            var links = await _uow.ExecutorHasServiceRepository.GetByServiceIdAsync(service.Id);
+            return links.Select(x => new ExecutorHasServiceDto
+            {
+                ExecutorPublicId = x.Executor.PublicId,
+                ExecutorName = x.Executor.ExecutorName,
+                ExecutorImgPath = x.Executor.ImgPath,
+                ServicePublicId = x.Service.PublicId,
+                ServiceName = x.Service.ServiceName,
+                ServicePrice = x.Service.ServicePrice,
+                DurationMinutes = x.Service.DurationMinutes
+            }).ToList();
+        }
+
+        /// <summary>
+        /// Компания получает список услуг для своего исполнителя.
+        /// </summary>
+        public async Task<List<ExecutorHasServiceDto>> GetByExecutorPublicIdForCompanyAsync(string companyGuid, Guid executorGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(Guid.Parse(companyGuid))
+                          ?? throw new UnauthorizedAccessException("Компания не найдена.");
+
+            var executor = await _uow.ExecutorRepository.GetByGuidAsync(executorGuid)
+                           ?? throw new NotFoundException("Исполнитель не найден.");
+
+            if (executor.CompanyId != company.Id)
+                throw new UnauthorizedAccessException("Нет прав.");
+
+            var links = await _uow.ExecutorHasServiceRepository.GetByExecutorIdAsync(executor.Id);
+            return links.Select(x => new ExecutorHasServiceDto
+            {
+                ExecutorPublicId = x.Executor.PublicId,
+                ExecutorName = x.Executor.ExecutorName,
+                ExecutorImgPath = x.Executor.ImgPath,
+                ServicePublicId = x.Service.PublicId,
+                ServiceName = x.Service.ServiceName,
+                ServicePrice = x.Service.ServicePrice,
+                DurationMinutes = x.Service.DurationMinutes
+            }).ToList();
+        }
+
+        /// <summary>
+        /// Исполнитель получает свои услуги.
+        /// </summary>
+        public async Task<List<ExecutorHasServiceDto>> GetByExecutorPublicIdForExecutorAsync(string executorGuidToken, Guid executorGuid)
+        {
+            if (!Guid.TryParse(executorGuidToken, out var tokenGuid) ||
+                tokenGuid != executorGuid)
+                throw new UnauthorizedAccessException("Нельзя смотреть чужие данные.");
+
+            var executor = await _uow.ExecutorRepository.GetByGuidAsync(executorGuid)
+                           ?? throw new NotFoundException("Исполнитель не найден.");
+
+            var links = await _uow.ExecutorHasServiceRepository.GetByExecutorIdAsync(executor.Id);
+            return links.Select(x => new ExecutorHasServiceDto
+            {
+                ExecutorPublicId = x.Executor.PublicId,
+                ExecutorName = x.Executor.ExecutorName,
+                ExecutorImgPath = x.Executor.ImgPath,
+                ServicePublicId = x.Service.PublicId,
+                ServiceName = x.Service.ServiceName,
+                ServicePrice = x.Service.ServicePrice,
+                DurationMinutes = x.Service.DurationMinutes
+            }).ToList();
+        }
     }
 
 }

@@ -102,9 +102,19 @@ namespace BusinessCalendar.Application.DTOs.OrdersDtos
         public bool? Confirmed { get; set; }
         public bool? Completed { get; set; }
 
-        // теперь — DateTimeOffset
+        // Время заказа в часовом поясе Минска
         public DateTimeOffset OrderStart { get; set; }
         public DateTimeOffset? OrderEnd { get; set; }
+
+        // --- Новые поля для клиента ---
+        public Guid ClientPublicId { get; set; }
+        public string ClientName { get; set; } = string.Empty;
+        public string ClientPhone { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Адрес доставки / исполнителю (если указано)
+        /// </summary>
+        public string? ClientAddress { get; set; }
 
         public List<OrderItemDetailDto> Items { get; set; } = new();
     }

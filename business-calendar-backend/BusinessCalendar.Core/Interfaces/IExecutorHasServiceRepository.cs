@@ -17,6 +17,11 @@ namespace BusinessCalendar.Core.Interfaces
         Task<IEnumerable<ExecutorHasService>> GetByExecutorIdAsync(int executorId);
 
         /// <summary>
+        /// Все связи для конкретной услуги
+        /// </summary>
+        Task<IEnumerable<ExecutorHasService>> GetByServiceIdAsync(int serviceId);
+
+        /// <summary>
         /// Одна связь по executorId + serviceId
         /// </summary>
         Task<ExecutorHasService?> GetByExecutorAndServiceAsync(int executorId, int serviceId);

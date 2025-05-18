@@ -1,4 +1,5 @@
-﻿using BusinessCalendar.Core.Entities;
+﻿// BusinessCalendar.Infrastructure.Repositories/ExecutorHasServiceRepository.cs
+using BusinessCalendar.Core.Entities;
 using BusinessCalendar.Core.Interfaces;
 using BusinessCalendar.Infrastructure.Persistence;
 using BusinessCalendar.Infrastructure.Persistence.Repositories;
@@ -26,25 +27,40 @@ namespace BusinessCalendar.Infrastructure.Repositories
                 .Include(x => x.Executor)
                 .Include(x => x.Service)
                 .Where(x =>
-                    x.Executor.CompanyId == companyId
-                    && x.Service.CompanyId == companyId)
+                    x.Executor.CompanyId == companyId &&
+                    x.Service.CompanyId == companyId)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<ExecutorHasService>> GetByExecutorIdAsync(int executorId)
         {
             return await _context.ExecutorHasServices
+                .Include(x => x.Executor)
                 .Include(x => x.Service)
                 .Where(x => x.ExecutorId == executorId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ExecutorHasService>> GetByServiceIdAsync(int serviceId)
+        {
+            return await _context.ExecutorHasServices
+                .Include(x => x.Executor)
+                .Include(x => x.Service)
+                .Where(x => x.ServiceId == serviceId)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<ExecutorHasService?> GetByExecutorAndServiceAsync(int executorId, int serviceId)
         {
             return await _context.ExecutorHasServices
+                .Include(x => x.Executor)
+                .Include(x => x.Service)
                 .FirstOrDefaultAsync(x =>
-                    x.ExecutorId == executorId
-                    && x.ServiceId == serviceId);
+                    x.ExecutorId == executorId &&
+                    x.ServiceId == serviceId);
         }
     }
 }
