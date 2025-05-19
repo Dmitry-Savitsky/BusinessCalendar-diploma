@@ -2,11 +2,19 @@
 {
     public class ExecutorRegisterDto
     {
-        public string Guid { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        /// <summary>
+        /// Публичный GUID исполнителя, выданный компанией
+        /// </summary>
+        public Guid ExecutorGuid { get; set; }
 
-        public string ExecutorName { get; set; } = string.Empty;
+        /// <summary>
+        /// Номер телефона, по которому компания зарегистрировала исполнителя
+        /// </summary>
         public string ExecutorPhone { get; set; } = string.Empty;
-    }
 
+        /// <summary>
+        /// Пароль, который исполнитель хочет установить
+        /// </summary>
+        public string Password { get; set; } = string.Empty;
+    }
 }

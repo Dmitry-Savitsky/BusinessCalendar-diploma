@@ -23,26 +23,32 @@ namespace BusinessCalendar.Application.Services
 
         public async Task<AuthResult> RegisterExecutorAsync(ExecutorRegisterDto dto)
         {
-            if (!Guid.TryParse(dto.Guid, out var parsedGuid))
-                throw new ArgumentException("Некорректный GUID");
-
-            var executor = await _unitOfWork.ExecutorRepository.GetByGuidAsync(parsedGuid);
+            // 1) Проверяем GUID
+            var executorGuid = dto.ExecutorGuid;
+            // 2) Достаём исполнителя по GUID
+            var executor = await _unitOfWork.ExecutorRepository.GetByGuidAsync(executorGuid);
             if (executor == null)
-                throw new NotFoundException("Executor с этим GUID не найден.");
+                throw new NotFoundException("Исполнитель с таким GUID не найден.");
 
+            // 3) Проверяем, что номер телефона совпадает
+            if (executor.ExecutorPhone != dto.ExecutorPhone)
+                throw new UnauthorizedException("Телефон не соответствует зарегистрированному за исполнителем.");
+
+            // 4) Проверяем, что он ещё не зарегистрирован
             if (executor.IsRegistered)
-                throw new AlreadyExistsException("Executor уже зарегистрирован.");
+                throw new AlreadyExistsException("Исполнитель уже зарегистрирован.");
 
-            executor.ExecutorName = dto.ExecutorName;
-            executor.ExecutorPhone = dto.ExecutorPhone;
+            // 5) Устанавливаем пароль и сохраняем
             executor.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
             _unitOfWork.Executors.Update(executor);
             await _unitOfWork.SaveChangesAsync();
 
-            var token = JwtHelper.GenerateExecutorJwtToken(executor, _configuration);
+            // 6) Генерируем JWT
+            string token = JwtHelper.GenerateExecutorJwtToken(executor, _configuration);
+
             return AuthResult.Success(token);
         }
+
 
 
         public async Task<AuthResult> AuthenticateExecutorAsync(ExecutorLoginDto dto)
