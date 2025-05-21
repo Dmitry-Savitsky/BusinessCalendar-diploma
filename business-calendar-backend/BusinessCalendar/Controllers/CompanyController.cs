@@ -75,7 +75,6 @@ namespace BusinessCalendar.Presentation.Controllers
         }
 
 
-
         private async Task<string> SaveImageAsync(IFormFile image)
         {
             if (image == null || image.Length == 0)

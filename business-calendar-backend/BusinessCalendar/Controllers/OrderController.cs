@@ -122,5 +122,25 @@ namespace BusinessCalendar.Presentation.Controllers
             var result = await _orderService.CreateOrderAsync(dto);
             return Ok(result);
         }
+
+        // -----------------------------------------------------
+        // 3) (ExecutorPolicy) — исполнитель получает свои заказы
+        // -----------------------------------------------------
+
+
+        /// <summary>
+        /// Исполнитель получает все свои заказы.
+        /// GET /api/orders/my
+        /// </summary>
+        [HttpGet("my")]
+        [Authorize(Policy = "ExecutorPolicy")]
+        public async Task<IActionResult> GetMyOrders()
+        {
+            // берём GUID исполнителя из токена
+            var executorGuid = User.GetExecutorGuid();
+
+            List<OrderDetailDto> list = await _orderService.GetMyOrdersAsync(executorGuid);
+            return Ok(list);
+        }
     }
 }

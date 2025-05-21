@@ -60,7 +60,7 @@ namespace BusinessCalendar.Presentation.Controllers
         /// <summary>
         /// 3) GET /api/executor-services/executor/{executorGuid}
         ///    Список услуг, которые оказывает исполнитель executorGuid.
-        ///    Компания видит только своих исполнителей; исполнитель видит только себя.
+        ///    Компания видит только своих исполнителей; исполнитель видит только себя.                 ////////////// потом переделать ///////////////
         /// </summary>
         [HttpGet("executor/{executorGuid:guid}")]
         [Authorize]  // CompanyPolicy или ExecutorPolicy

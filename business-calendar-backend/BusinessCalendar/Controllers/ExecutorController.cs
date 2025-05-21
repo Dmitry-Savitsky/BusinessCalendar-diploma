@@ -155,5 +155,20 @@ namespace BusinessCalendar.Presentation.Controllers
             await _executorService.UpdateWorkTimeAsync(companyGuid, executorGuid.ToString(), dto);
             return NoContent();
         }
+
+        /// <summary>
+        /// Исполнитель получает своё расписание.
+        /// GET /api/executor/me/worktime
+        /// </summary>
+        [HttpGet("me/worktime")]
+        [Authorize(Policy = "ExecutorPolicy")]
+        public async Task<IActionResult> GetMyWorkTime()
+        {
+            // берём GUID исполнителя из токена
+            var executorGuid = User.GetExecutorGuid();
+
+            var list = await _executorService.GetMyWorkTimeAsync(executorGuid);
+            return Ok(list);
+        }
     }
 }

@@ -299,6 +299,33 @@ namespace BusinessCalendar.Application.Services
             return MapToDetailDtos(filtered);
         }
 
+        /// <summary>
+        /// Все заказы, в которых участвует текущий исполнитель.
+        /// </summary>
+        public async Task<List<OrderDetailDto>> GetMyOrdersAsync(string executorGuid)
+        {
+            // 1) Парсим и находим исполнителя
+            if (!Guid.TryParse(executorGuid, out var parsedGuid))
+                throw new ArgumentException("Некорректный GUID исполнителя.");
+
+            var executor = await _uow.ExecutorRepository.GetByGuidAsync(parsedGuid)
+                           ?? throw new NotFoundException("Исполнитель не найден.");
+
+            // 2) Берём компанию исполнителя
+            var companyId = executor.CompanyId;
+
+            // 3) Загружаем все заказы компании (уже включает Service⇢Service,Executor и Client/ClientAddress)
+            var orders = await _uow.OrderRepository.GetAllByCompanyIdAsync(companyId);
+
+            // 4) Фильтруем по исполнителю
+            var myOrders = orders
+                .Where(o => o.Services.Any(sio => sio.ExecutorId == executor.Id))
+                .ToList();
+
+            // 5) Маппим через общий метод
+            return MapToDetailDtos(myOrders);
+        }
+
 
         // Вынесем общий маппинг в приватный метод
         private List<OrderDetailDto> MapToDetailDtos(List<Order> orders)

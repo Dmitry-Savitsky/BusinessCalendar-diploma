@@ -282,6 +282,38 @@ namespace BusinessCalendar.Application.Services
             };
         }
 
+        /// <summary>
+        /// Исполнитель получает своё расписание (по токену).
+        /// </summary>
+        public async Task<List<ExecutorWorkTimeDto>> GetMyWorkTimeAsync(string executorGuid)
+        {
+            // 1) Парсим GUID исполнителя
+            if (!Guid.TryParse(executorGuid, out var parsedGuid))
+                throw new ArgumentException("Некорректный GUID исполнителя.");
+
+            // 2) Находим исполнителя
+            var executor = await _unitOfWork.ExecutorRepository
+                                             .GetByGuidAsync(parsedGuid)
+                             ?? throw new NotFoundException("Исполнитель не найден.");
+
+            // 3) Загружаем расписание
+            var workTimes = await _unitOfWork.ExecutorWorkTimeRepository
+                                            .GetByExecutorIdAsync(executor.Id);
+
+            // 4) Маппим в DTO
+            return workTimes
+                .Select(w => new ExecutorWorkTimeDto
+                {
+                    DayNo = w.DayNo!.Value,
+                    IsWorking = w.IsWorking,
+                    FromTime = w.FromTime!.Value,
+                    TillTime = w.TillTime!.Value,
+                    BreakStart = w.BreakStart!.Value,
+                    BreakEnd = w.BreakEnd!.Value
+                })
+                .ToList();
+        }
+
     }
 
 }

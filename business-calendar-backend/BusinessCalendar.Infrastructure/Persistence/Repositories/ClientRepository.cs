@@ -13,7 +13,7 @@ namespace BusinessCalendar.Infrastructure.Repositories
         public ClientRepository(BusinessCalendarDbContext ctx) : base(ctx) => _ctx = ctx;
 
         public async Task<List<Client>> GetByCompanyIdAsync(int companyId) =>
-            await _ctx.Clients.Where(c => c.CompanyId == companyId).AsNoTracking().ToListAsync();
+            await _ctx.Clients.Where(c => c.CompanyId == companyId).AsNoTracking().Include(o => o.Addresses).ToListAsync();
 
         public async Task<Client?> GetByPublicIdAndCompanyIdAsync(Guid clientGuid, int companyId) =>
             await _ctx.Clients
