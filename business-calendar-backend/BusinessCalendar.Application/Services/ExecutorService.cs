@@ -314,6 +314,35 @@ namespace BusinessCalendar.Application.Services
                 .ToList();
         }
 
+
+
+
+
+        ///////////////////// ВИДЖЕТ //////////////////
+
+
+
+
+
+        public async Task<List<ExecutorDto>> GetAllForWidgetAsync(Guid companyGuid)
+        {
+            var company = await _unitOfWork.CompanyRepository.GetByGuidAsync(companyGuid)
+                          ?? throw new NotFoundException("Компания не найдена.");
+
+            var executors = await _unitOfWork.ExecutorRepository.GetAllByCompanyIdAsync(company.Id);
+
+            return executors.Select(e => new ExecutorDto
+            {
+                Guid = e.PublicId.ToString(),
+                Name = e.ExecutorName,
+                Phone = e.ExecutorPhone,
+                Description = e.Description,
+                ImgPath = e.ImgPath
+            }).ToList();
+        }
+
+
+
     }
 
 }

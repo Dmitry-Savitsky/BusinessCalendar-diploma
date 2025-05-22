@@ -194,6 +194,65 @@ namespace BusinessCalendar.Application.Services
                 DurationMinutes = x.Service.DurationMinutes
             }).ToList();
         }
+
+
+
+
+
+        /////////////////// ВИДЖЕТ /////////////////////////
+        
+
+
+
+
+        public async Task<List<ExecutorHasServiceDto>> GetExecutorServicesForWidgetAsync(Guid companyGuid, Guid executorGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(companyGuid)
+                          ?? throw new NotFoundException("Компания не найдена");
+
+            var executor = await _uow.ExecutorRepository.GetByGuidAsync(executorGuid)
+                           ?? throw new NotFoundException("Исполнитель не найден");
+
+            if (executor.CompanyId != company.Id)
+                throw new UnauthorizedAccessException("Исполнитель не принадлежит компании.");
+
+            var links = await _uow.ExecutorHasServiceRepository.GetByExecutorIdAsync(executor.Id);
+            return links.Select(x => new ExecutorHasServiceDto
+            {
+                ExecutorPublicId = x.Executor.PublicId,
+                ExecutorName = x.Executor.ExecutorName,
+                ExecutorImgPath = x.Executor.ImgPath,
+                ServicePublicId = x.Service.PublicId,
+                ServiceName = x.Service.ServiceName,
+                ServicePrice = x.Service.ServicePrice,
+                DurationMinutes = x.Service.DurationMinutes
+            }).ToList();
+        }
+
+        public async Task<List<ExecutorHasServiceDto>> GetServiceExecutorsForWidgetAsync(Guid companyGuid, Guid serviceGuid)
+        {
+            var company = await _uow.CompanyRepository.GetByGuidAsync(companyGuid)
+                          ?? throw new NotFoundException("Компания не найдена");
+
+            var service = await _uow.ServiceRepository.GetByGuidAsync(serviceGuid)
+                         ?? throw new NotFoundException("Услуга не найдена");
+
+            if (service.CompanyId != company.Id)
+                throw new UnauthorizedAccessException("Услуга не принадлежит компании.");
+
+            var links = await _uow.ExecutorHasServiceRepository.GetByServiceIdAsync(service.Id);
+            return links.Select(x => new ExecutorHasServiceDto
+            {
+                ExecutorPublicId = x.Executor.PublicId,
+                ExecutorName = x.Executor.ExecutorName,
+                ExecutorImgPath = x.Executor.ImgPath,
+                ServicePublicId = x.Service.PublicId,
+                ServiceName = x.Service.ServiceName,
+                ServicePrice = x.Service.ServicePrice,
+                DurationMinutes = x.Service.DurationMinutes
+            }).ToList();
+        }
+
     }
 
 }

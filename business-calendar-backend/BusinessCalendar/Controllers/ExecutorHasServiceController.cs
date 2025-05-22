@@ -1,5 +1,4 @@
-﻿// Presentation/Controllers/ExecutorHasServiceController.cs
-using BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos;
+﻿using BusinessCalendar.Application.DTOs.ExecutorHasServiceDtos;
 using BusinessCalendar.Application.Helpers;
 using BusinessCalendar.Application.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -100,6 +99,38 @@ namespace BusinessCalendar.Presentation.Controllers
             var companyGuid = User.GetCompanyGuid();
             await _service.DeleteAsync(companyGuid, executorGuid, serviceGuid);
             return NoContent();
+        }
+
+
+
+
+
+        //////////////////////////////// ВИДЖЕТ /////////////////////////////////
+
+
+
+
+
+        /// <summary>
+        /// Список услуг, которые оказывает исполнитель (для виджета).
+        /// </summary>
+        [HttpGet("widget/executor/{companyGuid:guid}/{executorGuid:guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetServicesByExecutorForWidget(Guid companyGuid, Guid executorGuid)
+        {
+            var list = await _service.GetExecutorServicesForWidgetAsync(companyGuid, executorGuid);
+            return Ok(list);
+        }
+
+        /// <summary>
+        /// Список исполнителей, предоставляющих услугу (для виджета).
+        /// </summary>
+        [HttpGet("widget/service/{companyGuid:guid}/{serviceGuid:guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetExecutorsByServiceForWidget(Guid companyGuid, Guid serviceGuid)
+        {
+            var list = await _service.GetServiceExecutorsForWidgetAsync(companyGuid, serviceGuid);
+            return Ok(list);
         }
     }
 }

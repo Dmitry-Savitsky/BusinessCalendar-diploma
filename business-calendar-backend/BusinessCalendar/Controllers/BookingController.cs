@@ -15,7 +15,7 @@ namespace BusinessCalendar.Presentation.Controllers
         /// <summary>
         /// Виджет (public): получает слоты по executorGuid,serviceGuid,date
         /// </summary>
-        [HttpGet("slots/widget")]
+        [HttpGet("widget/slots")]
         [AllowAnonymous]
         public async Task<IActionResult> GetSlotsForWidget(
             [FromQuery] Guid serviceGuid,

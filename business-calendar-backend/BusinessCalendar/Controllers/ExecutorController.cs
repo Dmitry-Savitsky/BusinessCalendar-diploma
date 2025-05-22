@@ -170,5 +170,24 @@ namespace BusinessCalendar.Presentation.Controllers
             var list = await _executorService.GetMyWorkTimeAsync(executorGuid);
             return Ok(list);
         }
+
+
+
+
+        ////////////////// ВИДЖЕТ /////////////////////
+
+
+
+
+        /// <summary>
+        /// Получить всех исполнителей компании по companyGuid (для виджета).
+        /// </summary>
+        [HttpGet("widget/executors/{companyGuid:guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllExecutorsForWidget(Guid companyGuid)
+        {
+            var result = await _executorService.GetAllForWidgetAsync(companyGuid);
+            return Ok(result);
+        }
     }
 }

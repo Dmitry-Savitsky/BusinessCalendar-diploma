@@ -1,5 +1,6 @@
 ﻿using BusinessCalendar.Application.DTOs.ServiceDtos;
 using BusinessCalendar.Core.Entities;
+using BusinessCalendar.Core.Exceptions;
 using BusinessCalendar.Core.Interfaces;
 
 public class ServiceService
@@ -132,5 +133,32 @@ public class ServiceService
         _unitOfWork.Services.Delete(service);
         await _unitOfWork.SaveChangesAsync();
     }
+
+
+
+
+    /////////////////////// ВИДЖЕТ ///////////////////////////
+    
+
+
+
+    public async Task<List<ServiceDto>> GetAllForWidgetAsync(Guid companyGuid)
+    {
+        var company = await _unitOfWork.CompanyRepository.GetByGuidAsync(companyGuid)
+                      ?? throw new NotFoundException("Компания не найдена.");
+
+        var services = await _unitOfWork.ServiceRepository.GetByCompanyIdAsync(company.Id);
+
+        return services.Select(service => new ServiceDto
+        {
+            PublicId = service.PublicId,
+            ServiceName = service.ServiceName,
+            ServiceType = service.ServiceType,
+            ServicePrice = service.ServicePrice,
+            DurationMinutes = service.DurationMinutes,
+            RequiresAddress = service.RequiresAddress
+        }).ToList();
+    }
+
 }
 

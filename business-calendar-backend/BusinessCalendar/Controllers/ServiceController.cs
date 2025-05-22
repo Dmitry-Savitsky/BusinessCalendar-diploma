@@ -1,6 +1,7 @@
 ﻿using BusinessCalendar.Application.DTOs.ServiceDtos;
 using BusinessCalendar.Application.Helpers;
 using BusinessCalendar.Application.Services;
+using BusinessCalendar.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -116,5 +117,26 @@ namespace BusinessCalendar.Presentation.Controllers
             await _serviceService.DeleteServiceAsync(publicId, companyGuid);
             return NoContent();
         }
+
+
+
+
+
+        ///////////////// ВИДЖЕТ ////////////////////
+
+
+
+
+        /// <summary>
+        /// Получить все услуги компании по companyGuid (для виджета).
+        /// </summary>
+        [HttpGet("widget/services/{companyGuid:guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllServicesForWidget(Guid companyGuid)
+        {
+            var result = await _serviceService.GetAllForWidgetAsync(companyGuid);
+            return Ok(result);
+        }
+
     }
 }
