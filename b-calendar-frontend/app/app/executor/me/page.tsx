@@ -66,7 +66,7 @@ export default function ExecutorMePage() {
     setLoading(true)
     try {
       // Fetch profile data
-      const profileResponse = await fetch(`${config.apiUrl}/api/Executor/me`, {
+      const profileResponse = await fetch(`${config.apiUrl}api/Executor/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,7 +80,7 @@ export default function ExecutorMePage() {
       setProfile(profileData)
 
       // Fetch work time data
-      const workTimeResponse = await fetch(`${config.apiUrl}/api/Executor/me/worktime`, {
+      const workTimeResponse = await fetch(`${config.apiUrl}api/Executor/me/worktime`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +99,7 @@ export default function ExecutorMePage() {
       const tokenData = parseToken(token)
       if (tokenData && tokenData.ExecutorGuid) {
         const servicesResponse = await fetch(
-          `${config.apiUrl}/api/executor-services/executor/${tokenData.ExecutorGuid}`,
+          `${config.apiUrl}api/executor-services/executor/${tokenData.ExecutorGuid}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
