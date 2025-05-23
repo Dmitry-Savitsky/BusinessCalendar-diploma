@@ -128,9 +128,9 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
                 )}
               </div>
               <span className="booking-widget-service-selector__service-price">
-                {new Intl.NumberFormat("ru-RU", {
+                {new Intl.NumberFormat("en-US", {
                   style: "currency",
-                  currency: "RUB",
+                  currency: "USD",
                   minimumFractionDigits: 0,
                 }).format(servicePrice)}
               </span>

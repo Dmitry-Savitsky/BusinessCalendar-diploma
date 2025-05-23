@@ -25,6 +25,7 @@ export interface ExecutorService {
   executorPublicId: string
   executorName: string
   executorImgPath: string
+  executorDescription?: string
 }
 
 export interface TimeSlot {

@@ -52,7 +52,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
       name: executor.executorName,
       imgPath: executor.executorImgPath || "",
       phone: "",
-      description: ""
+      description: executor.executorDescription || "Available for this service"
     } : executor;
     
     setSelectedExecutor(executorData)
@@ -97,7 +97,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
           const isExecutorService = "executorPublicId" in executor;
           const executorId = isExecutorService ? executor.executorPublicId : executor.guid;
           const executorName = isExecutorService ? executor.executorName : executor.name;
-          const executorDescription = !isExecutorService ? executor.description : "";
+          const executorDescription = isExecutorService ? (executor.executorDescription || "Available for this service") : executor.description;
           const imgPath = isExecutorService ? executor.executorImgPath : executor.imgPath;
           const fullImgPath = imgPath ? `${STATIC_BASE_URL}${imgPath}` : "";
 

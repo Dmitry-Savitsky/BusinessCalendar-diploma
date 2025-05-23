@@ -6,39 +6,56 @@
 .booking-widget-confirmation__title {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: #ffffff;
 }
 
 .booking-widget-confirmation__content {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 1.25rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .booking-widget-confirmation__section {
-  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .booking-widget-confirmation__section:last-child {
-  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-.booking-widget-confirmation__label {
+.booking-widget-confirmation__section:first-child {
+  padding-top: 0;
+}
+
+.booking-widget-confirmation__section-title {
+  display: block;
   font-size: 0.875rem;
+  font-weight: 500;
   color: #64748b;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-.booking-widget-confirmation__value {
+.booking-widget-confirmation__section-content {
+  display: block;
   font-size: 1rem;
   color: #0f172a;
-  font-weight: 500;
+  line-height: 1.5;
+}
+
+.booking-widget-confirmation__section-content + .booking-widget-confirmation__section-content {
+  margin-top: 0.25rem;
 }
 
 .booking-widget-confirmation__price {
+  font-size: 1.25rem;
   font-weight: 600;
   color: #0f172a;
 }
@@ -47,19 +64,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
   padding: 2rem;
+  color: #64748b;
 }
 
 .booking-widget-confirmation__error {
   text-align: center;
   color: #ef4444;
   margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
 }
 
 .booking-widget-confirmation__success {
   text-align: center;
   color: #10b981;
   margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f0fdf4;
+  border-radius: 8px;
+  border: 1px solid #86efac;
 }
 
 .booking-widget-confirmation__buttons {
@@ -70,41 +97,48 @@
 
 .booking-widget-confirmation__submit {
   width: 100%;
-  padding: 0.625rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: #ffffff;
   background: #2563eb;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .booking-widget-confirmation__submit:hover {
   background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.booking-widget-confirmation__submit:active {
+  transform: translateY(0);
 }
 
 .booking-widget-confirmation__submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .booking-widget-confirmation__back {
   width: 100%;
-  padding: 0.625rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: #0f172a;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .booking-widget-confirmation__back:hover {
   background: #f8fafc;
+  border-color: #94a3b8;
 }
 
 /* Dark mode styles */
@@ -120,13 +154,18 @@
   .booking-widget-confirmation__content {
     background: #1e293b;
     border-color: #334155;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
-  .booking-widget-confirmation__label {
+  .booking-widget-confirmation__section {
+    border-color: #334155;
+  }
+
+  .booking-widget-confirmation__section-title {
     color: #94a3b8;
   }
 
-  .booking-widget-confirmation__value {
+  .booking-widget-confirmation__section-content {
     color: #f8fafc;
   }
 
@@ -134,12 +173,20 @@
     color: #f8fafc;
   }
 
+  .booking-widget-confirmation__loading {
+    color: #94a3b8;
+  }
+
   .booking-widget-confirmation__error {
     color: #f87171;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
   }
 
   .booking-widget-confirmation__success {
     color: #34d399;
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
   }
 
   .booking-widget-confirmation__submit {
@@ -157,6 +204,7 @@
   }
 
   .booking-widget-confirmation__back:hover {
-    background: #334155;
+    background: #0f172a;
+    border-color: #475569;
   }
 } 
