@@ -3,6 +3,7 @@
 import React from "react"
 import { useBookingWidget } from "./context"
 import { addDays, startOfToday, format } from "date-fns"
+import "../../styles/modules/DateSelector.module.css"
 
 interface DateSelectorProps {
   onBack: () => void
@@ -89,12 +90,14 @@ export default function DateSelector({ onBack, onComplete }: DateSelectorProps) 
             }`}
             onClick={() => handleDateSelect(date)}
           >
-            <span className="booking-widget-date-selector__date">
-              {date.toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              })}
+            <span className="booking-widget-date-selector__weekday">
+              {format(date, "EEE")}
+            </span>
+            <span className="booking-widget-date-selector__day">
+              {format(date, "d")}
+            </span>
+            <span className="booking-widget-date-selector__month">
+              {format(date, "MMM")}
             </span>
           </div>
         ))}

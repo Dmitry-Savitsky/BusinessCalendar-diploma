@@ -12,15 +12,17 @@
 
 .booking-widget-date-selector__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
 }
 
 .booking-widget-date-selector__card {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  align-items: center;
+  padding: 0.75rem;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
@@ -39,11 +41,27 @@
   background-color: rgba(37, 99, 235, 0.05);
 }
 
-.booking-widget-date-selector__date {
-  font-size: 1rem;
-  font-weight: 500;
+.booking-widget-date-selector__weekday {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.booking-widget-date-selector__day {
+  font-size: 1.5rem;
+  font-weight: 600;
   color: #0f172a;
-  text-align: center;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.booking-widget-date-selector__month {
+  font-size: 0.875rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Dark mode styles */
@@ -70,7 +88,12 @@
     background-color: rgba(59, 130, 246, 0.1);
   }
 
-  .booking-widget-date-selector__date {
+  .booking-widget-date-selector__weekday,
+  .booking-widget-date-selector__month {
+    color: #94a3b8;
+  }
+
+  .booking-widget-date-selector__day {
     color: #f8fafc;
   }
 } 
