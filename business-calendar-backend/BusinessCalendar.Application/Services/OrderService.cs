@@ -96,7 +96,7 @@ namespace BusinessCalendar.Application.Services
                     CompanyId = company.Id,
                     OrderStart = intervals.Min(t => t.Start),
                     OrderEnd = intervals.Max(t => t.End),
-                    Confirmed = true,
+                    Confirmed = false,
                     OrderComment = dto.Comment
                 };
                 await _uow.Orders.AddAsync(order);
