@@ -21,6 +21,7 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
     selectedSlot,
     customerData,
     setBookingResponse,
+    resetBooking,
   } = useBookingWidget()
 
   const [loading, setLoading] = useState(false)
@@ -33,12 +34,12 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
       setLoading(true)
       setError(null)
 
-      const response = await createBooking({
+      const request = {
         companyGuid,
         clientName: customerData.name,
         clientPhone: customerData.phone,
         clientAddress: null,
-        notes: customerData.notes,
+        comment: customerData.notes,
         items: [
           {
             serviceGuid: selectedService.publicId,
@@ -47,10 +48,16 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
             requiresAddress: false,
           },
         ],
-      })
+      }
+
+      // Log the request to browser console
+      console.log('Booking request:', request)
+
+      const response = await createBooking(request)
 
       setBookingResponse(response)
       onComplete()
+      resetBooking()
     } catch (err) {
       console.error("Error creating booking:", err)
       setError("Failed to create booking. Please try again.")
