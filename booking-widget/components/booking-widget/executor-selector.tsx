@@ -11,7 +11,7 @@ const API_BASE_URL = "http://localhost:5221/api"
 const STATIC_BASE_URL = "http://localhost:5221"
 
 export default function ExecutorSelector({ onBack, onComplete }: { onBack: () => void, onComplete: () => void }) {
-  const { selectedExecutor, setSelectedExecutor, setAnyExecutor, companyGuid, mode, selectedService } = useBookingWidget()
+  const { selectedExecutor, setSelectedExecutor, anyExecutor, setAnyExecutor, companyGuid, mode, selectedService } = useBookingWidget()
   const [executors, setExecutors] = useState<(Executor | ExecutorService)[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -45,9 +45,24 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
     loadExecutors()
   }, [companyGuid, mode, selectedService])
 
-  const handleExecutorSelect = (executor: Executor | null) => {
-    setSelectedExecutor(executor)
-    setAnyExecutor(executor === null)
+  const handleExecutorSelect = (executor: Executor | ExecutorService) => {
+    const isExecutorService = "executorPublicId" in executor;
+    const executorData: Executor = isExecutorService ? {
+      guid: executor.executorPublicId,
+      name: executor.executorName,
+      imgPath: executor.executorImgPath || "",
+      phone: "",
+      description: ""
+    } : executor;
+    
+    setSelectedExecutor(executorData)
+    setAnyExecutor(false)
+    onComplete()
+  }
+
+  const handleAnyExecutorSelect = () => {
+    setSelectedExecutor(null)
+    setAnyExecutor(true)
     onComplete()
   }
 
@@ -78,83 +93,58 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
     <div className="booking-widget-executor-selector">
       <h3 className="booking-widget-executor-selector__title">Select a Specialist</h3>
       <div className="booking-widget-executor-selector__grid">
-        <button
-          className="booking-widget-executor-selector__card"
-          onClick={() => handleExecutorSelect(null)}
-        >
-          <div className="booking-widget-executor-selector__name">Any Available Specialist</div>
-          <div className="booking-widget-executor-selector__description">First available specialist will be assigned</div>
-        </button>
         {executors.map((executor) => {
-          if ("executorPublicId" in executor) {
-            // Convert ExecutorService to Executor
-            const executorData: Executor = {
-              guid: executor.executorPublicId,
-              name: executor.executorName,
-              imgPath: executor.executorImgPath,
-              phone: "",
-              description: ""
-            }
-            return (
-              <button
-                key={executorData.guid}
-                className={`booking-widget-executor-selector__card ${
-                  selectedExecutor?.guid === executorData.guid ? "booking-widget-executor-selector__card--selected" : ""
-                }`}
-                onClick={() => handleExecutorSelect(executorData)}
-              >
-                <div className="booking-widget-executor-selector__image-container">
-                  {imageErrors[executorData.guid] ? (
-                    <div className="booking-widget-executor-selector__fallback-image">
-                      <User className="tw-h-12 tw-w-12 tw-text-gray-400" />
-                    </div>
-                  ) : (
-                    <img 
-                      src={`${STATIC_BASE_URL}${executorData.imgPath}`} 
-                      alt={executorData.name}
-                      className="booking-widget-executor-selector__image"
-                      onError={() => handleImageError(executorData.guid)}
-                    />
-                  )}
-                </div>
-                <div className="booking-widget-executor-selector__name">{executorData.name}</div>
-              </button>
-            )
-          }
-          
+          const isExecutorService = "executorPublicId" in executor;
+          const executorId = isExecutorService ? executor.executorPublicId : executor.guid;
+          const executorName = isExecutorService ? executor.executorName : executor.name;
+          const executorDescription = !isExecutorService ? executor.description : "";
+          const imgPath = isExecutorService ? executor.executorImgPath : executor.imgPath;
+          const fullImgPath = imgPath ? `${STATIC_BASE_URL}${imgPath}` : "";
+
           return (
-            <button
-              key={executor.guid}
+            <div
+              key={executorId}
               className={`booking-widget-executor-selector__card ${
-                selectedExecutor?.guid === executor.guid ? "booking-widget-executor-selector__card--selected" : ""
+                selectedExecutor?.guid === executorId ? "booking-widget-executor-selector__card--selected" : ""
               }`}
               onClick={() => handleExecutorSelect(executor)}
             >
               <div className="booking-widget-executor-selector__image-container">
-                {imageErrors[executor.guid] ? (
-                  <div className="booking-widget-executor-selector__fallback-image">
-                    <User className="tw-h-12 tw-w-12 tw-text-gray-400" />
-                  </div>
-                ) : (
-                  <img 
-                    src={`${STATIC_BASE_URL}${executor.imgPath}`} 
-                    alt={executor.name}
+                {fullImgPath ? (
+                  <img
+                    src={fullImgPath}
+                    alt={executorName}
                     className="booking-widget-executor-selector__image"
-                    onError={() => handleImageError(executor.guid)}
+                    onError={() => handleImageError(executorId)}
                   />
+                ) : (
+                  <div className="booking-widget-executor-selector__fallback-image">
+                    {executorName.charAt(0)}
+                  </div>
                 )}
               </div>
-              <div className="booking-widget-executor-selector__name">{executor.name}</div>
-              {executor.description && (
-                <div className="booking-widget-executor-selector__description">{executor.description}</div>
+              <span className="booking-widget-executor-selector__name">{executorName}</span>
+              {executorDescription && (
+                <span className="booking-widget-executor-selector__description">{executorDescription}</span>
               )}
-            </button>
-          )
+            </div>
+          );
         })}
+        <div
+          className={`booking-widget-executor-selector__card ${
+            anyExecutor ? "booking-widget-executor-selector__card--selected" : ""
+          }`}
+          onClick={handleAnyExecutorSelect}
+        >
+          <div className="booking-widget-executor-selector__image-container">
+            <div className="booking-widget-executor-selector__fallback-image">?</div>
+          </div>
+          <span className="booking-widget-executor-selector__name">Any Available Specialist</span>
+          <span className="booking-widget-executor-selector__description">
+            We'll assign the best available specialist for you
+          </span>
+        </div>
       </div>
-      <button className="booking-widget-executor-selector__back-button" onClick={onBack}>
-        Back
-      </button>
     </div>
   )
 }

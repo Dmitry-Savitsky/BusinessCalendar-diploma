@@ -101,6 +101,10 @@ export default function BookingWidgetContent() {
 
   const containerStyle: React.CSSProperties = {
     padding: "1.5rem",
+    position: "relative",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column"
   }
 
   const titleStyle: React.CSSProperties = {
@@ -110,56 +114,111 @@ export default function BookingWidgetContent() {
     textAlign: "center",
   }
 
+  const backButtonStyle: React.CSSProperties = {
+    position: "absolute",
+    bottom: "1rem",
+    left: "1rem",
+    padding: "0.625rem 1rem",
+    fontSize: "0.875rem",
+    fontWeight: 500,
+    color: "#0f172a",
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
+    borderRadius: "6px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  }
+
+  const contentStyle: React.CSSProperties = {
+    flex: 1,
+    overflowY: "auto",
+    marginBottom: "3.5rem" // Space for the back button
+  }
+
+  const showBackButton = currentStep !== "mode"
+
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>Book an Appointment</h2>
 
-      {currentStep === "mode" && (
-        <ModeSelector 
-          onComplete={() => handleStepComplete(mode === "service" ? "service" : "executor")} 
-        />
-      )}
+      <div style={contentStyle}>
+        {currentStep === "mode" && (
+          <ModeSelector 
+            onComplete={() => handleStepComplete(mode === "service" ? "service" : "executor")} 
+          />
+        )}
 
-      {currentStep === "service" && (
-        <ServiceSelector 
-          onBack={() => handleBack(mode === "service" ? "mode" : "executor")} 
-          onComplete={() => handleStepComplete(mode === "service" ? "executor" : "date")} 
-        />
-      )}
+        {currentStep === "service" && (
+          <ServiceSelector 
+            onBack={() => handleBack(mode === "service" ? "mode" : "executor")} 
+            onComplete={() => handleStepComplete(mode === "service" ? "executor" : "date")} 
+          />
+        )}
 
-      {currentStep === "executor" && (
-        <ExecutorSelector
-          onBack={() => handleBack(mode === "service" ? "service" : "mode")}
-          onComplete={() => handleStepComplete(mode === "service" ? "date" : "service")}
-        />
-      )}
+        {currentStep === "executor" && (
+          <ExecutorSelector
+            onBack={() => handleBack(mode === "service" ? "service" : "mode")}
+            onComplete={() => handleStepComplete(mode === "service" ? "date" : "service")}
+          />
+        )}
 
-      {currentStep === "date" && (
-        <DateSelector
-          onBack={() => handleBack(mode === "service" ? "executor" : "service")}
-          onComplete={() => handleStepComplete("time")}
-        />
-      )}
+        {currentStep === "date" && (
+          <DateSelector
+            onBack={() => handleBack(mode === "service" ? "executor" : "service")}
+            onComplete={() => handleStepComplete("time")}
+          />
+        )}
 
-      {currentStep === "time" && (
-        <TimeSlotSelector 
-          onBack={() => handleBack("date")} 
-          onComplete={() => handleStepComplete("customer")} 
-        />
-      )}
+        {currentStep === "time" && (
+          <TimeSlotSelector 
+            onBack={() => handleBack("date")} 
+            onComplete={() => handleStepComplete("customer")} 
+          />
+        )}
 
-      {currentStep === "customer" && (
-        <CustomerForm 
-          onBack={() => handleBack("time")} 
-          onComplete={() => handleStepComplete("confirmation")} 
-        />
-      )}
+        {currentStep === "customer" && (
+          <CustomerForm 
+            onBack={() => handleBack("time")} 
+            onComplete={() => handleStepComplete("confirmation")} 
+          />
+        )}
 
-      {currentStep === "confirmation" && (
-        <BookingConfirmation
-          onBack={() => handleBack("customer")}
-          onComplete={() => handleStepComplete("success")}
-        />
+        {currentStep === "confirmation" && (
+          <BookingConfirmation
+            onBack={() => handleBack("customer")}
+            onComplete={() => handleStepComplete("success")}
+          />
+        )}
+      </div>
+
+      {showBackButton && (
+        <button
+          style={backButtonStyle}
+          onClick={() => {
+            switch (currentStep) {
+              case "service":
+                handleBack(mode === "service" ? "mode" : "executor")
+                break
+              case "executor":
+                handleBack(mode === "service" ? "service" : "mode")
+                break
+              case "date":
+                handleBack(mode === "service" ? "executor" : "service")
+                break
+              case "time":
+                handleBack("date")
+                break
+              case "customer":
+                handleBack("time")
+                break
+              case "confirmation":
+                handleBack("customer")
+                break
+            }
+          }}
+        >
+          Back
+        </button>
       )}
     </div>
   )

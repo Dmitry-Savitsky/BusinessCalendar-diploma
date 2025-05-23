@@ -76,24 +76,29 @@ export default function DateSelector({ onBack, onComplete }: DateSelectorProps) 
   }
 
   return (
-    <div style={containerStyle}>
-      <h3 style={titleStyle}>Select a Date</h3>
-      <div style={datesContainerStyle}>
+    <div className="booking-widget-date-selector">
+      <h3 className="booking-widget-date-selector__title">Select a Date</h3>
+      <div className="booking-widget-date-selector__grid">
         {dates.map((date) => (
-          <button
+          <div
             key={date.toISOString()}
-            onClick={() => handleDateSelect(date)}
-            style={dateButtonStyle(
+            className={`booking-widget-date-selector__card ${
               selectedDate?.toDateString() === date.toDateString()
-            )}
+                ? "booking-widget-date-selector__card--selected"
+                : ""
+            }`}
+            onClick={() => handleDateSelect(date)}
           >
-            {format(date, "EEEE, MMMM d")}
-          </button>
+            <span className="booking-widget-date-selector__date">
+              {date.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
         ))}
       </div>
-      <button style={backButtonStyle} onClick={onBack}>
-        Back
-      </button>
     </div>
   )
 }

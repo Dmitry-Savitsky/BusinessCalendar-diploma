@@ -32,10 +32,10 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
   return (
     <div className="booking-widget-customer-form">
       <h3 className="booking-widget-customer-form__title">Your Information</h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="booking-widget-customer-form__form">
+      <form className="booking-widget-customer-form__form" onSubmit={handleSubmit(onSubmit)}>
         <div className="booking-widget-customer-form__field">
-          <label htmlFor="name" className="booking-widget-customer-form__label">
-            Full Name
+          <label className="booking-widget-customer-form__label" htmlFor="name">
+            Name
           </label>
           <input
             type="text"
@@ -51,8 +51,8 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
         </div>
 
         <div className="booking-widget-customer-form__field">
-          <label htmlFor="phone" className="booking-widget-customer-form__label">
-            Phone Number
+          <label className="booking-widget-customer-form__label" htmlFor="phone">
+            Phone
           </label>
           <input
             type="tel"
@@ -68,8 +68,8 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
         </div>
 
         <div className="booking-widget-customer-form__field">
-          <label htmlFor="notes" className="booking-widget-customer-form__label">
-            Additional Notes (Optional)
+          <label className="booking-widget-customer-form__label" htmlFor="notes">
+            Notes (Optional)
           </label>
           <textarea
             id="notes"
@@ -83,18 +83,13 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
           )}
         </div>
 
-        <div className="booking-widget-customer-form__buttons">
-          <button
-            type="submit"
-            className="booking-widget-customer-form__submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Continue"}
-          </button>
-          <button type="button" className="booking-widget-customer-form__back" onClick={onBack}>
-            Back
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="booking-widget-customer-form__submit"
+          disabled={isSubmitting}
+        >
+          Continue
+        </button>
       </form>
     </div>
   )

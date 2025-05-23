@@ -65,12 +65,6 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
     return (
       <div className="booking-widget-time-slot-selector">
         <div className="booking-widget-time-slot-selector__error">{error}</div>
-        <button
-          onClick={() => window.location.reload()}
-          className="booking-widget-time-slot-selector__back-button"
-        >
-          Retry
-        </button>
       </div>
     )
   }
@@ -100,9 +94,6 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
           No available time slots for this date
         </div>
       )}
-      <button className="booking-widget-time-slot-selector__back-button" onClick={onBack}>
-        Back
-      </button>
     </div>
   )
 }

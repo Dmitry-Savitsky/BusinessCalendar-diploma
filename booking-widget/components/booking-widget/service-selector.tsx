@@ -99,42 +99,45 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
       <h3 className="booking-widget-service-selector__title">Select a Service</h3>
       <div className="booking-widget-service-selector__grid">
         {services.map((service) => {
-          const isExecutorService = "servicePublicId" in service
-          const serviceId = isExecutorService ? service.servicePublicId : service.publicId
-          const serviceName = isExecutorService ? service.serviceName : service.serviceName
-          const servicePrice = isExecutorService ? service.servicePrice : service.servicePrice
-          const durationMinutes = isExecutorService ? service.durationMinutes : service.durationMinutes
-          const requiresAddress = !isExecutorService && service.requiresAddress
+          const isExecutorService = "servicePublicId" in service;
+          const serviceId = isExecutorService ? service.servicePublicId : service.publicId;
+          const serviceName = service.serviceName;
+          const servicePrice = service.servicePrice;
+          const durationMinutes = service.durationMinutes;
+          const requiresAddress = !isExecutorService && "requiresAddress" in service && service.requiresAddress;
 
           return (
-            <button
+            <div
               key={serviceId}
               className={`booking-widget-service-selector__card ${
                 selectedService?.publicId === serviceId ? "booking-widget-service-selector__card--selected" : ""
               }`}
               onClick={() => handleSelectService(service)}
             >
-              <div className="booking-widget-service-selector__service-name">{serviceName}</div>
+              <span className="booking-widget-service-selector__service-name">{serviceName}</span>
               <div className="booking-widget-service-selector__service-details">
-                <div className="booking-widget-service-selector__service-detail">
-                  <Clock className="tw-h-4 tw-w-4" />
+                <span className="booking-widget-service-selector__service-detail">
+                  <Clock className="tw-w-4 tw-h-4" />
                   {durationMinutes} min
-                </div>
+                </span>
                 {requiresAddress && (
-                  <div className="booking-widget-service-selector__service-detail">
-                    <MapPin className="tw-h-4 tw-w-4" />
+                  <span className="booking-widget-service-selector__service-detail">
+                    <MapPin className="tw-w-4 tw-h-4" />
                     At your place
-                  </div>
+                  </span>
                 )}
               </div>
-              <div className="booking-widget-service-selector__service-price">{formatPrice(servicePrice)}</div>
-            </button>
-          )
+              <span className="booking-widget-service-selector__service-price">
+                {new Intl.NumberFormat("ru-RU", {
+                  style: "currency",
+                  currency: "RUB",
+                  minimumFractionDigits: 0,
+                }).format(servicePrice)}
+              </span>
+            </div>
+          );
         })}
       </div>
-      <button className="booking-widget-service-selector__back-button" onClick={onBack}>
-        Back
-      </button>
     </div>
   )
 }
