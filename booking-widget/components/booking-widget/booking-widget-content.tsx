@@ -100,7 +100,7 @@ export default function BookingWidgetContent() {
   }, [mode, selectedService, selectedExecutor, selectedDate, selectedSlot, bookingResponse, anyExecutor])
 
   const containerStyle: React.CSSProperties = {
-    padding: "1.5rem",
+    padding: "0.75rem 1.5rem 1.5rem",
     position: "relative",
     height: "100%",
     display: "flex",
@@ -110,13 +110,14 @@ export default function BookingWidgetContent() {
   const titleStyle: React.CSSProperties = {
     fontSize: "1.5rem",
     fontWeight: "bold",
-    marginBottom: "1.5rem",
+    marginBottom: "0.75rem",
     textAlign: "center",
+    color: "#ffffff",
   }
 
   const backButtonStyle: React.CSSProperties = {
     position: "absolute",
-    bottom: "1rem",
+    bottom: "2.5rem",
     left: "1rem",
     padding: "0.625rem 1rem",
     fontSize: "0.875rem",
@@ -132,7 +133,7 @@ export default function BookingWidgetContent() {
   const contentStyle: React.CSSProperties = {
     flex: 1,
     overflowY: "auto",
-    marginBottom: "3.5rem" // Space for the back button
+    marginBottom: "5rem", // Space for the back button
   }
 
   const showBackButton = currentStep !== "mode"
