@@ -1,27 +1,26 @@
-.booking-widget-ExecutorSelector-module__container--c912g {
+.booking-widget-service-selector {
   padding: 1.5rem;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, sans-serif;
 }
 
-.booking-widget-ExecutorSelector-module__title--NKmYx {
+.booking-widget-service-selector__title {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: #0f172a;
 }
 
-.booking-widget-ExecutorSelector-module__grid--qk2lR {
+.booking-widget-service-selector__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 1rem;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.booking-widget-ExecutorSelector-module__card--DaG9r {
+.booking-widget-service-selector__card {
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 1.5rem;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -30,53 +29,53 @@
   transition: all 0.2s ease;
 }
 
-.booking-widget-ExecutorSelector-module__card--DaG9r:hover {
+.booking-widget-service-selector__card:hover {
   border-color: #2563eb;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.booking-widget-ExecutorSelector-module__card--DaG9r.booking-widget-ExecutorSelector-module__selected--sbviv {
+.booking-widget-service-selector__card--selected {
   border-color: #2563eb;
   background-color: rgba(37, 99, 235, 0.05);
 }
 
-.booking-widget-ExecutorSelector-module__imageContainer--YLIaC {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-bottom: 1rem;
-  border: 2px solid #e2e8f0;
-}
-
-.booking-widget-ExecutorSelector-module__image--LdjDs {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-
-.booking-widget-ExecutorSelector-module__name--FMC5n {
-  font-size: 1rem;
+.booking-widget-service-selector__service-name {
+  font-size: 1.125rem;
   font-weight: 500;
   color: #0f172a;
   margin-bottom: 0.5rem;
-  text-align: center;
 }
 
-.booking-widget-ExecutorSelector-module__description--hX9nj {
-  font-size: 0.875rem;
+.booking-widget-service-selector__service-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.booking-widget-service-selector__service-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: #64748b;
-  text-align: center;
-  line-height: 1.4;
+  font-size: 0.875rem;
 }
 
-.booking-widget-ExecutorSelector-module__anyExecutor--uh2xi {
-  background-color: #ffffff;
+.booking-widget-service-selector__service-detail svg {
+  width: 1rem;
+  height: 1rem;
+  color: #64748b;
 }
 
-.booking-widget-ExecutorSelector-module__backButton--FlijJ {
+.booking-widget-service-selector__service-price {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 1.25rem;
+  margin-top: auto;
+}
+
+.booking-widget-service-selector__back-button {
   width: 100%;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -89,50 +88,218 @@
   transition: all 0.2s ease;
 }
 
-.booking-widget-ExecutorSelector-module__backButton--FlijJ:hover {
+.booking-widget-service-selector__back-button:hover {
   background-color: #f8fafc;
 }
 
 /* Dark mode styles */
 
 @media (prefers-color-scheme: dark) {
-  .booking-widget-ExecutorSelector-module__container--c912g {
+  .booking-widget-service-selector {
     color: #f8fafc;
   }
 
-  .booking-widget-ExecutorSelector-module__title--NKmYx {
+  .booking-widget-service-selector__title {
     color: #f8fafc;
   }
 
-  .booking-widget-ExecutorSelector-module__card--DaG9r {
+  .booking-widget-service-selector__card {
     background: #1e293b;
     border-color: #334155;
   }
 
-  .booking-widget-ExecutorSelector-module__card--DaG9r:hover {
+  .booking-widget-service-selector__card:hover {
     border-color: #3b82f6;
   }
 
-  .booking-widget-ExecutorSelector-module__card--DaG9r.booking-widget-ExecutorSelector-module__selected--sbviv {
+  .booking-widget-service-selector__card--selected {
     border-color: #3b82f6;
     background-color: rgba(59, 130, 246, 0.1);
   }
 
-  .booking-widget-ExecutorSelector-module__name--FMC5n {
+  .booking-widget-service-selector__service-name {
     color: #f8fafc;
   }
 
-  .booking-widget-ExecutorSelector-module__description--hX9nj {
+  .booking-widget-service-selector__service-detail {
     color: #94a3b8;
   }
 
-  .booking-widget-ExecutorSelector-module__backButton--FlijJ {
+  .booking-widget-service-selector__service-detail svg {
+    color: #94a3b8;
+  }
+
+  .booking-widget-service-selector__service-price {
+    color: #f8fafc;
+  }
+
+  .booking-widget-service-selector__back-button {
     color: #f8fafc;
     background: #1e293b;
     border-color: #334155;
   }
 
-  .booking-widget-ExecutorSelector-module__backButton--FlijJ:hover {
+  .booking-widget-service-selector__back-button:hover {
     background-color: #334155;
+  }
+} 
+.booking-widget-executor-selector {
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, sans-serif;
+}
+
+.booking-widget-executor-selector__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #0f172a;
+}
+
+.booking-widget-executor-selector__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 1rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.booking-widget-executor-selector__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-widget-executor-selector__card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.booking-widget-executor-selector__card--selected {
+  border-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.booking-widget-executor-selector__image-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+}
+
+.booking-widget-executor-selector__fallback-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f1f5f9;
+}
+
+.booking-widget-executor-selector__image {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.booking-widget-executor-selector__name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.booking-widget-executor-selector__description {
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.booking-widget-executor-selector__any-executor {
+  background-color: #ffffff;
+}
+
+.booking-widget-executor-selector__back-button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-widget-executor-selector__back-button:hover {
+  background-color: #f8fafc;
+}
+
+/* Dark mode styles */
+
+@media (prefers-color-scheme: dark) {
+  .booking-widget-executor-selector {
+    color: #f8fafc;
+  }
+
+  .booking-widget-executor-selector__title {
+    color: #f8fafc;
+  }
+
+  .booking-widget-executor-selector__card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .booking-widget-executor-selector__card:hover {
+    border-color: #3b82f6;
+  }
+
+  .booking-widget-executor-selector__card--selected {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  .booking-widget-executor-selector__name {
+    color: #f8fafc;
+  }
+
+  .booking-widget-executor-selector__description {
+    color: #94a3b8;
+  }
+
+  .booking-widget-executor-selector__back-button {
+    color: #f8fafc;
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .booking-widget-executor-selector__back-button:hover {
+    background-color: #334155;
+  }
+
+  .booking-widget-executor-selector__image-container {
+    border-color: #334155;
+    background-color: #1e293b;
+  }
+
+  .booking-widget-executor-selector__fallback-image {
+    background-color: #1e293b;
   }
 } 

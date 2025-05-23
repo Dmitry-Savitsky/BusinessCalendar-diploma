@@ -1,10 +1,11 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2, Clock, MapPin } from "lucide-react"
 import { useBookingWidget } from "./context"
 import { fetchServices, fetchServicesForExecutor } from "@/services/booking-api"
 import type { Service, ExecutorService } from "@/types/booking"
+import "../../styles/modules/ServiceSelector.module.css"
 
 interface ServiceSelectorProps {
   onBack: () => void
@@ -12,7 +13,7 @@ interface ServiceSelectorProps {
 }
 
 export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorProps) {
-  const { mode, companyGuid, selectedExecutor, setSelectedService } = useBookingWidget()
+  const { mode, companyGuid, selectedExecutor, setSelectedService, selectedService } = useBookingWidget()
   const [services, setServices] = useState<Service[] | ExecutorService[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -62,6 +63,14 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
     onComplete()
   }
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      minimumFractionDigits: 0
+    }).format(price)
+  }
+
   if (loading) {
     return (
       <div className="tw-flex tw-justify-center tw-items-center tw-py-12">
@@ -77,7 +86,7 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
         <p className="tw-text-red-500 tw-mb-4">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="tw-bg-white tw-border tw-border-gray-200 tw-rounded-md tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-shadow-sm hover:tw-bg-gray-50"
+          className="booking-widget-service-selector__back-button"
         >
           Retry
         </button>
@@ -86,49 +95,46 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
   }
 
   return (
-    <div className="tw-space-y-4">
-      <h3 className="tw-text-lg tw-font-medium">Select a Service</h3>
-
-      <div className="tw-space-y-3">
+    <div className="booking-widget-service-selector">
+      <h3 className="booking-widget-service-selector__title">Select a Service</h3>
+      <div className="booking-widget-service-selector__grid">
         {services.map((service) => {
-          const serviceData = "publicId" in service ? {
-            id: service.publicId,
-            name: service.serviceName,
-            price: service.servicePrice,
-            duration: service.durationMinutes
-          } : {
-            id: service.servicePublicId,
-            name: service.serviceName,
-            price: service.servicePrice,
-            duration: service.durationMinutes
-          }
+          const isExecutorService = "servicePublicId" in service
+          const serviceId = isExecutorService ? service.servicePublicId : service.publicId
+          const serviceName = isExecutorService ? service.serviceName : service.serviceName
+          const servicePrice = isExecutorService ? service.servicePrice : service.servicePrice
+          const durationMinutes = isExecutorService ? service.durationMinutes : service.durationMinutes
+          const requiresAddress = !isExecutorService && service.requiresAddress
 
           return (
-            <div
-              key={serviceData.id}
-              className="tw-border tw-rounded-md tw-p-4 tw-cursor-pointer tw-bg-white tw-shadow-sm hover:tw-shadow-md tw-transition-all"
+            <button
+              key={serviceId}
+              className={`booking-widget-service-selector__card ${
+                selectedService?.publicId === serviceId ? "booking-widget-service-selector__card--selected" : ""
+              }`}
               onClick={() => handleSelectService(service)}
             >
-              <div className="tw-flex tw-justify-between tw-items-start">
-                <div>
-                  <h4 className="tw-text-base tw-font-medium">{serviceData.name}</h4>
-                  <p className="tw-text-sm tw-text-gray-500">{serviceData.duration} minutes</p>
+              <div className="booking-widget-service-selector__service-name">{serviceName}</div>
+              <div className="booking-widget-service-selector__service-details">
+                <div className="booking-widget-service-selector__service-detail">
+                  <Clock className="tw-h-4 tw-w-4" />
+                  {durationMinutes} min
                 </div>
-                <span className="tw-font-medium">${(serviceData.price / 100).toFixed(2)}</span>
+                {requiresAddress && (
+                  <div className="booking-widget-service-selector__service-detail">
+                    <MapPin className="tw-h-4 tw-w-4" />
+                    At your place
+                  </div>
+                )}
               </div>
-            </div>
+              <div className="booking-widget-service-selector__service-price">{formatPrice(servicePrice)}</div>
+            </button>
           )
         })}
       </div>
-
-      <div className="tw-pt-4">
-        <button
-          onClick={onBack}
-          className="tw-w-full tw-bg-white tw-border tw-border-gray-200 tw-rounded-md tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-shadow-sm hover:tw-bg-gray-50"
-        >
-          Back
-        </button>
-      </div>
+      <button className="booking-widget-service-selector__back-button" onClick={onBack}>
+        Back
+      </button>
     </div>
   )
 }

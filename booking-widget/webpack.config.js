@@ -24,27 +24,19 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.module\.css$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentName: 'booking-widget-[name]__[local]--[hash:base64:5]',
+                auto: /\.module\.css$/,
+                localIdentName: '[local]',
                 exportLocalsConvention: 'camelCase',
               },
             },
           },
-          'postcss-loader',
-        ],
-      },
-      {
-        test: /\.css$/,
-        exclude: /\.module\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
           'postcss-loader',
         ],
       },

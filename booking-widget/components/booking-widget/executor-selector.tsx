@@ -5,7 +5,7 @@ import { Loader2, User } from "lucide-react"
 import { useBookingWidget } from "./context"
 import { fetchExecutors, fetchExecutorsForService } from "@/services/booking-api"
 import type { Executor, ExecutorService } from "@/types/booking"
-import styles from "../../styles/modules/ExecutorSelector.module.css"
+import "../../styles/modules/ExecutorSelector.module.css"
 
 const API_BASE_URL = "http://localhost:5221/api"
 const STATIC_BASE_URL = "http://localhost:5221"
@@ -66,7 +66,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
         <p className="tw-text-red-500 tw-mb-4">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="booking-widget-ExecutorSelector-module__backButton--FlijJ"
+          className="booking-widget-executor-selector__back-button"
         >
           Retry
         </button>
@@ -75,15 +75,15 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
   }
 
   return (
-    <div className="booking-widget-ExecutorSelector-module__container--c912g">
-      <h3 className="booking-widget-ExecutorSelector-module__title--NKmYx">Select a Specialist</h3>
-      <div className="booking-widget-ExecutorSelector-module__grid--qk2lR">
+    <div className="booking-widget-executor-selector">
+      <h3 className="booking-widget-executor-selector__title">Select a Specialist</h3>
+      <div className="booking-widget-executor-selector__grid">
         <button
-          className="booking-widget-ExecutorSelector-module__card--DaG9r"
+          className="booking-widget-executor-selector__card"
           onClick={() => handleExecutorSelect(null)}
         >
-          <div className="booking-widget-ExecutorSelector-module__name--FMC5n">Any Available Specialist</div>
-          <div className="booking-widget-ExecutorSelector-module__description--hX9nj">First available specialist will be assigned</div>
+          <div className="booking-widget-executor-selector__name">Any Available Specialist</div>
+          <div className="booking-widget-executor-selector__description">First available specialist will be assigned</div>
         </button>
         {executors.map((executor) => {
           if ("executorPublicId" in executor) {
@@ -98,26 +98,26 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
             return (
               <button
                 key={executorData.guid}
-                className={`booking-widget-ExecutorSelector-module__card--DaG9r ${
-                  selectedExecutor?.guid === executorData.guid ? "booking-widget-ExecutorSelector-module__selected--sbviv" : ""
+                className={`booking-widget-executor-selector__card ${
+                  selectedExecutor?.guid === executorData.guid ? "booking-widget-executor-selector__card--selected" : ""
                 }`}
                 onClick={() => handleExecutorSelect(executorData)}
               >
-                <div className="booking-widget-ExecutorSelector-module__imageContainer--YLIaC">
+                <div className="booking-widget-executor-selector__image-container">
                   {imageErrors[executorData.guid] ? (
-                    <div className="booking-widget-ExecutorSelector-module__fallbackImage--YLIaC">
+                    <div className="booking-widget-executor-selector__fallback-image">
                       <User className="tw-h-12 tw-w-12 tw-text-gray-400" />
                     </div>
                   ) : (
                     <img 
                       src={`${STATIC_BASE_URL}${executorData.imgPath}`} 
                       alt={executorData.name}
-                      className="booking-widget-ExecutorSelector-module__image--LdjDs"
+                      className="booking-widget-executor-selector__image"
                       onError={() => handleImageError(executorData.guid)}
                     />
                   )}
                 </div>
-                <div className="booking-widget-ExecutorSelector-module__name--FMC5n">{executorData.name}</div>
+                <div className="booking-widget-executor-selector__name">{executorData.name}</div>
               </button>
             )
           }
@@ -125,34 +125,34 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
           return (
             <button
               key={executor.guid}
-              className={`booking-widget-ExecutorSelector-module__card--DaG9r ${
-                selectedExecutor?.guid === executor.guid ? "booking-widget-ExecutorSelector-module__selected--sbviv" : ""
+              className={`booking-widget-executor-selector__card ${
+                selectedExecutor?.guid === executor.guid ? "booking-widget-executor-selector__card--selected" : ""
               }`}
               onClick={() => handleExecutorSelect(executor)}
             >
-              <div className="booking-widget-ExecutorSelector-module__imageContainer--YLIaC">
+              <div className="booking-widget-executor-selector__image-container">
                 {imageErrors[executor.guid] ? (
-                  <div className="booking-widget-ExecutorSelector-module__fallbackImage--YLIaC">
+                  <div className="booking-widget-executor-selector__fallback-image">
                     <User className="tw-h-12 tw-w-12 tw-text-gray-400" />
                   </div>
                 ) : (
                   <img 
                     src={`${STATIC_BASE_URL}${executor.imgPath}`} 
                     alt={executor.name}
-                    className="booking-widget-ExecutorSelector-module__image--LdjDs"
+                    className="booking-widget-executor-selector__image"
                     onError={() => handleImageError(executor.guid)}
                   />
                 )}
               </div>
-              <div className="booking-widget-ExecutorSelector-module__name--FMC5n">{executor.name}</div>
+              <div className="booking-widget-executor-selector__name">{executor.name}</div>
               {executor.description && (
-                <div className="booking-widget-ExecutorSelector-module__description--hX9nj">{executor.description}</div>
+                <div className="booking-widget-executor-selector__description">{executor.description}</div>
               )}
             </button>
           )
         })}
       </div>
-      <button className="booking-widget-ExecutorSelector-module__backButton--FlijJ" onClick={onBack}>
+      <button className="booking-widget-executor-selector__back-button" onClick={onBack}>
         Back
       </button>
     </div>

@@ -1,23 +1,23 @@
-.container {
+.booking-widget-executor-selector {
   padding: 1.5rem;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
-.title {
+.booking-widget-executor-selector__title {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: #0f172a;
 }
 
-.grid {
+.booking-widget-executor-selector__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.card {
+.booking-widget-executor-selector__card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,18 +29,18 @@
   transition: all 0.2s ease;
 }
 
-.card:hover {
+.booking-widget-executor-selector__card:hover {
   border-color: #2563eb;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.card.selected {
+.booking-widget-executor-selector__card--selected {
   border-color: #2563eb;
   background-color: rgba(37, 99, 235, 0.05);
 }
 
-.imageContainer {
+.booking-widget-executor-selector__image-container {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -53,7 +53,7 @@
   background-color: #f8fafc;
 }
 
-.fallbackImage {
+.booking-widget-executor-selector__fallback-image {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,13 +62,13 @@
   background-color: #f1f5f9;
 }
 
-.image {
+.booking-widget-executor-selector__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.name {
+.booking-widget-executor-selector__name {
   font-size: 1rem;
   font-weight: 500;
   color: #0f172a;
@@ -76,19 +76,19 @@
   text-align: center;
 }
 
-.description {
+.booking-widget-executor-selector__description {
   font-size: 0.875rem;
   color: #64748b;
   text-align: center;
   line-height: 1.4;
 }
 
-.anyExecutor {
-  composes: card;
+.booking-widget-executor-selector__any-executor {
+  composes: booking-widget-executor-selector__card;
   background-color: #ffffff;
 }
 
-.backButton {
+.booking-widget-executor-selector__back-button {
   width: 100%;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -101,58 +101,58 @@
   transition: all 0.2s ease;
 }
 
-.backButton:hover {
+.booking-widget-executor-selector__back-button:hover {
   background-color: #f8fafc;
 }
 
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
-  .container {
+  .booking-widget-executor-selector {
     color: #f8fafc;
   }
 
-  .title {
+  .booking-widget-executor-selector__title {
     color: #f8fafc;
   }
 
-  .card {
+  .booking-widget-executor-selector__card {
     background: #1e293b;
     border-color: #334155;
   }
 
-  .card:hover {
+  .booking-widget-executor-selector__card:hover {
     border-color: #3b82f6;
   }
 
-  .card.selected {
+  .booking-widget-executor-selector__card--selected {
     border-color: #3b82f6;
     background-color: rgba(59, 130, 246, 0.1);
   }
 
-  .name {
+  .booking-widget-executor-selector__name {
     color: #f8fafc;
   }
 
-  .description {
+  .booking-widget-executor-selector__description {
     color: #94a3b8;
   }
 
-  .backButton {
+  .booking-widget-executor-selector__back-button {
     color: #f8fafc;
     background: #1e293b;
     border-color: #334155;
   }
 
-  .backButton:hover {
+  .booking-widget-executor-selector__back-button:hover {
     background-color: #334155;
   }
 
-  .imageContainer {
+  .booking-widget-executor-selector__image-container {
     border-color: #334155;
     background-color: #1e293b;
   }
 
-  .fallbackImage {
+  .booking-widget-executor-selector__fallback-image {
     background-color: #1e293b;
   }
 } 
