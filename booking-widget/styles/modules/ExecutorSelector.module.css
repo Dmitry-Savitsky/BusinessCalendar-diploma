@@ -1,0 +1,158 @@
+.container {
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #0f172a;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card.selected {
+  border-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.imageContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+}
+
+.fallbackImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f1f5f9;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.anyExecutor {
+  composes: card;
+  background-color: #ffffff;
+}
+
+.backButton {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #f8fafc;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .container {
+    color: #f8fafc;
+  }
+
+  .title {
+    color: #f8fafc;
+  }
+
+  .card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .card:hover {
+    border-color: #3b82f6;
+  }
+
+  .card.selected {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  .name {
+    color: #f8fafc;
+  }
+
+  .description {
+    color: #94a3b8;
+  }
+
+  .backButton {
+    color: #f8fafc;
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .backButton:hover {
+    background-color: #334155;
+  }
+
+  .imageContainer {
+    border-color: #334155;
+    background-color: #1e293b;
+  }
+
+  .fallbackImage {
+    background-color: #1e293b;
+  }
+} 

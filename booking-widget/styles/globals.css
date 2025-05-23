@@ -1,3 +1,5 @@
+@import './variables.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,9 +17,10 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
 }
 
 @layer utilities {
@@ -96,8 +99,127 @@ body {
 @layer base {
   * {
     @apply tw-border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
   body {
     @apply tw-bg-background tw-text-foreground;
+  }
+}
+
+/* Base styles */
+.executor-selector {
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.executor-selector__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.executor-selector__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.executor-selector__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.executor-selector__card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.executor-selector__selected {
+  border-color: #2563eb;
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.executor-selector__image-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 2px solid #e2e8f0;
+}
+
+.executor-selector__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.executor-selector__name {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.executor-selector__description {
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.executor-selector__any-executor {
+  composes: executor-selector__card;
+  background-color: white;
+}
+
+.executor-selector__back-button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.executor-selector__back-button:hover {
+  background-color: #f8fafc;
+}
+
+@media (prefers-color-scheme: dark) {
+  .executor-selector {
+    color: #f8fafc;
+  }
+
+  .executor-selector__card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .executor-selector__name {
+    color: #f8fafc;
+  }
+
+  .executor-selector__description {
+    color: #94a3b8;
+  }
+
+  .executor-selector__back-button {
+    color: #f8fafc;
+    background: #1e293b;
+    border-color: #334155;
   }
 }

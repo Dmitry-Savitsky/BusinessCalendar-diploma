@@ -49,7 +49,7 @@ export async function fetchServicesForExecutor(companyGuid: string, executorGuid
 }
 
 // Fetch available time slots
-export async function fetchTimeSlots(serviceGuid: string, executorGuid: string, date: Date): Promise<TimeSlot[]> {
+export async function fetchTimeSlots(serviceGuid: string, executorGuid: string | null, date: Date): Promise<TimeSlot[]> {
   // Format the date as ISO string with timezone offset
   const userTimezoneOffset = -date.getTimezoneOffset();
   const hours = Math.floor(Math.abs(userTimezoneOffset) / 60);
@@ -59,7 +59,7 @@ export async function fetchTimeSlots(serviceGuid: string, executorGuid: string, 
   
   const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00${timezone}`;
 
-  const url = `${API_BASE_URL}/booking/widget/slots?serviceGuid=${serviceGuid}&executorGuid=${executorGuid}&date=${encodeURIComponent(formattedDate)}`;
+  const url = `${API_BASE_URL}/booking/widget/slots?serviceGuid=${serviceGuid}${executorGuid ? `&executorGuid=${executorGuid}` : ''}&date=${encodeURIComponent(formattedDate)}`;
   console.log('Fetching time slots from URL:', url);
 
   const response = await fetch(url)

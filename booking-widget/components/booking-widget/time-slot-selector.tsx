@@ -20,46 +20,69 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let isSubscribed = true
+
     const loadTimeSlots = async () => {
       if (!selectedService || !selectedDate) return
 
       try {
-        setLoading(true)
-
-        // If anyExecutor is true, we need a valid executor
-        if (anyExecutor && !selectedExecutor) {
-          setError("Please select an executor or go back to select one")
-          return
-        }
-
-        const executorGuid = selectedExecutor?.guid
-        if (!executorGuid) {
-          setError("An executor must be selected to view available time slots")
-          return
+        if (isSubscribed) {
+          setLoading(true)
         }
 
         const serviceGuid = selectedService.publicId
+        
+        // If anyExecutor is true, we'll fetch slots for any available executor
+        if (anyExecutor) {
+          const data = await fetchTimeSlots(serviceGuid, null, selectedDate)
+          if (isSubscribed) {
+            setTimeSlots(data)
+            setError(null)
+          }
+          return
+        }
 
-        console.log('Fetching time slots with params:', {
-          serviceGuid,
-          executorGuid,
-          date: selectedDate.toISOString()
-        })
+        // Otherwise, we need a specific executor
+        const executorGuid = selectedExecutor?.guid
+        if (!executorGuid) {
+          if (isSubscribed) {
+            setError("An executor must be selected to view available time slots")
+          }
+          return
+        }
 
         const data = await fetchTimeSlots(serviceGuid, executorGuid, selectedDate)
-        console.log('Received time slots:', data)
-        setTimeSlots(data)
-        setError(null)
+        
+        if (isSubscribed) {
+          setTimeSlots(data)
+          setError(null)
+        }
       } catch (err) {
-        console.error("Error loading time slots:", err)
-        setError("Failed to load available time slots. Please try again.")
+        if (isSubscribed) {
+          console.error("Error loading time slots:", err)
+          setError("Failed to load available time slots. Please try again.")
+        }
       } finally {
-        setLoading(false)
+        if (isSubscribed) {
+          setLoading(false)
+        }
       }
     }
 
     loadTimeSlots()
+
+    return () => {
+      isSubscribed = false
+      setTimeSlots([])
+      setError(null)
+      setLoading(false)
+    }
   }, [selectedService, selectedExecutor, selectedDate, anyExecutor])
+
+  const handleBack = () => {
+    setSelectedSlot(null)
+    onBack()
+  }
 
   const handleSelectTimeSlot = (slot: TimeSlot) => {
     setSelectedSlot(slot)
@@ -93,7 +116,7 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
     return (
       <div className="text-center py-8">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
+        <Button onClick={handleBack}>Back</Button>
       </div>
     )
   }
@@ -102,7 +125,7 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
     return (
       <div className="text-center py-8">
         <p className="mb-4">No available time slots for this date. Please select another date.</p>
-        <Button onClick={onBack}>Select Another Date</Button>
+        <Button onClick={handleBack}>Select Another Date</Button>
       </div>
     )
   }
@@ -155,7 +178,7 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
       </div>
 
       <div className="pt-4">
-        <Button variant="outline" onClick={onBack} className="w-full">
+        <Button variant="outline" onClick={handleBack} className="w-full">
           Back
         </Button>
       </div>

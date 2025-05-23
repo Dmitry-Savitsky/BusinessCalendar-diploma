@@ -1,44 +1,43 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Loader2, User } from "lucide-react"
 import { useBookingWidget } from "./context"
 import { fetchExecutors, fetchExecutorsForService } from "@/services/booking-api"
 import type { Executor, ExecutorService } from "@/types/booking"
+import styles from "../../styles/modules/ExecutorSelector.module.css"
 
-const API_BASE_URL = "http://localhost:5221"
+const API_BASE_URL = "http://localhost:5221/api"
+const STATIC_BASE_URL = "http://localhost:5221"
 
-interface ExecutorSelectorProps {
-  onBack: () => void
-  onComplete: () => void
-}
-
-export default function ExecutorSelector({ onBack, onComplete }: ExecutorSelectorProps) {
-  const { mode, companyGuid, selectedService, setSelectedExecutor, setAnyExecutor } = useBookingWidget()
-  const [executors, setExecutors] = useState<Executor[] | ExecutorService[]>([])
+export default function ExecutorSelector({ onBack, onComplete }: { onBack: () => void, onComplete: () => void }) {
+  const { selectedExecutor, setSelectedExecutor, setAnyExecutor, companyGuid, mode, selectedService } = useBookingWidget()
+  const [executors, setExecutors] = useState<(Executor | ExecutorService)[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({})
+
+  const handleImageError = (executorId: string) => {
+    setImageErrors(prev => ({ ...prev, [executorId]: true }))
+  }
 
   useEffect(() => {
     const loadExecutors = async () => {
       try {
         setLoading(true)
-
-        if (mode === "service" && selectedService) {
-          // Fetch executors for the selected service
-          const data = await fetchExecutorsForService(companyGuid, selectedService.publicId)
-          setExecutors(data)
-        } else if (mode === "executor") {
-          // Fetch all executors
-          const data = await fetchExecutors(companyGuid)
-          setExecutors(data)
-        }
-
         setError(null)
+
+        let data
+        if (mode === "service" && selectedService) {
+          data = await fetchExecutorsForService(companyGuid, selectedService.publicId)
+        } else {
+          data = await fetchExecutors(companyGuid)
+        }
+        
+        setExecutors(data)
+        setLoading(false)
       } catch (err) {
-        setError("Failed to load staff members. Please try again.")
-        console.error("Error loading executors:", err)
-      } finally {
+        setError(err instanceof Error ? err.message : "Failed to load executors")
         setLoading(false)
       }
     }
@@ -46,27 +45,9 @@ export default function ExecutorSelector({ onBack, onComplete }: ExecutorSelecto
     loadExecutors()
   }, [companyGuid, mode, selectedService])
 
-  const handleSelectExecutor = (executor: Executor | ExecutorService) => {
-    if ("executorPublicId" in executor) {
-      // It's an ExecutorService
-      setSelectedExecutor({
-        guid: executor.executorPublicId,
-        name: executor.executorName,
-        imgPath: executor.executorImgPath,
-        phone: "",
-        description: "",
-      })
-    } else {
-      // It's an Executor
-      setSelectedExecutor(executor)
-    }
-    setAnyExecutor(false)
-    onComplete()
-  }
-
-  const handleSelectAny = () => {
-    setSelectedExecutor(null)
-    setAnyExecutor(true)
+  const handleExecutorSelect = (executor: Executor | null) => {
+    setSelectedExecutor(executor)
+    setAnyExecutor(executor === null)
     onComplete()
   }
 
@@ -85,7 +66,7 @@ export default function ExecutorSelector({ onBack, onComplete }: ExecutorSelecto
         <p className="tw-text-red-500 tw-mb-4">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="tw-bg-white tw-border tw-border-gray-200 tw-rounded-md tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-shadow-sm hover:tw-bg-gray-50"
+          className="booking-widget-ExecutorSelector-module__backButton--FlijJ"
         >
           Retry
         </button>
@@ -94,63 +75,86 @@ export default function ExecutorSelector({ onBack, onComplete }: ExecutorSelecto
   }
 
   return (
-    <div className="tw-space-y-4">
-      <h3 className="tw-text-lg tw-font-medium">Select a Staff Member</h3>
-
-      {mode === "service" && (
+    <div className="booking-widget-ExecutorSelector-module__container--c912g">
+      <h3 className="booking-widget-ExecutorSelector-module__title--NKmYx">Select a Specialist</h3>
+      <div className="booking-widget-ExecutorSelector-module__grid--qk2lR">
         <button
-          onClick={handleSelectAny}
-          className="tw-w-full tw-bg-white tw-border tw-border-gray-200 tw-rounded-md tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-shadow-sm hover:tw-bg-gray-50 tw-mb-4 tw-flex tw-items-center tw-justify-center"
+          className="booking-widget-ExecutorSelector-module__card--DaG9r"
+          onClick={() => handleExecutorSelect(null)}
         >
-          <User className="tw-mr-2 tw-h-4 tw-w-4" />
-          <span>Any Available Staff Member</span>
+          <div className="booking-widget-ExecutorSelector-module__name--FMC5n">Any Available Specialist</div>
+          <div className="booking-widget-ExecutorSelector-module__description--hX9nj">First available specialist will be assigned</div>
         </button>
-      )}
-
-      <div className="tw-space-y-3">
         {executors.map((executor) => {
-          const id = "guid" in executor ? executor.guid : executor.executorPublicId
-          const name = "name" in executor ? executor.name : executor.executorName
-          const imgPath = "imgPath" in executor ? executor.imgPath : executor.executorImgPath
-
-          return (
-            <div
-              key={id}
-              className="tw-border tw-rounded-md tw-p-4 tw-cursor-pointer tw-bg-white tw-shadow-sm hover:tw-shadow-md tw-transition-all"
-              onClick={() => handleSelectExecutor(executor)}
-            >
-              <div className="tw-flex tw-items-center tw-pb-2">
-                <div className="tw-h-10 tw-w-10 tw-rounded-full tw-bg-gray-200 tw-mr-3 tw-flex tw-items-center tw-justify-center tw-overflow-hidden">
-                  {imgPath ? (
-                    <img src={`${API_BASE_URL}${imgPath}`} alt={name} className="tw-h-full tw-w-full tw-object-cover" />
+          if ("executorPublicId" in executor) {
+            // Convert ExecutorService to Executor
+            const executorData: Executor = {
+              guid: executor.executorPublicId,
+              name: executor.executorName,
+              imgPath: executor.executorImgPath,
+              phone: "",
+              description: ""
+            }
+            return (
+              <button
+                key={executorData.guid}
+                className={`booking-widget-ExecutorSelector-module__card--DaG9r ${
+                  selectedExecutor?.guid === executorData.guid ? "booking-widget-ExecutorSelector-module__selected--sbviv" : ""
+                }`}
+                onClick={() => handleExecutorSelect(executorData)}
+              >
+                <div className="booking-widget-ExecutorSelector-module__imageContainer--YLIaC">
+                  {imageErrors[executorData.guid] ? (
+                    <div className="booking-widget-ExecutorSelector-module__fallbackImage--YLIaC">
+                      <User className="tw-h-12 tw-w-12 tw-text-gray-400" />
+                    </div>
                   ) : (
-                    <span className="tw-text-sm tw-font-medium">{name.substring(0, 2).toUpperCase()}</span>
+                    <img 
+                      src={`${STATIC_BASE_URL}${executorData.imgPath}`} 
+                      alt={executorData.name}
+                      className="booking-widget-ExecutorSelector-module__image--LdjDs"
+                      onError={() => handleImageError(executorData.guid)}
+                    />
                   )}
                 </div>
-                <h4 className="tw-text-base tw-font-medium">{name}</h4>
+                <div className="booking-widget-ExecutorSelector-module__name--FMC5n">{executorData.name}</div>
+              </button>
+            )
+          }
+          
+          return (
+            <button
+              key={executor.guid}
+              className={`booking-widget-ExecutorSelector-module__card--DaG9r ${
+                selectedExecutor?.guid === executor.guid ? "booking-widget-ExecutorSelector-module__selected--sbviv" : ""
+              }`}
+              onClick={() => handleExecutorSelect(executor)}
+            >
+              <div className="booking-widget-ExecutorSelector-module__imageContainer--YLIaC">
+                {imageErrors[executor.guid] ? (
+                  <div className="booking-widget-ExecutorSelector-module__fallbackImage--YLIaC">
+                    <User className="tw-h-12 tw-w-12 tw-text-gray-400" />
+                  </div>
+                ) : (
+                  <img 
+                    src={`${STATIC_BASE_URL}${executor.imgPath}`} 
+                    alt={executor.name}
+                    className="booking-widget-ExecutorSelector-module__image--LdjDs"
+                    onError={() => handleImageError(executor.guid)}
+                  />
+                )}
               </div>
-              {"description" in executor && executor.description && (
-                <p className="tw-text-sm tw-text-gray-500">{executor.description}</p>
+              <div className="booking-widget-ExecutorSelector-module__name--FMC5n">{executor.name}</div>
+              {executor.description && (
+                <div className="booking-widget-ExecutorSelector-module__description--hX9nj">{executor.description}</div>
               )}
-              {"serviceName" in executor && (
-                <div className="tw-flex tw-justify-between tw-mt-2">
-                  <span className="tw-text-sm">{executor.serviceName}</span>
-                  <span className="tw-font-medium">${(executor.servicePrice / 100).toFixed(2)}</span>
-                </div>
-              )}
-            </div>
+            </button>
           )
         })}
       </div>
-
-      <div className="tw-pt-4">
-        <button
-          onClick={onBack}
-          className="tw-w-full tw-bg-white tw-border tw-border-gray-200 tw-rounded-md tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-shadow-sm hover:tw-bg-gray-50"
-        >
-          Back
-        </button>
-      </div>
+      <button className="booking-widget-ExecutorSelector-module__backButton--FlijJ" onClick={onBack}>
+        Back
+      </button>
     </div>
   )
 }

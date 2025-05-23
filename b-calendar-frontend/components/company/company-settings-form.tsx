@@ -94,8 +94,8 @@ export function CompanySettingsForm() {
           const reactScript = document.createElement('script');
           reactScript.src = 'https://unpkg.com/react@18/umd/react.development.js';
           reactScript.crossOrigin = '';
-          await new Promise((resolve, reject) => {
-            reactScript.onload = resolve;
+          await new Promise<void>((resolve, reject) => {
+            reactScript.onload = () => resolve();
             reactScript.onerror = reject;
             document.head.appendChild(reactScript);
           });
@@ -108,13 +108,19 @@ export function CompanySettingsForm() {
           const reactDOMScript = document.createElement('script');
           reactDOMScript.src = 'https://unpkg.com/react-dom@18/umd/react-dom.development.js';
           reactDOMScript.crossOrigin = '';
-          await new Promise((resolve, reject) => {
-            reactDOMScript.onload = resolve;
+          await new Promise<void>((resolve, reject) => {
+            reactDOMScript.onload = () => resolve();
             reactDOMScript.onerror = reject;
             document.head.appendChild(reactDOMScript);
           });
           console.log('ReactDOM loaded successfully');
         }
+
+        // Load CSS
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = 'http://localhost:3001/booking-widget.css';
+        document.head.appendChild(cssLink);
 
         // Set React as loaded
         setIsReactLoaded(true);
@@ -123,8 +129,7 @@ export function CompanySettingsForm() {
         console.log('Loading widget...');
         const widgetScript = document.createElement('script');
         widgetScript.src = 'http://localhost:3001/booking-widget.js';
-        widgetScript.async = true;
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
           widgetScript.onload = () => {
             console.log('Widget loaded successfully');
             setIsWidgetLoaded(true);
@@ -196,67 +201,58 @@ export function CompanySettingsForm() {
 
   const getEssentialEmbeddingCode = () => {
     if (!company?.publicId) return ""
-    return `<div id="booking-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; padding: 2rem;">
-    <div style="position: relative; background-color: white; border-radius: 0.5rem; max-width: 100%; width: 600px; max-height: 90vh; overflow: auto;">
-        <button id="close-btn" style="position: fixed; right: 1rem; top: 1rem; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 1001;">×</button>
-        <div style="padding: 1rem;">
-            <booking-widget company-guid="${company.publicId}"></booking-widget>
-        </div>
+    return `<!-- Контейнер для виджета -->
+<div id="booking-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="position: relative; background: transparent; border-radius: 0.5rem; max-width: 100%; width: 600px; max-height: 90vh; overflow: auto;">
+        <button id="close-btn" style="position: absolute; right: 1rem; top: 1rem; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 1001;">×</button>
+        <booking-widget company-guid="${company.publicId}"></booking-widget>
     </div>
 </div>
 
-<button id="open-btn" style="padding: 0.5rem 1rem; background-color: #0284c7; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">Забронировать услугу</button>
+<!-- Кнопка открытия -->
+<button id="open-btn" style="padding: 0.5rem 1rem; background-color: #0284c7; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+    Забронировать услугу
+</button>
 
-<!-- Подключаем скрипты и обработчики... -->`
+<!-- Подключение зависимостей... -->`
   }
 
   const getEmbeddingCode = () => {
     if (!company?.publicId) return ""
-    return `<div id="booking-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; padding: 2rem;">
-    <div style="position: relative; background-color: white; border-radius: 0.5rem; max-width: 100%; width: 600px; max-height: 90vh; overflow: auto;">
-        <button id="close-btn" style="position: fixed; right: 1rem; top: 1rem; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 1001;">×</button>
-        <div style="padding: 1rem;">
-            <booking-widget company-guid="${company.publicId}"></booking-widget>
-        </div>
+    return `<!-- Контейнер для виджета -->
+<div id="booking-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="position: relative; background: transparent; border-radius: 0.5rem; max-width: 100%; width: 600px; max-height: 90vh; overflow: auto;">
+        <button id="close-btn" style="position: absolute; right: 1rem; top: 1rem; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 1001;">×</button>
+        <booking-widget company-guid="${company.publicId}"></booking-widget>
     </div>
 </div>
 
-<button id="open-btn" style="padding: 0.5rem 1rem; background-color: #0284c7; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">Забронировать услугу</button>
+<!-- Кнопка открытия -->
+<button id="open-btn" style="padding: 0.5rem 1rem; background-color: #0284c7; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+    Забронировать услугу
+</button>
 
-<!-- Подключаем React и ReactDOM -->
+<!-- Подключение зависимостей -->
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-<!-- Подключаем бандл виджета -->
-<script>
-    // Ждем загрузки React перед загрузкой виджета
-    function loadWidget() {
-        if (window.React && window.ReactDOM) {
-            console.log('Loading widget script...');
-            const script = document.createElement('script');
-            script.src = 'http://localhost:3001/booking-widget.js';
-            script.async = true;
-            script.onload = () => console.log('Widget loaded successfully');
-            script.onerror = (error) => console.error('Widget load error:', error);
-            document.body.appendChild(script);
-        } else {
-            console.log('Waiting for React...');
-            setTimeout(loadWidget, 100);
-        }
-    }
-    loadWidget();
-</script>
+<!-- Подключение виджета -->
+<link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
+<script src="http://localhost:3001/booking-widget.js"></script>
 
 <script>
-    const openBtn = document.getElementById('open-btn');
-    const closeBtn = document.getElementById('close-btn');
-    const container = document.getElementById('booking-container');
+    // Инициализация после загрузки всех скриптов
+    window.addEventListener('load', () => {
+        const openBtn = document.getElementById('open-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const container = document.getElementById('booking-container');
 
-    openBtn.addEventListener('click', () => {
-        container.style.display = 'flex';
-    });
-    closeBtn.addEventListener('click', () => {
-        container.style.display = 'none';
+        openBtn.addEventListener('click', () => {
+            container.style.display = 'flex';
+        });
+        closeBtn.addEventListener('click', () => {
+            container.style.display = 'none';
+        });
     });
 </script>`
   }
@@ -446,13 +442,12 @@ export function CompanySettingsForm() {
                   background: 'rgba(0, 0, 0, 0.5)',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  zIndex: 1000,
-                  padding: '2rem'
+                  zIndex: 1000
                 }}
               >
                 <div style={{ 
                   position: 'relative',
-                  backgroundColor: 'white',
+                  background: 'transparent',
                   borderRadius: '0.5rem',
                   maxWidth: '100%',
                   width: '600px',
@@ -462,7 +457,7 @@ export function CompanySettingsForm() {
                   <button 
                     onClick={() => setShowWidget(false)}
                     style={{
-                      position: 'fixed',
+                      position: 'absolute',
                       right: '1rem',
                       top: '1rem',
                       background: 'none',
@@ -476,9 +471,7 @@ export function CompanySettingsForm() {
                     ×
                   </button>
                   {isReactLoaded && isWidgetLoaded && (
-                    <div style={{ padding: '1rem' }}>
-                      <booking-widget company-guid={company.publicId}></booking-widget>
-                    </div>
+                    <booking-widget company-guid={company.publicId}></booking-widget>
                   )}
                 </div>
               </div>
