@@ -10,7 +10,7 @@ import TimeSlotSelector from "./time-slot-selector"
 import CustomerForm from "./customer-form"
 import BookingConfirmation from "./booking-confirmation"
 
-type BookingStep = "mode" | "service" | "executor" | "date" | "time" | "customer" | "confirmation"
+type BookingStep = "mode" | "service" | "executor" | "date" | "time" | "customer" | "confirmation" | "success"
 
 export default function BookingWidgetContent() {
   const { 
@@ -99,9 +99,20 @@ export default function BookingWidgetContent() {
     }
   }, [mode, selectedService, selectedExecutor, selectedDate, selectedSlot, bookingResponse, anyExecutor])
 
+  const containerStyle: React.CSSProperties = {
+    padding: "1.5rem",
+  }
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    marginBottom: "1.5rem",
+    textAlign: "center",
+  }
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">Book an Appointment</h2>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>Book an Appointment</h2>
 
       {currentStep === "mode" && (
         <ModeSelector 
@@ -146,10 +157,8 @@ export default function BookingWidgetContent() {
 
       {currentStep === "confirmation" && (
         <BookingConfirmation
-          onNewBooking={() => {
-            resetBooking()
-            handleStepComplete("mode")
-          }}
+          onBack={() => handleBack("customer")}
+          onComplete={() => handleStepComplete("success")}
         />
       )}
     </div>

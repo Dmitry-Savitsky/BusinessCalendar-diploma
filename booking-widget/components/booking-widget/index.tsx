@@ -6,6 +6,9 @@ import BookingWidgetContent from './booking-widget-content';
 import { BookingWidgetProvider } from './context';
 import '../../styles/modules/ServiceSelector.module.css';
 import '../../styles/modules/ExecutorSelector.module.css';
+import '../../styles/modules/TimeSlotSelector.module.css';
+import '../../styles/modules/CustomerForm.module.css';
+import '../../styles/modules/BookingConfirmation.module.css';
 
 const WIDGET_NAME = 'booking-widget'
 

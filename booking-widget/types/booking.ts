@@ -12,19 +12,19 @@ export interface Service {
 export interface Executor {
   guid: string
   name: string
+  imgPath: string
   phone: string
   description: string
-  imgPath: string
 }
 
 export interface ExecutorService {
-  executorPublicId: string
-  executorName: string
-  executorImgPath: string
   servicePublicId: string
   serviceName: string
   servicePrice: number
   durationMinutes: number
+  executorPublicId: string
+  executorName: string
+  executorImgPath: string
 }
 
 export interface TimeSlot {
@@ -32,11 +32,10 @@ export interface TimeSlot {
   available: boolean
 }
 
-export interface BookingItem {
-  serviceGuid: string
-  executorGuid: string | null
-  start: string
-  requiresAddress: boolean
+export interface CustomerFormData {
+  name: string
+  phone: string
+  notes?: string
 }
 
 export interface BookingRequest {
@@ -44,12 +43,17 @@ export interface BookingRequest {
   clientName: string
   clientPhone: string
   clientAddress: string | null
-  comment: string
-  items: BookingItem[]
+  notes?: string
+  items: {
+    serviceGuid: string
+    executorGuid: string | null
+    start: string
+    requiresAddress: boolean
+  }[]
 }
 
 export interface BookingResponse {
-  publicId: string
-  items: BookingItem[]
-  comment: string
+  bookingId: string
+  status: string
+  message: string
 }

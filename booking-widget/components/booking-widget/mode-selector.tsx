@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { CalendarDays, Users } from "lucide-react"
 import { useBookingWidget } from "./context"
 
 interface ModeSelectorProps {
@@ -9,43 +8,116 @@ interface ModeSelectorProps {
 }
 
 export default function ModeSelector({ onComplete }: ModeSelectorProps) {
-  const { setMode } = useBookingWidget()
+  const { setMode, mode } = useBookingWidget()
 
-  const handleSelectMode = (mode: "service" | "executor") => {
-    setMode(mode)
+  const handleModeSelect = (selectedMode: "service" | "executor") => {
+    setMode(selectedMode)
     onComplete()
   }
 
+  const containerStyle: React.CSSProperties = {
+    padding: "1.5rem",
+  }
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: "1.25rem",
+    fontWeight: 600,
+    marginBottom: "1.5rem",
+    color: "#0f172a",
+  }
+
+  const gridStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+    gap: "1rem",
+    marginBottom: "1.5rem",
+  }
+
+  const cardStyle = (isSelected: boolean): React.CSSProperties => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "1.5rem",
+    background: "#ffffff",
+    border: `1px solid ${isSelected ? "#2563eb" : "#e2e8f0"}`,
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    backgroundColor: isSelected ? "rgba(37, 99, 235, 0.05)" : undefined,
+  })
+
+  const iconStyle: React.CSSProperties = {
+    width: "2.5rem",
+    height: "2.5rem",
+    marginBottom: "1rem",
+    color: "#64748b",
+  }
+
+  const nameStyle: React.CSSProperties = {
+    fontSize: "1rem",
+    fontWeight: 500,
+    color: "#0f172a",
+    marginBottom: "0.5rem",
+    textAlign: "center",
+  }
+
+  const descriptionStyle: React.CSSProperties = {
+    fontSize: "0.875rem",
+    color: "#64748b",
+    textAlign: "center",
+    lineHeight: 1.4,
+  }
+
   return (
-    <div className="tw-space-y-4">
-      <h3 className="tw-text-lg tw-font-medium tw-text-center tw-mb-4">How would you like to book?</h3>
-
-      <div className="tw-grid tw-grid-cols-1 tw-gap-4">
-        <div
-          className="tw-border tw-rounded-md tw-p-4 tw-cursor-pointer tw-bg-white tw-shadow-sm hover:tw-shadow-md tw-transition-all"
-          onClick={() => handleSelectMode("service")}
+    <div style={containerStyle}>
+      <h3 style={titleStyle}>How would you like to book?</h3>
+      <div style={gridStyle}>
+        <button
+          style={cardStyle(mode === "service")}
+          onClick={() => handleModeSelect("service")}
         >
-          <div className="tw-flex tw-items-center tw-pb-2">
-            <CalendarDays className="tw-mr-2 tw-h-5 tw-w-5" />
-            <h4 className="tw-text-lg tw-font-medium">By Service</h4>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={iconStyle}
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <div style={nameStyle}>Browse All Services</div>
+          <div style={descriptionStyle}>
+            View all available services and choose a specialist later
           </div>
-          <p className="tw-text-sm tw-text-muted-foreground">
-            Choose a service first, then select from available staff members
-          </p>
-        </div>
-
-        <div
-          className="tw-border tw-rounded-md tw-p-4 tw-cursor-pointer tw-bg-white tw-shadow-sm hover:tw-shadow-md tw-transition-all"
-          onClick={() => handleSelectMode("executor")}
+        </button>
+        <button
+          style={cardStyle(mode === "executor")}
+          onClick={() => handleModeSelect("executor")}
         >
-          <div className="tw-flex tw-items-center tw-pb-2">
-            <Users className="tw-mr-2 tw-h-5 tw-w-5" />
-            <h4 className="tw-text-lg tw-font-medium">By Staff Member</h4>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={iconStyle}
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <div style={nameStyle}>Choose a Specialist</div>
+          <div style={descriptionStyle}>
+            Pick your preferred specialist and see their services
           </div>
-          <p className="tw-text-sm tw-text-muted-foreground">
-            Choose your preferred staff member first, then select a service
-          </p>
-        </div>
+        </button>
       </div>
     </div>
   )

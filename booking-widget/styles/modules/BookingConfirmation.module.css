@@ -1,0 +1,153 @@
+.booking-widget-confirmation {
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.booking-widget-confirmation__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #0f172a;
+}
+
+.booking-widget-confirmation__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.booking-widget-confirmation__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.booking-widget-confirmation__section-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.booking-widget-confirmation__section-content {
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.booking-widget-confirmation__price {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.booking-widget-confirmation__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.booking-widget-confirmation__error {
+  text-align: center;
+  color: #ef4444;
+  margin-bottom: 1rem;
+}
+
+.booking-widget-confirmation__success {
+  text-align: center;
+  color: #10b981;
+  margin-bottom: 1rem;
+}
+
+.booking-widget-confirmation__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.booking-widget-confirmation__submit {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: #2563eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-widget-confirmation__submit:hover {
+  background: #1d4ed8;
+}
+
+.booking-widget-confirmation__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.booking-widget-confirmation__back {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-widget-confirmation__back:hover {
+  background: #f8fafc;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .booking-widget-confirmation {
+    color: #f8fafc;
+  }
+
+  .booking-widget-confirmation__title {
+    color: #f8fafc;
+  }
+
+  .booking-widget-confirmation__section-title {
+    color: #94a3b8;
+  }
+
+  .booking-widget-confirmation__section-content {
+    color: #f8fafc;
+  }
+
+  .booking-widget-confirmation__price {
+    color: #f8fafc;
+  }
+
+  .booking-widget-confirmation__error {
+    color: #f87171;
+  }
+
+  .booking-widget-confirmation__success {
+    color: #34d399;
+  }
+
+  .booking-widget-confirmation__submit {
+    background: #3b82f6;
+  }
+
+  .booking-widget-confirmation__submit:hover {
+    background: #2563eb;
+  }
+
+  .booking-widget-confirmation__back {
+    color: #f8fafc;
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .booking-widget-confirmation__back:hover {
+    background: #334155;
+  }
+} 

@@ -1,94 +1,136 @@
 "use client"
 
-import React from "react"
-import { Button } from "@/components/ui/button"
+import React, { useState } from "react"
+import { Loader2 } from "lucide-react"
 import { useBookingWidget } from "./context"
-import { CheckCircle } from "lucide-react"
+import { createBooking } from "@/services/booking-api"
+import { format } from "date-fns"
+import "../../styles/modules/BookingConfirmation.module.css"
 
 interface BookingConfirmationProps {
-  onNewBooking: () => void
+  onBack: () => void
+  onComplete: () => void
 }
 
-export default function BookingConfirmation({ onNewBooking }: BookingConfirmationProps) {
-  const { bookingResponse, selectedService, selectedExecutor, selectedSlot, resetBooking } = useBookingWidget()
+export default function BookingConfirmation({ onBack, onComplete }: BookingConfirmationProps) {
+  const {
+    companyGuid,
+    selectedService,
+    selectedExecutor,
+    selectedDate,
+    selectedSlot,
+    customerData,
+    setBookingResponse,
+  } = useBookingWidget()
 
-  if (!bookingResponse || !selectedService || !selectedSlot) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleConfirm = async () => {
+    if (!selectedService || !selectedSlot || !customerData || !selectedDate) return
+
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await createBooking({
+        companyGuid,
+        clientName: customerData.name,
+        clientPhone: customerData.phone,
+        clientAddress: null,
+        notes: customerData.notes,
+        items: [
+          {
+            serviceGuid: selectedService.publicId,
+            executorGuid: selectedExecutor?.guid || null,
+            start: selectedSlot.time,
+            requiresAddress: false,
+          },
+        ],
+      })
+
+      setBookingResponse(response)
+      onComplete()
+    } catch (err) {
+      console.error("Error creating booking:", err)
+      setError("Failed to create booking. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
     return (
-      <div className="text-center py-8">
-        <p className="mb-4">Booking information is missing. Please try again.</p>
-        <Button onClick={() => resetBooking()}>Start Over</Button>
+      <div className="booking-widget-confirmation">
+        <div className="booking-widget-confirmation__loading">
+          <Loader2 className="tw-h-8 tw-w-8 tw-animate-spin" />
+          <span className="tw-ml-2">Creating your booking...</span>
+        </div>
       </div>
     )
   }
 
-  const bookingDate = new Date(selectedSlot.time)
-  const formattedDate = bookingDate.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })
-
-  const formattedTime = bookingDate.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  })
-
-  const handleNewBooking = () => {
-    resetBooking()
-    onNewBooking()
-  }
-
   return (
-    <div className="space-y-6 text-center">
-      <div className="flex justify-center">
-        <CheckCircle className="h-16 w-16 text-green-500" />
-      </div>
+    <div className="booking-widget-confirmation">
+      <h3 className="booking-widget-confirmation__title">Confirm Your Booking</h3>
 
-      <h3 className="text-xl font-bold">Booking Confirmed!</h3>
+      {error && <div className="booking-widget-confirmation__error">{error}</div>}
 
-      <p className="text-muted-foreground">
-        Your booking reference: <span className="font-medium text-foreground">{bookingResponse.publicId}</span>
-      </p>
-
-      <div className="bg-muted p-4 rounded-md text-left">
-        <h4 className="font-medium mb-2">Booking Details</h4>
-        <ul className="space-y-2 text-sm">
-          <li>
-            <span className="font-medium">Service:</span> {selectedService.serviceName}
-          </li>
-          {selectedExecutor && (
-            <li>
-              <span className="font-medium">Staff:</span> {selectedExecutor.name}
-            </li>
-          )}
-          <li>
-            <span className="font-medium">Date:</span> {formattedDate}
-          </li>
-          <li>
-            <span className="font-medium">Time:</span> {formattedTime}
-          </li>
-          <li>
-            <span className="font-medium">Duration:</span> {selectedService.durationMinutes} minutes
-          </li>
-          <li>
-            <span className="font-medium">Price:</span> ${(selectedService.servicePrice / 100).toFixed(2)}
-          </li>
-        </ul>
-      </div>
-
-      {bookingResponse.comment && (
-        <div className="bg-muted p-4 rounded-md text-left">
-          <h4 className="font-medium mb-2">Your Comments</h4>
-          <p className="text-sm">{bookingResponse.comment}</p>
+      <div className="booking-widget-confirmation__content">
+        <div className="booking-widget-confirmation__section">
+          <span className="booking-widget-confirmation__section-title">Service</span>
+          <span className="booking-widget-confirmation__section-content">
+            {selectedService?.serviceName}
+          </span>
+          <span className="booking-widget-confirmation__price">
+            {new Intl.NumberFormat("ru-RU", {
+              style: "currency",
+              currency: "RUB",
+              minimumFractionDigits: 0,
+            }).format(selectedService?.servicePrice || 0)}
+          </span>
         </div>
-      )}
 
-      <div className="pt-4">
-        <Button onClick={handleNewBooking} className="w-full">
-          Book Another Appointment
-        </Button>
+        {selectedExecutor && (
+          <div className="booking-widget-confirmation__section">
+            <span className="booking-widget-confirmation__section-title">Specialist</span>
+            <span className="booking-widget-confirmation__section-content">{selectedExecutor.name}</span>
+          </div>
+        )}
+
+        <div className="booking-widget-confirmation__section">
+          <span className="booking-widget-confirmation__section-title">Date & Time</span>
+          <span className="booking-widget-confirmation__section-content">
+            {selectedDate?.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}{" "}
+            at {format(new Date(selectedSlot?.time || ""), "h:mm a")}
+          </span>
+        </div>
+
+        <div className="booking-widget-confirmation__section">
+          <span className="booking-widget-confirmation__section-title">Your Information</span>
+          <span className="booking-widget-confirmation__section-content">{customerData?.name}</span>
+          <span className="booking-widget-confirmation__section-content">{customerData?.phone}</span>
+          {customerData?.notes && (
+            <span className="booking-widget-confirmation__section-content">{customerData.notes}</span>
+          )}
+        </div>
+      </div>
+
+      <div className="booking-widget-confirmation__buttons">
+        <button
+          className="booking-widget-confirmation__submit"
+          onClick={handleConfirm}
+          disabled={loading}
+        >
+          Confirm Booking
+        </button>
+        <button className="booking-widget-confirmation__back" onClick={onBack} disabled={loading}>
+          Back
+        </button>
       </div>
     </div>
   )

@@ -25,19 +25,37 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
+        oneOf: [
           {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                auto: /\.module\.css$/,
-                localIdentName: '[local]',
-                exportLocalsConvention: 'camelCase',
+            test: /\.module\.css$/,
+            use: [
+              MiniCssExtractPlugin.loader,
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: {
+                    localIdentName: '[local]',
+                    exportLocalsConvention: 'camelCase',
+                  },
+                  importLoaders: 1,
+                },
               },
-            },
+              'postcss-loader',
+            ],
           },
-          'postcss-loader',
+          {
+            use: [
+              MiniCssExtractPlugin.loader,
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: false,
+                  importLoaders: 1,
+                },
+              },
+              'postcss-loader',
+            ],
+          },
         ],
       },
     ],

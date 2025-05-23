@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, type ReactNode } from "react"
-import type { Service, Executor, TimeSlot, BookingResponse } from "@/types/booking"
+import type { Service, Executor, TimeSlot, CustomerFormData, BookingResponse } from "@/types/booking"
 
 type BookingMode = "service" | "executor"
 
@@ -12,10 +12,7 @@ interface BookingState {
   selectedExecutor: Executor | null
   selectedDate: Date | null
   selectedSlot: TimeSlot | null
-  clientName: string
-  clientPhone: string
-  clientAddress: string
-  comment: string
+  customerData: CustomerFormData | null
   bookingResponse: BookingResponse | null
   anyExecutor: boolean
 }
@@ -26,12 +23,9 @@ interface BookingContextType extends BookingState {
   setSelectedExecutor: (executor: Executor | null) => void
   setSelectedDate: (date: Date | null) => void
   setSelectedSlot: (slot: TimeSlot | null) => void
-  setClientName: (name: string) => void
-  setClientPhone: (phone: string) => void
-  setClientAddress: (address: string) => void
-  setComment: (comment: string) => void
+  setCustomerData: (data: CustomerFormData | null) => void
   setBookingResponse: (response: BookingResponse | null) => void
-  setAnyExecutor: (any: boolean) => void
+  setAnyExecutor: (value: boolean) => void
   resetBooking: () => void
 }
 
@@ -49,22 +43,17 @@ export function BookingWidgetProvider({
   const [selectedExecutor, setSelectedExecutor] = useState<Executor | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null)
-  const [clientName, setClientName] = useState("")
-  const [clientPhone, setClientPhone] = useState("")
-  const [clientAddress, setClientAddress] = useState("")
-  const [comment, setComment] = useState("")
+  const [customerData, setCustomerData] = useState<CustomerFormData | null>(null)
   const [bookingResponse, setBookingResponse] = useState<BookingResponse | null>(null)
   const [anyExecutor, setAnyExecutor] = useState(false)
 
   const resetBooking = () => {
+    setMode("service")
     setSelectedService(null)
     setSelectedExecutor(null)
     setSelectedDate(null)
     setSelectedSlot(null)
-    setClientName("")
-    setClientPhone("")
-    setClientAddress("")
-    setComment("")
+    setCustomerData(null)
     setBookingResponse(null)
     setAnyExecutor(false)
   }
@@ -78,10 +67,7 @@ export function BookingWidgetProvider({
         selectedExecutor,
         selectedDate,
         selectedSlot,
-        clientName,
-        clientPhone,
-        clientAddress,
-        comment,
+        customerData,
         bookingResponse,
         anyExecutor,
         setMode,
@@ -89,10 +75,7 @@ export function BookingWidgetProvider({
         setSelectedExecutor,
         setSelectedDate,
         setSelectedSlot,
-        setClientName,
-        setClientPhone,
-        setClientAddress,
-        setComment,
+        setCustomerData,
         setBookingResponse,
         setAnyExecutor,
         resetBooking,
