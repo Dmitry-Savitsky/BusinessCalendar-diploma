@@ -21,7 +21,7 @@ namespace BusinessCalendar.Infrastructure.Persistence.Repositories
         /// в диапазоне [from, to) по полю ServiceStart.
         /// Загружает навигационные свойства Order, Service и Executor.
         /// </summary>
-        public async Task<List<ServiceInOrder>> GetConfirmedForExecutorAsync(
+        public async Task<List<ServiceInOrder>> GetForExecutorAsync(
             int executorId, DateTime from, DateTime to)
         {
             return await _ctx.ServiceInOrders
@@ -31,12 +31,12 @@ namespace BusinessCalendar.Infrastructure.Persistence.Repositories
                 .Include(sio => sio.Executor)
                 .Where(sio =>
                     sio.ExecutorId == executorId
-                    && sio.Order.Confirmed == true
                     && sio.ServiceStart.HasValue
                     && sio.ServiceStart.Value >= from
                     && sio.ServiceStart.Value < to)
                 .ToListAsync();
         }
+
 
         /// <summary>
         /// Проверяет, есть ли уже занятой слот, пересекающийся с [startUtc, endUtc).

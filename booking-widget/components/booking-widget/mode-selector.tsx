@@ -53,20 +53,20 @@ export default function ModeSelector({ onComplete }: ModeSelectorProps) {
     color: "#64748b",
   }
 
-  const nameStyle: React.CSSProperties = {
+  const nameStyle = (isSelected: boolean): React.CSSProperties => ({
     fontSize: "1rem",
     fontWeight: 500,
-    color: "#0f172a",
+    color: mode === "service" ? "#ffffff" : "#0f172a",
     marginBottom: "0.5rem",
     textAlign: "center",
-  }
+  })
 
-  const descriptionStyle: React.CSSProperties = {
+  const descriptionStyle = (isSelected: boolean): React.CSSProperties => ({
     fontSize: "0.875rem",
-    color: "#64748b",
+    color: mode === "service" ? "#e2e8f0" : "#000000",
     textAlign: "center",
     lineHeight: 1.4,
-  }
+  })
 
   return (
     <div style={containerStyle}>
@@ -91,13 +91,13 @@ export default function ModeSelector({ onComplete }: ModeSelectorProps) {
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          <div style={nameStyle}>Browse All Services</div>
-          <div style={descriptionStyle}>
+          <div style={nameStyle(mode === "service")}>Browse All Services</div>
+          <div style={descriptionStyle(mode === "service")}>
             View all available services and choose a specialist later
           </div>
         </button>
         <button
-          style={cardStyle(mode === "executor")}
+          style={cardStyle(mode === "service")}
           onClick={() => handleModeSelect("executor")}
         >
           <svg
@@ -113,8 +113,8 @@ export default function ModeSelector({ onComplete }: ModeSelectorProps) {
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          <div style={nameStyle}>Choose a Specialist</div>
-          <div style={descriptionStyle}>
+          <div style={nameStyle(mode === "service")}>Choose a Specialist</div>
+          <div style={descriptionStyle(mode === "service")}>
             Pick your preferred specialist and see their services
           </div>
         </button>

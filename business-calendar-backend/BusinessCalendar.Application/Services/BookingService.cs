@@ -75,7 +75,7 @@ namespace BusinessCalendar.Application.Services
             var fromUtc = TimeZoneInfo.ConvertTimeToUtc(targetLocal, _tz);
             var toUtc = TimeZoneInfo.ConvertTimeToUtc(targetLocal.AddDays(1), _tz);
             var existing = await _uow.ServiceInOrderRepository
-                .GetConfirmedForExecutorAsync(executor.Id, fromUtc, toUtc);
+                .GetForExecutorAsync(executor.Id, fromUtc, toUtc);
 
             var reserved = existing
                 .Where(sio => sio.ServiceStart.HasValue && sio.ServiceEnd.HasValue)
