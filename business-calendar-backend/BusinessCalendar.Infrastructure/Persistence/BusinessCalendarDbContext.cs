@@ -20,6 +20,8 @@ namespace BusinessCalendar.Infrastructure.Persistence
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<ServiceInOrder> ServiceInOrders { get; set; }
+        public DbSet<ExecutorNotification> ExecutorNotifications { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
