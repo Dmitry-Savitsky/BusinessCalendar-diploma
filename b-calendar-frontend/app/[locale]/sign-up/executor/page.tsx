@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -12,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import { useLocale } from 'next-intl'
 
 // Update imports to include our API functions
 import { executorRegister } from "@/lib/api/auth"
@@ -20,6 +20,7 @@ export default function ExecutorSignUpPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const locale = useLocale()
 
   const [executorGuid, setExecutorGuid] = useState("")
   const [executorPhone, setExecutorPhone] = useState("")
@@ -51,7 +52,7 @@ export default function ExecutorSignUpPage() {
       })
 
       // Redirect to executor dashboard
-      router.push("/app/executor")
+      router.push(`/${locale}/app/executor`)
     } catch (error) {
       toast({
         title: "Registration failed",
@@ -129,7 +130,7 @@ export default function ExecutorSignUpPage() {
             <CardFooter className="flex flex-col">
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}
-                <Link href="/sign-in" className="text-teal-500 hover:underline">
+                <Link href={`/${locale}/sign-in`} className="text-teal-500 hover:underline">
                   Sign In
                 </Link>
               </div>
@@ -140,4 +141,4 @@ export default function ExecutorSignUpPage() {
       <Footer />
     </div>
   )
-}
+} 

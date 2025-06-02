@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -12,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import { useLocale } from 'next-intl'
 
 // Update imports to include our API functions
 import { companyRegister } from "@/lib/api/auth"
@@ -20,6 +20,7 @@ export default function CompanySignUpPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const locale = useLocale()
 
   const [companyName, setCompanyName] = useState("")
   const [companyPhone, setCompanyPhone] = useState("")
@@ -53,7 +54,7 @@ export default function CompanySignUpPage() {
       })
 
       // Redirect to company dashboard
-      router.push("/app/company")
+      router.push(`/${locale}/app/company`)
     } catch (error) {
       toast({
         title: "Registration failed",
@@ -147,7 +148,7 @@ export default function CompanySignUpPage() {
             <CardFooter className="flex flex-col">
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}
-                <Link href="/sign-in" className="text-teal-500 hover:underline">
+                <Link href={`/${locale}/sign-in`} className="text-teal-500 hover:underline">
                   Sign In
                 </Link>
               </div>
@@ -158,4 +159,4 @@ export default function CompanySignUpPage() {
       <Footer />
     </div>
   )
-}
+} 

@@ -16,24 +16,16 @@ export async function generateMetadata({
 }: {
   params: { locale: string }
 }) {
-  const { locale } = await params;
+  const { locale } = await params
   
   // Validate locale
   if (!locales.includes(locale)) {
-    notFound();
+    notFound()
   }
 
   return {
     title: "B-Calendar - Booking Management System",
     description: "A multi-user application for service booking management",
-  };
-}
-
-async function getMessages(locale: string) {
-  try {
-    return (await import(`../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
   }
 }
 
@@ -44,14 +36,18 @@ export default async function LocaleLayout({
   children: React.ReactNode
   params: { locale: string }
 }) {
-  const { locale } = await params;
-
-  // Validate locale
+  const { locale } = await params
+  
   if (!locales.includes(locale)) {
-    notFound();
+    notFound()
   }
 
-  const messages = await getMessages(locale);
+  let messages
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default
+  } catch (error) {
+    notFound()
+  }
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
@@ -60,5 +56,5 @@ export default async function LocaleLayout({
         <Toaster />
       </>
     </NextIntlClientProvider>
-  );
+  )
 } 

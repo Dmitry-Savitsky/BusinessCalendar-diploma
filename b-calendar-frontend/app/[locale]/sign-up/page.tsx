@@ -4,8 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Building2, UserCog } from "lucide-react"
+import { useLocale } from 'next-intl'
 
 export default function SignUpPage() {
+  const locale = useLocale()
+  
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -100,7 +103,7 @@ export default function SignUpPage() {
                     </li>
                   </ul>
                 </div>
-                <Link href="/sign-up/company" className="mt-auto">
+                <Link href={`/${locale}/sign-up/company`} className="mt-auto">
                   <Button className="w-full">Sign Up as Company</Button>
                 </Link>
               </CardContent>
@@ -187,7 +190,7 @@ export default function SignUpPage() {
                     </li>
                   </ul>
                 </div>
-                <Link href="/sign-up/executor" className="mt-auto">
+                <Link href={`/${locale}/sign-up/executor`} className="mt-auto">
                   <Button className="w-full">Sign Up as Executor</Button>
                 </Link>
               </CardContent>
@@ -197,7 +200,7 @@ export default function SignUpPage() {
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Already have an account?{" "}
-              <Link href="/sign-in" className="font-medium text-teal-500 hover:underline">
+              <Link href={`/${locale}/sign-in`} className="font-medium text-teal-500 hover:underline">
                 Sign In
               </Link>
             </p>
@@ -207,4 +210,4 @@ export default function SignUpPage() {
       <Footer />
     </div>
   )
-}
+} 

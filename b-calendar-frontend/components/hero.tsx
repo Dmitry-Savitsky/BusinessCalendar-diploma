@@ -3,9 +3,11 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 
 export default function Hero() {
   const t = useTranslations('hero')
+  const locale = useLocale()
 
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-background">
@@ -21,12 +23,12 @@ export default function Hero() {
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Link href="/sign-up" className="flex-1 min-[400px]:flex-initial">
+              <Link href={`/${locale}/sign-up`} className="flex-1 min-[400px]:flex-initial">
                 <Button size="lg" className="w-full">
                   {t('getStarted')}
                 </Button>
               </Link>
-              <Link href="/#features" className="flex-1 min-[400px]:flex-initial">
+              <Link href={`/${locale}#features`} className="flex-1 min-[400px]:flex-initial">
                 <Button size="lg" variant="outline" className="w-full">
                   {t('learnMore')}
                 </Button>

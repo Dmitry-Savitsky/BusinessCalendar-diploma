@@ -1,18 +1,22 @@
+import Navbar from "@/components/navbar"
 import Hero from "@/components/hero"
 import Features from "@/components/features"
 import FAQ from "@/components/faq"
 import Contact from "@/components/contact"
-import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 
-export default function Home() {
+export default function LocalizedHome() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
-        <Hero />
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+          <Hero />
+        </div>
         <Features />
-        <FAQ />
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+          <FAQ />
+        </div>
         <Contact />
       </main>
       <Footer />

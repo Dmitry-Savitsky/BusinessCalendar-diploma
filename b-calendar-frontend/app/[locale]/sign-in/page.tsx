@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -13,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import { useLocale } from 'next-intl'
 
 // Update imports to include our API functions
 import { executorLogin, companyLogin } from "@/lib/api/auth"
@@ -21,6 +21,7 @@ export default function SignInPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const locale = useLocale()
 
   // Company login state
   const [companyLoginId, setCompanyLoginId] = useState("")
@@ -44,7 +45,7 @@ export default function SignInPage() {
       })
 
       // Redirect to company dashboard
-      router.push("/app/company")
+      router.push(`/${locale}/app/company`)
     } catch (error) {
       toast({
         title: "Login failed",
@@ -70,7 +71,7 @@ export default function SignInPage() {
       })
 
       // Redirect to executor dashboard
-      router.push("/app/executor")
+      router.push(`/${locale}/app/executor`)
     } catch (error) {
       toast({
         title: "Login failed",
@@ -113,7 +114,7 @@ export default function SignInPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="company-password">Password</Label>
-                        <Link href="/forgot-password" className="text-sm text-teal-500 hover:underline">
+                        <Link href={`/${locale}/forgot-password`} className="text-sm text-teal-500 hover:underline">
                           Forgot password?
                         </Link>
                       </div>
@@ -146,7 +147,7 @@ export default function SignInPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="executor-password">Password</Label>
-                        <Link href="/forgot-password" className="text-sm text-teal-500 hover:underline">
+                        <Link href={`/${locale}/forgot-password`} className="text-sm text-teal-500 hover:underline">
                           Forgot password?
                         </Link>
                       </div>
@@ -169,7 +170,7 @@ export default function SignInPage() {
             <CardFooter className="flex flex-col">
               <div className="mt-4 text-center text-sm">
                 Don't have an account?{" "}
-                <Link href="/sign-up" className="text-teal-500 hover:underline">
+                <Link href={`/${locale}/sign-up`} className="text-teal-500 hover:underline">
                   Sign Up
                 </Link>
               </div>
@@ -180,4 +181,4 @@ export default function SignInPage() {
       <Footer />
     </div>
   )
-}
+} 
