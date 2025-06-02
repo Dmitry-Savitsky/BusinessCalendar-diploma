@@ -1,6 +1,12 @@
+"use client"
+
 import Link from "next/link"
+import { useTranslations } from 'next-intl'
 
 export default function Footer() {
+  const t = useTranslations('footer')
+  const nav = useTranslations('navbar')
+
   return (
     <footer className="w-full border-t py-6 md:py-8">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
@@ -11,21 +17,21 @@ export default function Footer() {
             </Link>
             <nav className="flex gap-4 md:gap-6">
               <Link href="/#features" className="text-sm font-medium transition-colors hover:text-primary">
-                Features
+                {nav('features')}
               </Link>
               <Link href="/#faq" className="text-sm font-medium transition-colors hover:text-primary">
-                FAQ
+                {nav('faq')}
               </Link>
               <Link href="/#about" className="text-sm font-medium transition-colors hover:text-primary">
-                About Us
+                {nav('about')}
               </Link>
               <Link href="/#contact" className="text-sm font-medium transition-colors hover:text-primary">
-                Contact
+                {nav('contact')}
               </Link>
             </nav>
           </div>
           <div className="text-center text-sm text-muted-foreground md:text-right">
-            &copy; {new Date().getFullYear()} B-Calendar. All rights reserved.
+            &copy; {new Date().getFullYear()} B-Calendar. {t('allRightsReserved')}
           </div>
         </div>
       </div>

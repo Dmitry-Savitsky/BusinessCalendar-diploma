@@ -1,0 +1,89 @@
+{
+  "navbar": {
+    "features": "Features",
+    "faq": "FAQ",
+    "about": "About Us",
+    "contact": "Contact",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "hero": {
+    "title": "Streamline Your Service Booking",
+    "description": "B-Calendar helps service providers manage bookings, schedules, and clients all in one place. Perfect for cleaning services, photographers, hairdressers, and more.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More"
+  },
+  "features": {
+    "title": "Features",
+    "subtitle": "Everything you need to manage your service bookings efficiently",
+    "smartScheduling": {
+      "title": "Smart Scheduling",
+      "description": "Manage your service schedule with an intuitive calendar interface"
+    },
+    "teamManagement": {
+      "title": "Team Management",
+      "description": "Assign services to specific executors and manage their schedules"
+    },
+    "realTimeBookings": {
+      "title": "Real-time Bookings",
+      "description": "Allow clients to book services in real-time with instant confirmation"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Track performance and gain insights into your business operations"
+    },
+    "bookingWidget": {
+      "title": "Booking Widget",
+      "description": "Embed a booking widget on your website for seamless client experience"
+    },
+    "secureAccess": {
+      "title": "Secure Access",
+      "description": "Role-based access control for companies and executors"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about B-Calendar",
+    "questions": {
+      "businessTypes": {
+        "question": "What types of businesses can use B-Calendar?",
+        "answer": "B-Calendar is designed for any service-based business that requires appointment scheduling. This includes cleaning services, wedding photographers, hairdressers, consultants, and many more."
+      },
+      "executorRole": {
+        "question": "How does the executor role work?",
+        "answer": "Executors are the service providers who perform the actual services. Companies can add executors to their account, assign services to them, and manage their schedules. Executors can log in to view their assigned orders, services, and client information."
+      },
+      "integration": {
+        "question": "Can I integrate B-Calendar with my website?",
+        "answer": "Yes, B-Calendar provides a booking widget that you can embed on your website. This allows your clients to book services directly from your website without having to navigate to a separate platform."
+      },
+      "mobileApp": {
+        "question": "Is there a mobile app available?",
+        "answer": "Currently, B-Calendar is a web-based application optimized for both desktop and mobile browsers. A dedicated mobile app is on our roadmap for future development."
+      },
+      "security": {
+        "question": "How secure is my data?",
+        "answer": "We take security seriously. All data is encrypted in transit and at rest. We implement role-based access control to ensure that only authorized users can access specific information."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Have questions? Get in touch with our team",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message"
+    },
+    "info": {
+      "email": "support@b-calendar.com",
+      "phone": "+1 (555) 123-4567",
+      "address": "123 Calendar Street, Booking City, BC 12345"
+    }
+  },
+  "footer": {
+    "allRightsReserved": "All rights reserved"
+  }
+} 
