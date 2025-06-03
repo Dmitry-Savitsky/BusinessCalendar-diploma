@@ -1,13 +1,12 @@
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin", "cyrillic"] })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "B-Calendar - Booking Management System",
   description: "A multi-user application for service booking management",
-  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -17,15 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning>
+      <head />
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   )

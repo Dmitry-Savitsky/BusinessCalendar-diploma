@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { logout } from "@/lib/auth"
 import { LayoutDashboard, Calendar, Users, Settings, LogOut, Menu, X, User, ShoppingBag } from "lucide-react"
 import { useState } from "react"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function ExecutorSidebar() {
   const pathname = usePathname()
@@ -69,10 +71,14 @@ export default function ExecutorSidebar() {
       `}
       >
         <div className="flex h-full flex-col">
-          <div className="flex h-16 items-center border-b px-6">
+          <div className="flex h-16 items-center justify-between border-b px-6">
             <Link href="/app/executor" className="flex items-center gap-2">
               <span className="text-xl font-bold">B-Calendar</span>
             </Link>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <LanguageSwitcher />
+            </div>
           </div>
           <div className="flex-1 overflow-auto py-6 px-4">
             <nav className="flex flex-col gap-2">

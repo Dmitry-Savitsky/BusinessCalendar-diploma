@@ -11,10 +11,35 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { locales } from "@/i18n.config"
+import Image from "next/image"
 
 const languages = [
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "ru", name: "Русский", flag: "🇷🇺" },
+  { 
+    code: "en", 
+    name: "English", 
+    flag: (
+      <Image
+        src="/flags/gb.svg"
+        alt="English"
+        width={24}
+        height={24}
+        className="rounded-sm"
+      />
+    )
+  },
+  { 
+    code: "ru", 
+    name: "Русский", 
+    flag: (
+      <Image
+        src="/flags/ru.svg"
+        alt="Русский"
+        width={24}
+        height={24}
+        className="rounded-sm"
+      />
+    )
+  },
 ]
 
 export function LanguageSwitcher() {
@@ -32,7 +57,7 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="w-9 px-0">
-          <span className="text-lg">{languages.find(l => l.code === currentLocale)?.flag}</span>
+          {languages.find(l => l.code === currentLocale)?.flag}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -40,9 +65,9 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => switchLanguage(lang.code)}
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center"
           >
-            <span className="mr-2">{lang.flag}</span>
+            <span className="mr-2 flex items-center">{lang.flag}</span>
             {lang.name}
           </DropdownMenuItem>
         ))}

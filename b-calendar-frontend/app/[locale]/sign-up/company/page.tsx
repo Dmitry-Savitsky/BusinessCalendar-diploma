@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 // Update imports to include our API functions
 import { companyRegister } from "@/lib/api/auth"
@@ -21,6 +21,8 @@ export default function CompanySignUpPage() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const locale = useLocale()
+  const t = useTranslations('auth.signUp.company')
+  const commonT = useTranslations('auth.signUp')
 
   const [companyName, setCompanyName] = useState("")
   const [companyPhone, setCompanyPhone] = useState("")
@@ -73,83 +75,83 @@ export default function CompanySignUpPage() {
         <div className="container max-w-md px-4 md:px-6">
           <Card>
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center">Create a Company Account</CardTitle>
-              <CardDescription className="text-center">Enter your company details to create an account</CardDescription>
+              <CardTitle className="text-2xl font-bold text-center">{t('title')}</CardTitle>
+              <CardDescription className="text-center">{t('description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="company-name">Company Name</Label>
+                  <Label htmlFor="company-name">{t('companyName')}</Label>
                   <Input
                     id="company-name"
-                    placeholder="Enter your company name"
+                    placeholder={t('companyName')}
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company-phone">Company Phone</Label>
+                  <Label htmlFor="company-phone">{t('companyPhone')}</Label>
                   <Input
                     id="company-phone"
-                    placeholder="Enter your company phone"
+                    placeholder={t('companyPhone')}
                     value={companyPhone}
                     onChange={(e) => setCompanyPhone(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company-address">Company Address</Label>
+                  <Label htmlFor="company-address">{t('companyAddress')}</Label>
                   <Input
                     id="company-address"
-                    placeholder="Enter your company address"
+                    placeholder={t('companyAddress')}
                     value={companyAddress}
                     onChange={(e) => setCompanyAddress(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login">Login</Label>
+                  <Label htmlFor="login">{t('login')}</Label>
                   <Input
                     id="login"
-                    placeholder="Create a login"
+                    placeholder={t('login')}
                     value={login}
                     onChange={(e) => setLogin(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('password')}</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder={t('password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="confirm-password">{t('confirmPassword')}</Label>
                   <Input
                     id="confirm-password"
                     type="password"
-                    placeholder="Confirm your password"
+                    placeholder={t('confirmPassword')}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating Account..." : "Create Account"}
+                  {isLoading ? t('creatingAccount') : t('createAccount')}
                 </Button>
               </form>
             </CardContent>
             <CardFooter className="flex flex-col">
               <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
+                {commonT('haveAccount')}{" "}
                 <Link href={`/${locale}/sign-in`} className="text-teal-500 hover:underline">
-                  Sign In
+                  {commonT('signIn')}
                 </Link>
               </div>
             </CardFooter>

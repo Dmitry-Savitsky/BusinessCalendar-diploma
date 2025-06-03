@@ -51,10 +51,16 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        storageKey="b-calendar-theme"
+      >
         {children}
         <Toaster />
-      </>
+      </ThemeProvider>
     </NextIntlClientProvider>
   )
 } 

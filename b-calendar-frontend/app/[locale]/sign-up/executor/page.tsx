@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 // Update imports to include our API functions
 import { executorRegister } from "@/lib/api/auth"
@@ -21,6 +21,8 @@ export default function ExecutorSignUpPage() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const locale = useLocale()
+  const t = useTranslations('auth.signUp.executor')
+  const commonT = useTranslations('auth.signUp')
 
   const [executorGuid, setExecutorGuid] = useState("")
   const [executorPhone, setExecutorPhone] = useState("")
@@ -71,67 +73,65 @@ export default function ExecutorSignUpPage() {
         <div className="container max-w-md px-4 md:px-6">
           <Card>
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center">Create an Executor Account</CardTitle>
-              <CardDescription className="text-center">
-                Enter your details to create an executor account
-              </CardDescription>
+              <CardTitle className="text-2xl font-bold text-center">{t('title')}</CardTitle>
+              <CardDescription className="text-center">{t('description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="executorGuid">GUID</Label>
+                  <Label htmlFor="executorGuid">{t('guid')}</Label>
                   <Input
                     id="executorGuid"
-                    placeholder="Enter your GUID provided by the company"
+                    placeholder={t('guid')}
                     value={executorGuid}
                     onChange={(e) => setExecutorGuid(e.target.value)}
                     required
                   />
-                  <p className="text-xs text-muted-foreground">This is a unique identifier provided by your company</p>
+                  <p className="text-xs text-muted-foreground">{t('guidDescription')}</p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="executorPhone">Phone Number</Label>
+                  <Label htmlFor="executorPhone">{t('phone')}</Label>
                   <Input
                     id="executorPhone"
-                    placeholder="Enter your phone number"
+                    placeholder={t('phone')}
                     value={executorPhone}
                     onChange={(e) => setExecutorPhone(e.target.value)}
                     required
                   />
-                  <p className="text-xs text-muted-foreground">Use the phone number provided by your company</p>
+                  <p className="text-xs text-muted-foreground">{t('phoneDescription')}</p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('password')}</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder={t('password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="confirm-password">{t('confirmPassword')}</Label>
                   <Input
                     id="confirm-password"
                     type="password"
-                    placeholder="Confirm your password"
+                    placeholder={t('confirmPassword')}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating Account..." : "Create Account"}
+                  {isLoading ? t('creatingAccount') : t('createAccount')}
                 </Button>
               </form>
             </CardContent>
             <CardFooter className="flex flex-col">
               <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
+                {commonT('haveAccount')}{" "}
                 <Link href={`/${locale}/sign-in`} className="text-teal-500 hover:underline">
-                  Sign In
+                  {commonT('signIn')}
                 </Link>
               </div>
             </CardFooter>

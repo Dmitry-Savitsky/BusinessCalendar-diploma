@@ -83,6 +83,83 @@
       "address": "123 Calendar Street, Booking City, BC 12345"
     }
   },
+  "auth": {
+    "signIn": {
+      "title": "Sign In",
+      "description": "Enter your credentials to access your account",
+      "company": "Company",
+      "executor": "Executor",
+      "login": "Login",
+      "phone": "Phone Number",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign Up",
+      "signInButton": "Sign In",
+      "signingIn": "Signing in..."
+    },
+    "signUp": {
+      "title": "Choose Your Account Type",
+      "description": "Select the type of account that best fits your role in the booking process",
+      "company": {
+        "title": "Create a Company Account",
+        "description": "Enter your company details to create an account",
+        "companyName": "Company Name",
+        "companyPhone": "Company Phone",
+        "companyAddress": "Company Address",
+        "login": "Login",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "createAccount": "Create Account",
+        "creatingAccount": "Creating Account..."
+      },
+      "executor": {
+        "title": "Create an Executor Account",
+        "description": "Enter your details to create an executor account",
+        "guid": "GUID",
+        "guidDescription": "This is a unique identifier provided by your company",
+        "phone": "Phone Number",
+        "phoneDescription": "Use the phone number provided by your company",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "createAccount": "Create Account",
+        "creatingAccount": "Creating Account...",
+        "features": {
+          "viewServices": "View assigned services",
+          "manageSchedule": "Manage personal schedule",
+          "trackAppointments": "Track upcoming appointments",
+          "clientInfo": "Access client information"
+        },
+        "button": "Sign Up as Executor"
+      },
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign In",
+      "types": {
+        "company": {
+          "title": "Company",
+          "description": "For businesses that provide services and need to manage bookings",
+          "features": {
+            "manageServices": "Manage services and pricing",
+            "manageExecutors": "Add and manage executors",
+            "manageBookings": "View and manage all bookings",
+            "analytics": "Access analytics and reports"
+          },
+          "button": "Sign Up as Company"
+        },
+        "executor": {
+          "title": "Executor",
+          "description": "For service providers who perform the actual services",
+          "features": {
+            "viewServices": "View assigned services",
+            "manageSchedule": "Manage personal schedule",
+            "trackAppointments": "Track upcoming appointments",
+            "clientInfo": "Access client information"
+          },
+          "button": "Sign Up as Executor"
+        }
+      }
+    }
+  },
   "footer": {
     "allRightsReserved": "All rights reserved"
   }
