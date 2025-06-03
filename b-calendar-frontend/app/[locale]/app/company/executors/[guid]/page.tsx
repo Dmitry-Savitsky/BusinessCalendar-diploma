@@ -54,8 +54,10 @@ import ExecutorSchedule from "@/components/executor-schedule"
 
 // Import the config at the top of the file
 import { config } from "@/lib/config"
+import { useTranslations } from 'next-intl'
 
 export default function ExecutorDetailsPage() {
+  const t = useTranslations('executorDetails')
   const router = useRouter()
   const params = useParams()
   const { toast } = useToast()
@@ -99,7 +101,7 @@ export default function ExecutorDetailsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load executor details. Please try again.",
+        description: t('toast.loadError'),
         variant: "destructive",
       })
     } finally {
@@ -124,7 +126,7 @@ export default function ExecutorDetailsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load executor services. Please try again.",
+        description: t('toast.servicesLoadError'),
         variant: "destructive",
       })
     } finally {
@@ -140,7 +142,7 @@ export default function ExecutorDetailsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load executor bookings. Please try again.",
+        description: t('toast.bookingsLoadError'),
         variant: "destructive",
       })
     } finally {
@@ -152,7 +154,7 @@ export default function ExecutorDetailsPage() {
     if (!selectedServiceId) {
       toast({
         title: "Error",
-        description: "Please select a service to assign.",
+        description: t('toast.selectServiceError'),
         variant: "destructive",
       })
       return
@@ -164,7 +166,7 @@ export default function ExecutorDetailsPage() {
 
       toast({
         title: "Success",
-        description: "Service assigned to executor successfully.",
+        description: t('toast.assignSuccess'),
       })
 
       // Reset and close dialog
@@ -176,7 +178,7 @@ export default function ExecutorDetailsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to assign service to executor. Please try again.",
+        description: t('toast.assignError'),
         variant: "destructive",
       })
     } finally {
@@ -190,7 +192,7 @@ export default function ExecutorDetailsPage() {
 
       toast({
         title: "Success",
-        description: "Service removed from executor successfully.",
+        description: t('toast.removeSuccess'),
       })
 
       // Refresh assigned services
@@ -198,7 +200,7 @@ export default function ExecutorDetailsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to remove service from executor. Please try again.",
+        description: t('toast.removeError'),
         variant: "destructive",
       })
     }
@@ -217,16 +219,16 @@ export default function ExecutorDetailsPage() {
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         <Button variant="outline" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {t('navigation.back')}
         </Button>
         <Card className="flex h-[400px] flex-col items-center justify-center text-center">
           <CardContent className="pt-6">
-            <h3 className="text-lg font-medium">Executor Not Found</h3>
+            <h3 className="text-lg font-medium">{t('notFound.title')}</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              The executor you're looking for doesn't exist or has been deleted.
+              {t('notFound.description')}
             </p>
             <Button className="mt-4" onClick={() => router.push("/app/company/executors")}>
-              View All Executors
+              {t('navigation.viewAll')}
             </Button>
           </CardContent>
         </Card>
@@ -239,7 +241,7 @@ export default function ExecutorDetailsPage() {
       <div className="flex items-center space-x-2">
         <Button variant="outline" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {t('navigation.back')}
         </Button>
         <h2 className="text-3xl font-bold tracking-tight">{executor.name}</h2>
       </div>
@@ -247,8 +249,8 @@ export default function ExecutorDetailsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Executor information</CardDescription>
+            <CardTitle>{t('profile.title')}</CardTitle>
+            <CardDescription>{t('profile.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="aspect-square w-full overflow-hidden rounded-md">
@@ -276,7 +278,7 @@ export default function ExecutorDetailsPage() {
               </div>
               {executor.description && (
                 <div className="pt-2">
-                  <h4 className="text-sm font-medium">Description</h4>
+                  <h4 className="text-sm font-medium">{t('profile.description_label')}</h4>
                   <p className="text-sm text-muted-foreground">{executor.description}</p>
                 </div>
               )}
@@ -288,28 +290,28 @@ export default function ExecutorDetailsPage() {
           <Tabs defaultValue="schedule" onValueChange={setActiveTab}>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Executor Management</CardTitle>
+                <CardTitle>{t('management.title')}</CardTitle>
                 <TabsList>
                   <TabsTrigger value="schedule">
                     <Calendar className="mr-2 h-4 w-4" />
-                    Schedule
+                    {t('management.tabs.schedule.title')}
                   </TabsTrigger>
                   <TabsTrigger value="services">
                     <Scissors className="mr-2 h-4 w-4" />
-                    Services
+                    {t('management.tabs.services.title')}
                   </TabsTrigger>
                   <TabsTrigger value="bookings">
                     <Clock className="mr-2 h-4 w-4" />
-                    Bookings
+                    {t('management.tabs.bookings.title')}
                   </TabsTrigger>
                 </TabsList>
               </div>
               <CardDescription>
                 {activeTab === "schedule"
-                  ? "Manage work schedule"
+                  ? t('management.tabs.schedule.description')
                   : activeTab === "services"
-                    ? "Manage services this executor can perform"
-                    : "View all bookings for this executor"}
+                    ? t('management.tabs.services.description')
+                    : t('management.tabs.bookings.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -319,24 +321,24 @@ export default function ExecutorDetailsPage() {
               <TabsContent value="services" className="mt-0">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-medium">Assigned Services</h3>
+                    <h3 className="text-lg font-medium">{t('services.title')}</h3>
                     <Dialog open={isAddServiceDialogOpen} onOpenChange={setIsAddServiceDialogOpen}>
                       <DialogTrigger asChild>
                         <Button disabled={availableServices.length === 0}>
                           <Plus className="mr-2 h-4 w-4" />
-                          Add Service
+                          {t('services.add.button')}
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Assign Service to Executor</DialogTitle>
-                          <DialogDescription>Select a service that {executor.name} can perform.</DialogDescription>
+                          <DialogTitle>{t('services.add.title')}</DialogTitle>
+                          <DialogDescription>{t('services.add.description', { name: executor.name })}</DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                           <div className="grid gap-2">
                             <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a service" />
+                                <SelectValue placeholder={t('services.add.placeholder')} />
                               </SelectTrigger>
                               <SelectContent>
                                 {availableServices.map((service) => (
@@ -353,10 +355,10 @@ export default function ExecutorDetailsPage() {
                             {isSubmitting ? (
                               <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Assigning...
+                                {t('services.add.submitting')}
                               </>
                             ) : (
-                              "Assign Service"
+                              t('services.add.submit')
                             )}
                           </Button>
                         </DialogFooter>
@@ -371,18 +373,18 @@ export default function ExecutorDetailsPage() {
                   ) : executorServices.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
                       <Scissors className="h-12 w-12 text-muted-foreground" />
-                      <h3 className="mt-4 text-lg font-medium">No Services Assigned</h3>
+                      <h3 className="mt-4 text-lg font-medium">{t('services.empty.title')}</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Assign services to this executor to allow them to perform them.
+                        {t('services.empty.description')}
                       </p>
                       {availableServices.length > 0 ? (
                         <Button className="mt-4" onClick={() => setIsAddServiceDialogOpen(true)}>
                           <Plus className="mr-2 h-4 w-4" />
-                          Add Service
+                          {t('services.add.button')}
                         </Button>
                       ) : (
                         <p className="mt-4 text-sm text-muted-foreground">
-                          No available services to assign. All services are already assigned to this executor.
+                          {t('services.empty.noAvailable')}
                         </p>
                       )}
                     </div>
@@ -397,31 +399,33 @@ export default function ExecutorDetailsPage() {
                             <p className="font-medium">{service.serviceName}</p>
                             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                               <span>${service.servicePrice.toFixed(2)}</span>
-                              <span>{service.durationMinutes} minutes</span>
+                              <span>{t('services.service.duration', { minutes: service.durationMinutes })}</span>
                             </div>
                           </div>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600">
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Remove
+                                {t('services.remove.button')}
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogTitle>{t('services.remove.title')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  This will remove the service "{service.serviceName}" from {executor.name}. They will
-                                  no longer be able to perform this service.
+                                  {t('services.remove.description', {
+                                    serviceName: service.serviceName,
+                                    executorName: executor.name,
+                                  })}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel>{t('services.remove.cancel')}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleRemoveService(service.servicePublicId)}
                                   className="bg-red-500 hover:bg-red-600"
                                 >
-                                  Remove
+                                  {t('services.remove.confirm')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -439,7 +443,7 @@ export default function ExecutorDetailsPage() {
                       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                   ) : bookings.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">No bookings found for this executor.</div>
+                    <div className="text-center py-8 text-muted-foreground">{t('bookings.empty')}</div>
                   ) : (
                     <div className="space-y-4">
                       {bookings.map((booking) => {
@@ -461,7 +465,7 @@ export default function ExecutorDetailsPage() {
                               </div>
 
                               <div className="space-y-2">
-                                <div className="font-medium">Client: {booking.clientName}</div>
+                                <div className="font-medium">{t('bookings.details.client')}: {booking.clientName}</div>
                                 <div className="flex items-center gap-2">
                                   <Phone className="h-4 w-4 text-muted-foreground" />
                                   <span>{booking.clientPhone}</span>
@@ -481,17 +485,17 @@ export default function ExecutorDetailsPage() {
                                 {booking.completed === true ? (
                                   <span className="flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
                                     <CheckCircle className="mr-1 h-3 w-3" />
-                                    Completed
+                                    {t('bookings.status.completed')}
                                   </span>
                                 ) : isUpcoming ? (
                                   <span className="flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                                     <Clock className="mr-1 h-3 w-3" />
-                                    Upcoming
+                                    {t('bookings.status.upcoming')}
                                   </span>
                                 ) : (
                                   <span className="flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
                                     <AlertCircle className="mr-1 h-3 w-3" />
-                                    Pending
+                                    {t('bookings.status.pending')}
                                   </span>
                                 )}
                               </div>
@@ -499,14 +503,14 @@ export default function ExecutorDetailsPage() {
 
                             {booking.comment && (
                               <div className="mt-4 pt-4 border-t">
-                                <div className="text-sm font-medium">Comment:</div>
+                                <div className="text-sm font-medium">{t('bookings.details.comment')}:</div>
                                 <div className="text-sm text-muted-foreground">{booking.comment}</div>
                               </div>
                             )}
 
                             {booking.clientAddress && (
                               <div className="mt-2">
-                                <div className="text-sm font-medium">Address:</div>
+                                <div className="text-sm font-medium">{t('bookings.details.address')}:</div>
                                 <div className="text-sm text-muted-foreground">{booking.clientAddress}</div>
                               </div>
                             )}

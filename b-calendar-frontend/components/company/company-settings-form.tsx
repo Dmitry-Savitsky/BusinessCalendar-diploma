@@ -22,16 +22,17 @@ import { useToast } from "@/components/ui/use-toast"
 import { Company, UpdateCompanyData, getCompanyProfile, updateCompanyProfile } from "@/lib/api/company"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-// Declare the custom element for TypeScript
+interface BookingWidgetElement extends HTMLElement {
+  'company-guid'?: string;
+}
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       'booking-widget': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          'company-guid'?: string
-        },
-        HTMLElement
-      >
+        React.HTMLAttributes<BookingWidgetElement>,
+        BookingWidgetElement
+      >;
     }
   }
 }
@@ -471,6 +472,7 @@ export function CompanySettingsForm() {
                     ×
                   </button>
                   {isReactLoaded && isWidgetLoaded && (
+                    // @ts-ignore - Custom web component
                     <booking-widget company-guid={company.publicId}></booking-widget>
                   )}
                 </div>

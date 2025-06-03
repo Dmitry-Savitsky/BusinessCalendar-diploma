@@ -162,5 +162,296 @@
   },
   "footer": {
     "allRightsReserved": "All rights reserved"
+  },
+  "sidebar": {
+    "title": "B-Calendar",
+    "nav": {
+      "dashboard": "Dashboard",
+      "executors": "Executors",
+      "services": "Services",
+      "orders": "Orders",
+      "schedule": "Schedule",
+      "clients": "Clients",
+      "settings": "Settings"
+    },
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "filters": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "customRange": "Custom Range",
+      "pickDate": "Pick a date",
+      "reset": "Reset",
+      "apply": "Apply"
+    },
+    "metrics": {
+      "totalOrders": {
+        "title": "Total Orders",
+        "period": {
+          "today": "Today",
+          "week": "This week",
+          "month": "This month",
+          "selected": "In selected period"
+        }
+      },
+      "confirmedOrders": {
+        "title": "Confirmed Orders",
+        "ofTotal": "% of total"
+      },
+      "completedOrders": {
+        "title": "Completed Orders",
+        "ofTotal": "% of total"
+      },
+      "pendingOrders": {
+        "title": "Pending Orders",
+        "ofTotal": "% of total"
+      }
+    },
+    "charts": {
+      "topPerformers": {
+        "title": "Top 5 Performers by Revenue",
+        "description": "Best performing artists by total revenue",
+        "revenue": "Revenue"
+      },
+      "orderDistribution": {
+        "title": "Order Distribution",
+        "description": "Distribution of orders by status",
+        "orders": "Orders"
+      },
+      "orderDynamics": {
+        "title": "Order Dynamics",
+        "description": "Orders and revenue over time",
+        "orders": "Orders",
+        "revenue": "Revenue"
+      },
+      "orderStatusFunnel": {
+        "title": "Order Status Funnel",
+        "description": "Conversion from all orders to completed",
+        "allOrders": "All Orders",
+        "confirmed": "Confirmed",
+        "completed": "Completed"
+      },
+      "topServices": {
+        "title": "Top 5 Services by Popularity",
+        "description": "Most requested services"
+      },
+      "pricePopularity": {
+        "title": "Price vs Popularity",
+        "description": "Service price compared to order count",
+        "price": "Price",
+        "popularity": "Popularity",
+        "revenue": "Revenue",
+        "services": "Services"
+      }
+    },
+    "errors": {
+      "loadFailed": "Failed to load order data. Please try again.",
+      "refresh": "Refresh"
+    }
+  },
+  "clients": {
+    "title": "Clients",
+    "subtitle": "Manage your clients and view client analytics",
+    "metrics": {
+      "totalClients": {
+        "title": "Total Clients",
+        "description": "Active clients in your database"
+      },
+      "totalOrders": {
+        "title": "Total Orders",
+        "description": "Orders placed by all clients"
+      },
+      "totalRevenue": {
+        "title": "Total Revenue",
+        "description": "Revenue from all client orders"
+      }
+    },
+    "tabs": {
+      "analytics": "Analytics",
+      "clientList": "Client List"
+    },
+    "charts": {
+      "serviceDistribution": {
+        "title": "Distribution of Services",
+        "description": "Most popular services by number of orders",
+        "label": "Services"
+      },
+      "topCustomers": {
+        "title": "Top Customers by Orders",
+        "description": "Clients with the most orders",
+        "label": "Orders"
+      },
+      "ordersDynamics": {
+        "title": "Dynamics of Orders and Revenue by Day",
+        "description": "Peak days and correlation between orders and revenue",
+        "orders": "Orders",
+        "revenue": "Revenue"
+      }
+    },
+    "clientList": {
+      "title": "Client List",
+      "description": "Manage and view all your clients",
+      "search": "Search clients...",
+      "noResults": {
+        "withSearch": "No clients match your search",
+        "noClients": "No clients found"
+      },
+      "buttons": {
+        "viewOrders": "View Orders",
+        "edit": "Edit"
+      }
+    },
+    "errors": {
+      "loadFailed": "Failed to load client data. Please try again.",
+      "refresh": "Refresh"
+    }
+  },
+  "executors": {
+    "title": "Executors",
+    "actions": {
+      "add": {
+        "button": "Add Executor",
+        "title": "Add New Executor",
+        "description": "Create a new executor account. The executor will receive an invitation to set up their account.",
+        "form": {
+          "name": "Name",
+          "namePlaceholder": "Enter executor's name",
+          "phone": "Phone",
+          "phonePlaceholder": "Enter executor's phone number",
+          "description": "Description",
+          "descriptionPlaceholder": "Enter executor's specialization or description",
+          "submit": "Create Executor",
+          "submitting": "Creating..."
+        }
+      },
+      "edit": {
+        "button": "Edit",
+        "title": "Edit Executor",
+        "description": "Update the executor's information.",
+        "form": {
+          "name": "Name",
+          "namePlaceholder": "Enter executor's name",
+          "phone": "Phone",
+          "phonePlaceholder": "Enter executor's phone number",
+          "description": "Description",
+          "descriptionPlaceholder": "Enter executor's specialization or description",
+          "image": "Profile Image",
+          "chooseImage": "Choose Image",
+          "removeImage": "Remove",
+          "submit": "Update Executor",
+          "submitting": "Updating..."
+        }
+      },
+      "delete": {
+        "button": "Delete",
+        "title": "Are you sure?",
+        "description": "This will permanently delete the executor \"{name}\". This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "schedule": {
+        "button": "Schedule",
+        "title": "Executor Schedule",
+        "description": "Manage work schedule for {name}"
+      },
+      "details": "Details"
+    },
+    "empty": {
+      "title": "No Executors Found",
+      "description": "You haven't added any executors yet. Add your first executor to get started."
+    },
+    "toast": {
+      "addSuccess": "Executor added successfully",
+      "addError": "Failed to add executor. Please try again.",
+      "updateSuccess": "Executor updated successfully",
+      "updateError": "Failed to update executor. Please try again.",
+      "deleteSuccess": "Executor deleted successfully",
+      "deleteError": "Failed to delete executor. Please try again.",
+      "loadError": "Failed to load executors. Please try again."
+    }
+  },
+  "executorDetails": {
+    "navigation": {
+      "back": "Back",
+      "viewAll": "View All Executors"
+    },
+    "notFound": {
+      "title": "Executor Not Found",
+      "description": "The executor you're looking for doesn't exist or has been deleted."
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "Executor information",
+      "description_label": "Description"
+    },
+    "management": {
+      "title": "Executor Management",
+      "tabs": {
+        "schedule": {
+          "title": "Schedule",
+          "description": "Manage work schedule"
+        },
+        "services": {
+          "title": "Services",
+          "description": "Manage services this executor can perform"
+        },
+        "bookings": {
+          "title": "Bookings",
+          "description": "View all bookings for this executor"
+        }
+      }
+    },
+    "services": {
+      "title": "Assigned Services",
+      "add": {
+        "button": "Add Service",
+        "title": "Assign Service to Executor",
+        "description": "Select a service that {name} can perform.",
+        "placeholder": "Select a service",
+        "submitting": "Assigning...",
+        "submit": "Assign Service"
+      },
+      "empty": {
+        "title": "No Services Assigned",
+        "description": "Assign services to this executor to allow them to perform them.",
+        "noAvailable": "No available services to assign. All services are already assigned to this executor."
+      },
+      "remove": {
+        "button": "Remove",
+        "title": "Are you sure?",
+        "description": "This will remove the service \"{serviceName}\" from {executorName}. They will no longer be able to perform this service.",
+        "confirm": "Remove",
+        "cancel": "Cancel"
+      },
+      "service": {
+        "duration": "{minutes} minutes"
+      }
+    },
+    "bookings": {
+      "empty": "No bookings found for this executor.",
+      "status": {
+        "completed": "Completed",
+        "upcoming": "Upcoming",
+        "pending": "Pending"
+      },
+      "details": {
+        "client": "Client",
+        "comment": "Comment",
+        "address": "Address"
+      }
+    },
+    "toast": {
+      "loadError": "Failed to load executor details. Please try again.",
+      "servicesLoadError": "Failed to load executor services. Please try again.",
+      "bookingsLoadError": "Failed to load executor bookings. Please try again.",
+      "selectServiceError": "Please select a service to assign.",
+      "assignSuccess": "Service assigned to executor successfully.",
+      "assignError": "Failed to assign service to executor. Please try again.",
+      "removeSuccess": "Service removed from executor successfully.",
+      "removeError": "Failed to remove service from executor. Please try again."
+    }
   }
 } 

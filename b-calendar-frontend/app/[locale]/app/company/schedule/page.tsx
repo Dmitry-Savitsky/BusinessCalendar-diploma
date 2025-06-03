@@ -4,6 +4,7 @@ import React from "react"
 
 import { useState, useEffect, useMemo } from "react"
 import { format, addDays, startOfDay, isSameDay, startOfWeek, isWithinInterval } from "date-fns"
+import { formatInTimeZone } from 'date-fns-tz'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import {
@@ -60,7 +61,7 @@ const TIMEZONE = "Europe/Minsk"
 const formatDate = (dateStr: string) => {
   try {
     const date = new Date(dateStr)
-    return format(date, "PPP", { timeZone: TIMEZONE })
+    return formatInTimeZone(date, TIMEZONE, 'PPP')
   } catch (error) {
     console.error("Error formatting date:", error)
     return "Invalid Date"
@@ -71,7 +72,7 @@ const formatDate = (dateStr: string) => {
 const formatTime = (dateStr: string) => {
   try {
     const date = new Date(dateStr)
-    return format(date, "HH:mm", { timeZone: TIMEZONE })
+    return formatInTimeZone(date, TIMEZONE, 'HH:mm')
   } catch (error) {
     console.error("Error formatting time:", error)
     return "Invalid Time"

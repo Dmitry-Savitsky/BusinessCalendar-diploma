@@ -53,8 +53,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { config } from "@/lib/config"
+import { useTranslations } from 'next-intl'
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
   const [loading, setLoading] = useState(true)
   const [orders, setOrders] = useState<Order[]>([])
   const [statistics, setStatistics] = useState<any>(null)
@@ -147,26 +149,26 @@ export default function DashboardPage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
                 {dateFilter === "today"
-                  ? "Today"
+                  ? t('filters.today')
                   : dateFilter === "week"
-                    ? "This Week"
+                    ? t('filters.thisWeek')
                     : dateFilter === "month"
-                      ? "This Month"
-                      : "Custom Range"}
+                      ? t('filters.thisMonth')
+                      : t('filters.customRange')}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setDateFilter("today")}>Today</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setDateFilter("week")}>This Week</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setDateFilter("month")}>This Month</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDateFilter("today")}>{t('filters.today')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDateFilter("week")}>{t('filters.thisWeek')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDateFilter("month")}>{t('filters.thisMonth')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -183,7 +185,7 @@ export default function DashboardPage() {
                     format(dateRange.from, "LLL dd, y")
                   )
                 ) : (
-                  "Pick a date"
+                  t('filters.pickDate')
                 )}
               </Button>
             </PopoverTrigger>
@@ -198,10 +200,10 @@ export default function DashboardPage() {
               />
               <div className="flex items-center justify-end gap-2 p-3 border-t">
                 <Button variant="outline" size="sm" onClick={() => setDateRange(undefined)}>
-                  Reset
+                  {t('filters.reset')}
                 </Button>
                 <Button size="sm" onClick={applyDateRange}>
-                  Apply
+                  {t('filters.apply')}
                 </Button>
               </div>
             </PopoverContent>
@@ -222,55 +224,55 @@ export default function DashboardPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.totalOrders.title')}</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{statistics.totalOrders}</div>
                 <p className="text-xs text-muted-foreground">
                   {dateFilter === "today"
-                    ? "Today"
+                    ? t('metrics.totalOrders.period.today')
                     : dateFilter === "week"
-                      ? "This week"
+                      ? t('metrics.totalOrders.period.week')
                       : dateFilter === "month"
-                        ? "This month"
-                        : "In selected period"}
+                        ? t('metrics.totalOrders.period.month')
+                        : t('metrics.totalOrders.period.selected')}
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Confirmed Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.confirmedOrders.title')}</CardTitle>
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{statistics.confirmedOrders}</div>
                 <p className="text-xs text-muted-foreground">
-                  {((statistics.confirmedOrders / statistics.totalOrders) * 100 || 0).toFixed(1)}% of total
+                  {((statistics.confirmedOrders / statistics.totalOrders) * 100 || 0).toFixed(1)}{t('metrics.confirmedOrders.ofTotal')}
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Completed Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.completedOrders.title')}</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{statistics.completedOrders}</div>
                 <p className="text-xs text-muted-foreground">
-                  {((statistics.completedOrders / statistics.totalOrders) * 100 || 0).toFixed(1)}% of total
+                  {((statistics.completedOrders / statistics.totalOrders) * 100 || 0).toFixed(1)}{t('metrics.completedOrders.ofTotal')}
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.pendingOrders.title')}</CardTitle>
                 <AlertCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{statistics.pendingOrders}</div>
                 <p className="text-xs text-muted-foreground">
-                  {((statistics.pendingOrders / statistics.totalOrders) * 100 || 0).toFixed(1)}% of total
+                  {((statistics.pendingOrders / statistics.totalOrders) * 100 || 0).toFixed(1)}{t('metrics.pendingOrders.ofTotal')}
                 </p>
               </CardContent>
             </Card>
@@ -284,15 +286,15 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
-                    Top 5 Performers by Revenue
+                    {t('charts.topPerformers.title')}
                   </CardTitle>
-                  <CardDescription>Best performing artists by total revenue</CardDescription>
+                  <CardDescription>{t('charts.topPerformers.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   <ChartContainer
                     config={{
                       revenue: {
-                        label: "Revenue",
+                        label: t('charts.topPerformers.revenue'),
                         color: "hsl(var(--chart-1))",
                       },
                     }}
@@ -323,15 +325,15 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <PieChartIcon className="h-5 w-5" />
-                    Order Distribution
+                    {t('charts.orderDistribution.title')}
                   </CardTitle>
-                  <CardDescription>Distribution of orders by status</CardDescription>
+                  <CardDescription>{t('charts.orderDistribution.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   <ChartContainer
                     config={{
                       value: {
-                        label: "Orders",
+                        label: t('charts.orderDistribution.orders'),
                         color: "hsl(var(--chart-1))",
                       },
                     }}
@@ -368,19 +370,19 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    Order Dynamics
+                    {t('charts.orderDynamics.title')}
                   </CardTitle>
-                  <CardDescription>Orders and revenue over time</CardDescription>
+                  <CardDescription>{t('charts.orderDynamics.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   <ChartContainer
                     config={{
                       orders: {
-                        label: "Orders",
+                        label: t('charts.orderDynamics.orders'),
                         color: "hsl(var(--chart-1))",
                       },
                       revenue: {
-                        label: "Revenue",
+                        label: t('charts.orderDynamics.revenue'),
                         color: "hsl(var(--chart-2))",
                       },
                     }}
@@ -412,46 +414,39 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    Order Status Funnel
+                    {t('charts.orderStatusFunnel.title')}
                   </CardTitle>
-                  <CardDescription>Conversion from all orders to completed</CardDescription>
+                  <CardDescription>{t('charts.orderStatusFunnel.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   <div className="flex flex-col h-full justify-center">
                     <div className="relative h-[200px] mx-auto">
-                      {/* All Orders */}
                       <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[250px] h-[60px] bg-primary/20 rounded-t-lg flex items-center justify-center">
                         <div className="text-center">
-                          <div className="font-medium">All Orders</div>
+                          <div className="font-medium">{t('charts.orderStatusFunnel.allOrders')}</div>
                           <div className="text-sm">{statistics.orderStatusMap.all}</div>
                         </div>
                       </div>
 
-                      {/* Confirmed Orders */}
                       <div className="absolute top-[70px] left-1/2 transform -translate-x-1/2 w-[200px] h-[60px] bg-primary/40 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="font-medium">Confirmed</div>
+                          <div className="font-medium">{t('charts.orderStatusFunnel.confirmed')}</div>
                           <div className="text-sm">
                             {statistics.orderStatusMap.confirmed}
                             <span className="text-xs ml-1">
-                              (
-                              {((statistics.orderStatusMap.confirmed / statistics.orderStatusMap.all) * 100).toFixed(0)}
-                              %)
+                              ({((statistics.orderStatusMap.confirmed / statistics.orderStatusMap.all) * 100).toFixed(0)}%)
                             </span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Completed Orders */}
                       <div className="absolute top-[140px] left-1/2 transform -translate-x-1/2 w-[150px] h-[60px] bg-primary/60 rounded-b-lg flex items-center justify-center">
                         <div className="text-center">
-                          <div className="font-medium">Completed</div>
+                          <div className="font-medium">{t('charts.orderStatusFunnel.completed')}</div>
                           <div className="text-sm">
                             {statistics.orderStatusMap.completed}
                             <span className="text-xs ml-1">
-                              (
-                              {((statistics.orderStatusMap.completed / statistics.orderStatusMap.all) * 100).toFixed(0)}
-                              %)
+                              ({((statistics.orderStatusMap.completed / statistics.orderStatusMap.all) * 100).toFixed(0)}%)
                             </span>
                           </div>
                         </div>
@@ -468,15 +463,15 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
-                    Top 5 Services by Popularity
+                    {t('charts.topServices.title')}
                   </CardTitle>
-                  <CardDescription>Most requested services</CardDescription>
+                  <CardDescription>{t('charts.topServices.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   <ChartContainer
                     config={{
                       count: {
-                        label: "Orders",
+                        label: t('charts.orderDistribution.orders'),
                         color: "hsl(var(--chart-1))",
                       },
                     }}
@@ -507,23 +502,23 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    Price vs Popularity
+                    {t('charts.pricePopularity.title')}
                   </CardTitle>
-                  <CardDescription>Service price compared to order count</CardDescription>
+                  <CardDescription>{t('charts.pricePopularity.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   <ChartContainer
                     config={{
                       price: {
-                        label: "Price",
+                        label: t('charts.pricePopularity.price'),
                         color: "hsl(var(--chart-1))",
                       },
                       popularity: {
-                        label: "Popularity",
+                        label: t('charts.pricePopularity.popularity'),
                         color: "hsl(var(--chart-2))",
                       },
                       revenue: {
-                        label: "Revenue",
+                        label: t('charts.pricePopularity.revenue'),
                         color: "hsl(var(--chart-3))",
                       },
                     }}
@@ -546,9 +541,9 @@ export default function DashboardPage() {
         </>
       ) : (
         <div className="text-center py-10">
-          <p>Failed to load order data. Please try again.</p>
+          <p>{t('errors.loadFailed')}</p>
           <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
-            Refresh
+            {t('errors.refresh')}
           </Button>
         </div>
       )}

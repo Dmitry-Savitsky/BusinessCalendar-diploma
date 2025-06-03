@@ -25,8 +25,10 @@ import { getAllClients, processClientStatistics } from "@/lib/api/clients"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/components/ui/use-toast"
+import { useTranslations } from 'next-intl'
 
 export default function ClientsPage() {
+  const t = useTranslations('clients')
   const [loading, setLoading] = useState(true)
   const [clients, setClients] = useState<any[]>([])
   const [orders, setOrders] = useState<any[]>([])
@@ -50,7 +52,7 @@ export default function ClientsPage() {
         console.error("Error fetching data:", error)
         toast({
           title: "Error",
-          description: "Failed to load client data. Please try again.",
+          description: t('errors.loadFailed'),
           variant: "destructive",
         })
       } finally {
@@ -59,7 +61,7 @@ export default function ClientsPage() {
     }
 
     fetchData()
-  }, [toast])
+  }, [toast, t])
 
   // Filter clients based on search query
   const filteredClients = clients.filter(
@@ -85,8 +87,8 @@ export default function ClientsPage() {
     <div className="container mx-auto px-4 py-6 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
-          <p className="text-muted-foreground">Manage your clients and view client analytics</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -102,32 +104,32 @@ export default function ClientsPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.totalClients.title')}</CardTitle>
                 <User className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{statistics.totalClients}</div>
-                <p className="text-xs text-muted-foreground">Active clients in your database</p>
+                <p className="text-xs text-muted-foreground">{t('metrics.totalClients.description')}</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.totalOrders.title')}</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{statistics.totalOrders}</div>
-                <p className="text-xs text-muted-foreground">Orders placed by all clients</p>
+                <p className="text-xs text-muted-foreground">{t('metrics.totalOrders.description')}</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('metrics.totalRevenue.title')}</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">${statistics.totalRevenue.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">Revenue from all client orders</p>
+                <p className="text-xs text-muted-foreground">{t('metrics.totalRevenue.description')}</p>
               </CardContent>
             </Card>
           </div>
@@ -137,11 +139,11 @@ export default function ClientsPage() {
             <TabsList>
               <TabsTrigger value="charts" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
-                Analytics
+                {t('tabs.analytics')}
               </TabsTrigger>
               <TabsTrigger value="clients" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Client List
+                {t('tabs.clientList')}
               </TabsTrigger>
             </TabsList>
 
@@ -152,15 +154,15 @@ export default function ClientsPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <PieChartIcon className="h-5 w-5" />
-                      Distribution of Services
+                      {t('charts.serviceDistribution.title')}
                     </CardTitle>
-                    <CardDescription>Most popular services by number of orders</CardDescription>
+                    <CardDescription>{t('charts.serviceDistribution.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[350px] overflow-hidden">
                     <ChartContainer
                       config={{
                         services: {
-                          label: "Services",
+                          label: t('charts.serviceDistribution.label'),
                           color: "hsl(var(--chart-1))",
                         },
                       }}
@@ -195,15 +197,15 @@ export default function ClientsPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <BarChart3 className="h-5 w-5" />
-                      Top Customers by Orders
+                      {t('charts.topCustomers.title')}
                     </CardTitle>
-                    <CardDescription>Clients with the most orders</CardDescription>
+                    <CardDescription>{t('charts.topCustomers.description')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[350px] overflow-hidden">
                     <ChartContainer
                       config={{
                         orders: {
-                          label: "Orders",
+                          label: t('charts.topCustomers.label'),
                           color: "hsl(var(--chart-1))",
                         },
                       }}
@@ -222,7 +224,7 @@ export default function ClientsPage() {
                           <XAxis dataKey="name" />
                           <YAxis />
                           <ChartTooltip content={<ChartTooltipContent />} />
-                          <Bar dataKey="orders" fill="#8884d8" name="Orders" />
+                          <Bar dataKey="orders" fill="#8884d8" name={t('charts.topCustomers.label')} />
                         </BarChart>
                       </ResponsiveContainer>
                     </ChartContainer>
@@ -235,19 +237,19 @@ export default function ClientsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    Dynamics of Orders and Revenue by Day
+                    {t('charts.ordersDynamics.title')}
                   </CardTitle>
-                  <CardDescription>Peak days and correlation between orders and revenue</CardDescription>
+                  <CardDescription>{t('charts.ordersDynamics.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[350px]">
                   <ChartContainer
                     config={{
                       orders: {
-                        label: "Orders",
+                        label: t('charts.ordersDynamics.orders'),
                         color: "hsl(var(--chart-1))",
                       },
                       revenue: {
-                        label: "Revenue",
+                        label: t('charts.ordersDynamics.revenue'),
                         color: "hsl(var(--chart-2))",
                       },
                     }}
@@ -274,9 +276,15 @@ export default function ClientsPage() {
                           dataKey="orders"
                           stroke="#8884d8"
                           activeDot={{ r: 8 }}
-                          name="Orders"
+                          name={t('charts.ordersDynamics.orders')}
                         />
-                        <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="#82ca9d" name="Revenue" />
+                        <Line 
+                          yAxisId="right" 
+                          type="monotone" 
+                          dataKey="revenue" 
+                          stroke="#82ca9d" 
+                          name={t('charts.ordersDynamics.revenue')} 
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -287,13 +295,13 @@ export default function ClientsPage() {
             <TabsContent value="clients">
               <Card>
                 <CardHeader>
-                  <CardTitle>Client List</CardTitle>
-                  <CardDescription>Manage and view all your clients</CardDescription>
+                  <CardTitle>{t('clientList.title')}</CardTitle>
+                  <CardDescription>{t('clientList.description')}</CardDescription>
                   <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="search"
-                      placeholder="Search clients..."
+                      placeholder={t('clientList.search')}
                       className="pl-8"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -304,7 +312,7 @@ export default function ClientsPage() {
                   <div className="space-y-4">
                     {filteredClients.length === 0 ? (
                       <p className="text-center text-muted-foreground py-4">
-                        {searchQuery ? "No clients match your search" : "No clients found"}
+                        {searchQuery ? t('clientList.noResults.withSearch') : t('clientList.noResults.noClients')}
                       </p>
                     ) : (
                       filteredClients.map((client) => (
@@ -330,10 +338,10 @@ export default function ClientsPage() {
                               </div>
                               <div className="flex items-center gap-2">
                                 <Button variant="outline" size="sm">
-                                  View Orders
+                                  {t('clientList.buttons.viewOrders')}
                                 </Button>
                                 <Button variant="outline" size="sm">
-                                  Edit
+                                  {t('clientList.buttons.edit')}
                                 </Button>
                               </div>
                             </div>
@@ -349,9 +357,9 @@ export default function ClientsPage() {
         </>
       ) : (
         <div className="text-center py-10">
-          <p>Failed to load client data. Please try again.</p>
+          <p>{t('errors.loadFailed')}</p>
           <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
-            Refresh
+            {t('errors.refresh')}
           </Button>
         </div>
       )}

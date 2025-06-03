@@ -35,11 +35,11 @@ import { Phone, Edit, Trash2, Plus, User, Calendar, Loader2, ExternalLink } from
 import ExecutorSchedule from "@/components/executor-schedule"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreVertical } from "lucide-react"
-
-// Import the config at the top of the file
 import { config } from "@/lib/config"
+import { useTranslations } from 'next-intl'
 
 export default function ExecutorsPage() {
+  const t = useTranslations('executors')
   const { toast } = useToast()
   const router = useRouter()
   const [executors, setExecutors] = useState<Executor[]>([])
@@ -74,7 +74,7 @@ export default function ExecutorsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load executors. Please try again.",
+        description: t('toast.loadError'),
         variant: "destructive",
       })
     } finally {
@@ -93,7 +93,7 @@ export default function ExecutorsPage() {
 
       toast({
         title: "Success",
-        description: "Executor added successfully",
+        description: t('toast.addSuccess'),
       })
 
       // Reset form and close dialog
@@ -107,7 +107,7 @@ export default function ExecutorsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add executor. Please try again.",
+        description: t('toast.addError'),
         variant: "destructive",
       })
     } finally {
@@ -135,7 +135,7 @@ export default function ExecutorsPage() {
 
       toast({
         title: "Success",
-        description: "Executor updated successfully",
+        description: t('toast.updateSuccess'),
       })
 
       // Reset form and close dialog
@@ -151,7 +151,7 @@ export default function ExecutorsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update executor. Please try again.",
+        description: t('toast.updateError'),
         variant: "destructive",
       })
     } finally {
@@ -165,7 +165,7 @@ export default function ExecutorsPage() {
 
       toast({
         title: "Success",
-        description: "Executor deleted successfully",
+        description: t('toast.deleteSuccess'),
       })
 
       // Refresh executors list
@@ -173,7 +173,7 @@ export default function ExecutorsPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete executor. Please try again.",
+        description: t('toast.deleteError'),
         variant: "destructive",
       })
     }
@@ -201,45 +201,43 @@ export default function ExecutorsPage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Executors</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Executor
+              {t('actions.add.button')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Executor</DialogTitle>
-              <DialogDescription>
-                Create a new executor account. The executor will receive an invitation to set up their account.
-              </DialogDescription>
+              <DialogTitle>{t('actions.add.title')}</DialogTitle>
+              <DialogDescription>{t('actions.add.description')}</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">{t('actions.add.form.name')}</Label>
                 <Input
                   id="name"
-                  placeholder="Enter executor's name"
+                  placeholder={t('actions.add.form.namePlaceholder')}
                   value={newExecutorName}
                   onChange={(e) => setNewExecutorName(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">{t('actions.add.form.phone')}</Label>
                 <Input
                   id="phone"
-                  placeholder="Enter executor's phone number"
+                  placeholder={t('actions.add.form.phonePlaceholder')}
                   value={newExecutorPhone}
                   onChange={(e) => setNewExecutorPhone(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('actions.add.form.description')}</Label>
                 <Textarea
                   id="description"
-                  placeholder="Enter executor's specialization or description"
+                  placeholder={t('actions.add.form.descriptionPlaceholder')}
                   value={newExecutorDescription}
                   onChange={(e) => setNewExecutorDescription(e.target.value)}
                 />
@@ -250,10 +248,10 @@ export default function ExecutorsPage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    {t('actions.add.form.submitting')}
                   </>
                 ) : (
-                  "Create Executor"
+                  t('actions.add.form.submit')
                 )}
               </Button>
             </DialogFooter>
@@ -269,13 +267,11 @@ export default function ExecutorsPage() {
         <Card className="flex h-[400px] flex-col items-center justify-center text-center">
           <CardContent className="pt-6">
             <User className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No Executors Found</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              You haven't added any executors yet. Add your first executor to get started.
-            </p>
+            <h3 className="mt-4 text-lg font-medium">{t('empty.title')}</h3>
+            <p className="mt-2 text-sm text-muted-foreground">{t('empty.description')}</p>
             <Button className="mt-4" onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Executor
+              {t('actions.add.button')}
             </Button>
           </CardContent>
         </Card>
@@ -315,7 +311,7 @@ export default function ExecutorsPage() {
                   onClick={() => router.push(`/app/company/executors/${executor.guid}`)}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  Details
+                  {t('actions.details')}
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -326,11 +322,11 @@ export default function ExecutorsPage() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => handleEditClick(executor)}>
                       <Edit className="mr-2 h-4 w-4" />
-                      Edit
+                      {t('actions.edit.button')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleScheduleClick(executor)}>
                       <Calendar className="mr-2 h-4 w-4" />
-                      Schedule
+                      {t('actions.schedule.button')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-500 focus:text-red-500"
@@ -342,30 +338,30 @@ export default function ExecutorsPage() {
                       }}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {t('actions.delete.button')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button id={`delete-alert-${executor.guid}`} className="hidden">
-                      Delete
+                      {t('actions.delete.button')}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogTitle>{t('actions.delete.title')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will permanently delete the executor "{executor.name}". This action cannot be undone.
+                        {t('actions.delete.description', { name: executor.name })}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t('actions.delete.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => handleDeleteExecutor(executor.guid)}
                         className="bg-red-500 hover:bg-red-600"
                       >
-                        Delete
+                        {t('actions.delete.confirm')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -380,39 +376,39 @@ export default function ExecutorsPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Executor</DialogTitle>
-            <DialogDescription>Update the executor's information.</DialogDescription>
+            <DialogTitle>{t('actions.edit.title')}</DialogTitle>
+            <DialogDescription>{t('actions.edit.description')}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-name">Name</Label>
+              <Label htmlFor="edit-name">{t('actions.edit.form.name')}</Label>
               <Input
                 id="edit-name"
-                placeholder="Enter executor's name"
+                placeholder={t('actions.edit.form.namePlaceholder')}
                 value={editExecutorName}
                 onChange={(e) => setEditExecutorName(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-phone">Phone</Label>
+              <Label htmlFor="edit-phone">{t('actions.edit.form.phone')}</Label>
               <Input
                 id="edit-phone"
-                placeholder="Enter executor's phone number"
+                placeholder={t('actions.edit.form.phonePlaceholder')}
                 value={editExecutorPhone}
                 onChange={(e) => setEditExecutorPhone(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-description">Description</Label>
+              <Label htmlFor="edit-description">{t('actions.edit.form.description')}</Label>
               <Textarea
                 id="edit-description"
-                placeholder="Enter executor's specialization or description"
+                placeholder={t('actions.edit.form.descriptionPlaceholder')}
                 value={editExecutorDescription}
                 onChange={(e) => setEditExecutorDescription(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-image">Profile Image</Label>
+              <Label htmlFor="edit-image">{t('actions.edit.form.image')}</Label>
               <div className="flex items-center gap-4">
                 {selectedExecutor?.imgPath && !editExecutorImage && (
                   <div className="h-16 w-16 overflow-hidden rounded-md">
@@ -426,7 +422,7 @@ export default function ExecutorsPage() {
                 {editExecutorImage && (
                   <div className="h-16 w-16 overflow-hidden rounded-md">
                     <img
-                      src={URL.createObjectURL(editExecutorImage) || "/placeholder.svg"}
+                      src={URL.createObjectURL(editExecutorImage)}
                       alt="Preview"
                       className="h-full w-full object-cover"
                     />
@@ -442,7 +438,7 @@ export default function ExecutorsPage() {
                     className="hidden"
                   />
                   <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                    Choose Image
+                    {t('actions.edit.form.chooseImage')}
                   </Button>
                   {editExecutorImage && (
                     <Button
@@ -451,7 +447,7 @@ export default function ExecutorsPage() {
                       className="ml-2 text-red-500 hover:text-red-600"
                       onClick={() => setEditExecutorImage(null)}
                     >
-                      Remove
+                      {t('actions.edit.form.removeImage')}
                     </Button>
                   )}
                 </div>
@@ -463,10 +459,10 @@ export default function ExecutorsPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  {t('actions.edit.form.submitting')}
                 </>
               ) : (
-                "Update Executor"
+                t('actions.edit.form.submit')
               )}
             </Button>
           </DialogFooter>
@@ -477,9 +473,9 @@ export default function ExecutorsPage() {
       <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Executor Schedule</DialogTitle>
+            <DialogTitle>{t('actions.schedule.title')}</DialogTitle>
             <DialogDescription>
-              {selectedExecutor ? `Manage work schedule for ${selectedExecutor.name}` : "Loading..."}
+              {selectedExecutor ? t('actions.schedule.description', { name: selectedExecutor.name }) : "Loading..."}
             </DialogDescription>
           </DialogHeader>
           {selectedExecutor && <ExecutorSchedule executorGuid={selectedExecutor.guid} />}

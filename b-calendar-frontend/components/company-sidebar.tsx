@@ -19,49 +19,50 @@ import {
 import { useState } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { useTranslations } from 'next-intl'
 
 export default function CompanySidebar() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const t = useTranslations('sidebar')
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
-  // Update the navItems array to include the clients link
   const navItems = [
     {
-      title: "Dashboard",
+      title: t('nav.dashboard'),
       href: "/app/company",
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
-      title: "Executors",
+      title: t('nav.executors'),
       href: "/app/company/executors",
       icon: <Users className="h-5 w-5" />,
     },
     {
-      title: "Services",
+      title: t('nav.services'),
       href: "/app/company/services",
       icon: <Scissors className="h-5 w-5" />,
     },
     {
-      title: "Orders",
+      title: t('nav.orders'),
       href: "/app/company/orders",
       icon: <ShoppingBag className="h-5 w-5" />,
     },
     {
-      title: "Schedule",
+      title: t('nav.schedule'),
       href: "/app/company/schedule",
       icon: <Calendar className="h-5 w-5" />,
     },
     {
-      title: "Clients",
+      title: t('nav.clients'),
       href: "/app/company/clients",
       icon: <UserRound className="h-5 w-5" />,
     },
     {
-      title: "Settings",
+      title: t('nav.settings'),
       href: "/app/company/settings",
       icon: <Settings className="h-5 w-5" />,
     },
@@ -89,7 +90,7 @@ export default function CompanySidebar() {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b px-6">
             <Link href="/app/company" className="flex items-center gap-2">
-              <span className="text-xl font-bold">B-Calendar</span>
+              <span className="text-xl font-bold">{t('title')}</span>
             </Link>
             <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -115,7 +116,7 @@ export default function CompanySidebar() {
               onClick={logout}
             >
               <LogOut className="h-5 w-5" />
-              Logout
+              {t('logout')}
             </Button>
           </div>
         </div>
