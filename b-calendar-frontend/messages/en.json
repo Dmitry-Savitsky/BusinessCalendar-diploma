@@ -806,21 +806,23 @@
       "add": {
         "button": "Add Service",
         "title": "Add New Service",
-        "description": "Create a new service that clients can book.",
-        "creating": "Creating..."
+        "description": "Fill out the form to add a new service",
+        "creating": "Creating service...",
+        "submit": "Create"
       },
       "edit": {
         "button": "Edit",
         "title": "Edit Service",
-        "description": "Update the service information.",
-        "updating": "Updating..."
+        "description": "Modify service details",
+        "updating": "Updating...",
+        "submit": "Update"
       },
       "delete": {
         "button": "Delete",
-        "title": "Are you sure?",
-        "description": "This will permanently delete the service \"{name}\". This action cannot be undone.",
-        "confirm": "Delete",
-        "cancel": "Cancel"
+        "title": "Delete Service",
+        "description": "Are you sure you want to delete service {name}? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
       },
       "details": "Details"
     },
@@ -847,38 +849,38 @@
       },
       "duration": {
         "label": "Duration (minutes)",
-        "placeholder": "Enter duration in minutes",
-        "display": "{minutes} minutes"
+        "placeholder": "Enter duration",
+        "display": "{minutes} min"
       },
       "requiresAddress": {
-        "label": "Requires client address (for on-site services)"
+        "label": "Requires client address"
       },
       "submit": {
         "create": "Create Service",
         "update": "Update Service"
       }
     },
-    "empty": {
-      "title": "No Services Found",
-      "description": "You haven't added any services yet. Add your first service to get started."
-    },
     "card": {
       "price": "Price",
       "duration": "Duration",
       "requiresAddress": "Requires client address"
     },
+    "empty": {
+      "title": "No Services",
+      "description": "Add your first service to start accepting orders"
+    },
     "toast": {
-      "loadError": "Failed to load services. Please try again.",
+      "loadError": "Failed to load services",
+      "addSuccess": "Service added successfully",
+      "addError": "Failed to add service",
+      "updateSuccess": "Service updated successfully",
+      "updateError": "Failed to update service",
+      "deleteSuccess": "Service deleted successfully",
+      "deleteError": "Failed to delete service",
       "validation": {
         "title": "Validation Error",
-        "description": "Please fill in all required fields."
-      },
-      "addSuccess": "Service added successfully",
-      "addError": "Failed to add service. Please try again.",
-      "updateSuccess": "Service updated successfully",
-      "updateError": "Failed to update service. Please try again.",
-      "deleteSuccess": "Service deleted successfully",
-      "deleteError": "Failed to delete service. Please try again."
+        "description": "Please fill in all required fields"
+      }
     },
     "details": {
       "navigation": {
