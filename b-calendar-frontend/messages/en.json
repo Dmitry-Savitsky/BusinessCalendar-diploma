@@ -584,6 +584,10 @@
         "pending": "Pending",
         "confirmed": "Confirmed",
         "completed": "Completed"
+      },
+      "total": "Total",
+      "service": {
+        "price": "{price}"
       }
     },
     "details": {
@@ -1137,13 +1141,12 @@
           "range": "{startTime} - {endTime}"
         },
         "client": {
-          "title": "Client",
           "services": "Services"
         },
         "service": {
-          "price": "${price}"
+          "price": "{price} BYN"
         },
-        "total": "Total: ${amount}",
+        "total": "Total",
         "viewDetails": "View Details"
       },
       "orderDetails": {
@@ -1172,7 +1175,7 @@
           },
           "total": {
             "title": "Total",
-            "amount": "${amount}"
+            "amount": "{amount} BYN"
           }
         }
       }
@@ -1241,6 +1244,161 @@
         "completeError": {
           "title": "Error",
           "description": "Failed to complete order. Please try again."
+        }
+      },
+      "metrics": {
+        "todayAppointments": {
+          "title": "Today's Appointments",
+          "nextAt": "Next at {time}",
+          "noAppointments": "No appointments today"
+        },
+        "completedOrders": {
+          "title": "Completed Orders",
+          "completionRate": "{rate}% completion rate"
+        },
+        "upcomingWeek": {
+          "title": "This Week",
+          "totalUpcoming": "{count} upcoming appointments"
+        },
+        "revenue": {
+          "title": "Total Revenue",
+          "upcoming": "Upcoming: {amount} BYN"
+        }
+      },
+      "analytics": {
+        "serviceDistribution": {
+          "title": "Service Distribution",
+          "description": "Distribution of services by type",
+          "orders": "{count} orders",
+          "noData": "No service data available"
+        },
+        "orderStatus": {
+          "title": "Order Status",
+          "description": "Distribution of orders by status",
+          "statuses": {
+            "completed": "Completed",
+            "upcoming": "Upcoming",
+            "pending": "Pending"
+          },
+          "orders": "{count} orders"
+        }
+      },
+      "schedule": {
+        "tabs": {
+          "today": "Today",
+          "upcoming": "Upcoming"
+        },
+        "today": {
+          "title": "Today's Schedule",
+          "description": {
+            "hasAppointments": "{count} appointments scheduled for today",
+            "noAppointments": "No appointments scheduled for today"
+          }
+        },
+        "upcoming": {
+          "title": "Upcoming Schedule",
+          "description": {
+            "hasAppointments": "{count} upcoming appointments",
+            "noAppointments": "No upcoming appointments"
+          }
+        },
+        "appointment": {
+          "time": "{startTime} - {endTime}",
+          "client": {
+            "title": "Client",
+            "info": "{name} • {phone}"
+          },
+          "status": {
+            "completed": "Completed",
+            "confirmed": "Confirmed",
+            "pending": "Pending"
+          }
+        },
+        "noAppointments": "No appointments scheduled"
+      },
+      "errors": {
+        "loadFailed": {
+          "title": "Error",
+          "description": "Failed to load your orders. Please try again later."
+        }
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "metrics": {
+        "todayAppointments": {
+          "title": "Today's Appointments",
+          "nextAt": "Next at {time}",
+          "noAppointments": "No appointments today"
+        },
+        "completedOrders": {
+          "title": "Completed Orders",
+          "completionRate": "{rate}% completion rate"
+        },
+        "upcomingWeek": {
+          "title": "This Week",
+          "totalUpcoming": "{count} upcoming appointments"
+        },
+        "revenue": {
+          "title": "Total Revenue",
+          "upcoming": "Upcoming: {amount} BYN"
+        }
+      },
+      "analytics": {
+        "serviceDistribution": {
+          "title": "Service Distribution",
+          "description": "Distribution of services by type",
+          "orders": "{count} orders",
+          "noData": "No service data available"
+        },
+        "orderStatus": {
+          "title": "Order Status",
+          "description": "Distribution of orders by status",
+          "statuses": {
+            "completed": "Completed",
+            "upcoming": "Upcoming",
+            "pending": "Pending"
+          },
+          "orders": "{count} orders"
+        }
+      },
+      "schedule": {
+        "tabs": {
+          "today": "Today",
+          "upcoming": "Upcoming"
+        },
+        "today": {
+          "title": "Today's Schedule",
+          "description": {
+            "hasAppointments": "{count} appointments scheduled for today",
+            "noAppointments": "No appointments scheduled for today"
+          }
+        },
+        "upcoming": {
+          "title": "Upcoming Schedule",
+          "description": {
+            "hasAppointments": "{count} upcoming appointments",
+            "noAppointments": "No upcoming appointments"
+          }
+        },
+        "appointment": {
+          "time": "{startTime} - {endTime}",
+          "client": {
+            "title": "Client",
+            "info": "{name} • {phone}"
+          },
+          "status": {
+            "completed": "Completed",
+            "confirmed": "Confirmed",
+            "pending": "Pending"
+          }
+        },
+        "noAppointments": "No appointments scheduled"
+      },
+      "errors": {
+        "loadFailed": {
+          "title": "Error",
+          "description": "Failed to load your orders. Please try again later."
         }
       }
     }

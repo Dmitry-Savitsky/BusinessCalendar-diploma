@@ -498,7 +498,8 @@
         "pending": "Ожидает",
         "confirmed": "Подтвержден",
         "completed": "Выполнен"
-      }
+      },
+      "total": "Итого"
     },
     "details": {
       "title": "Детали заказа",
@@ -969,27 +970,27 @@
         },
         "completedOrders": {
           "title": "Выполненные заказы",
-          "completionRate": "{rate}% выполнения"
+          "completionRate": "Выполнено {rate}%"
         },
         "upcomingWeek": {
-          "title": "Предстоящие на этой неделе",
-          "totalUpcoming": "Всего предстоящих: {count}"
+          "title": "Эта неделя",
+          "totalUpcoming": "Предстоит записей: {count}"
         },
         "revenue": {
           "title": "Общая выручка",
-          "upcoming": "Предстоящая: ${amount}"
+          "upcoming": "Предстоящая: {amount} BYN"
         }
       },
       "analytics": {
         "serviceDistribution": {
           "title": "Распределение услуг",
-          "description": "Разбивка ваших услуг по типам",
-          "noData": "Нет данных об услугах",
-          "orders": "{count} заказов"
+          "description": "Распределение услуг по типам",
+          "orders": "{count} заказов",
+          "noData": "Нет данных об услугах"
         },
         "orderStatus": {
           "title": "Статус заказов",
-          "description": "Обзор статусов ваших заказов",
+          "description": "Распределение заказов по статусам",
           "statuses": {
             "completed": "Выполнено",
             "upcoming": "Предстоит",
@@ -1006,15 +1007,15 @@
         "today": {
           "title": "Расписание на сегодня",
           "description": {
-            "hasAppointments": "У вас {count} записей на сегодня",
-            "noAppointments": "У вас нет записей на сегодня"
+            "hasAppointments": "Записей на сегодня: {count}",
+            "noAppointments": "Нет записей на сегодня"
           }
         },
         "upcoming": {
           "title": "Предстоящие записи",
           "description": {
-            "hasAppointments": "У вас {count} предстоящих записей",
-            "noAppointments": "У вас нет предстоящих записей"
+            "hasAppointments": "Предстоящих записей: {count}",
+            "noAppointments": "Нет предстоящих записей"
           }
         },
         "appointment": {
@@ -1029,7 +1030,7 @@
             "pending": "Ожидает"
           }
         },
-        "noAppointments": "Нет записей на сегодня"
+        "noAppointments": "Нет записей"
       },
       "errors": {
         "loadFailed": {
@@ -1134,9 +1135,9 @@
           "services": "Услуги"
         },
         "service": {
-          "price": "${price}"
+          "price": "{price} BYN"
         },
-        "total": "Итого: ${amount}",
+        "total": "Итого",
         "viewDetails": "Подробнее"
       },
       "orderDetails": {
@@ -1165,7 +1166,7 @@
           },
           "total": {
             "title": "Итого",
-            "amount": "${amount}"
+            "amount": "{amount} BYN"
           }
         }
       }

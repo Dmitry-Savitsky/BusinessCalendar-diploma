@@ -356,7 +356,7 @@ export default function ServicesPage() {
                       <DollarSign className="mr-2 h-4 w-4 text-muted-foreground" />
                       <span>{t('card.price')}</span>
                     </div>
-                    <span className="font-medium">${service.servicePrice.toFixed(2)}</span>
+                    <span className="font-medium">{service.servicePrice} BYN</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">

@@ -129,24 +129,23 @@ export const deleteOrder = async (orderId: string): Promise<any> => {
 }
 
 // Format date for display
-export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    weekday: "short",
+export const formatDate = (date: string | Date) => {
+  const d = new Date(date)
+  return d.toLocaleDateString("ru-BY", {
+    weekday: "long",
     year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "Europe/Minsk",
+    month: "long",
+    day: "numeric"
   })
 }
 
 // Format time for display
-export const formatTime = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleTimeString("en-US", {
+export const formatTime = (date: string | Date) => {
+  const d = new Date(date)
+  return d.toLocaleTimeString("ru-BY", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "Europe/Minsk",
+    hour12: false
   })
 }
 

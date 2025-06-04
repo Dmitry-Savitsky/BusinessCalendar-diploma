@@ -48,9 +48,9 @@ export default function ExecutorDashboard() {
 
   const stats = calculateOrderStats(orders)
 
-  // Get today's date for display
+  // Get today's date for display using Intl
   const today = new Date()
-  const todayFormatted = today.toLocaleDateString("en-US", {
+  const todayFormatted = today.toLocaleDateString("ru-BY", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -133,9 +133,9 @@ export default function ExecutorDashboard() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${stats.totalRevenue}</div>
+              <div className="text-2xl font-bold">{stats.totalRevenue} BYN</div>
               <p className="text-xs text-muted-foreground">
-                {t('metrics.revenue.upcoming', { amount: stats.upcomingRevenue })}
+                {t('metrics.revenue.upcoming', { amount: stats.upcomingRevenue + ' BYN' })}
               </p>
             </CardContent>
           </Card>

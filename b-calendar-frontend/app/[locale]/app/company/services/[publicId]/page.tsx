@@ -261,7 +261,7 @@ export default function ServiceDetailsPage() {
                 <p className="text-sm font-medium text-muted-foreground">{t('info.fields.price')}</p>
                 <p className="flex items-center">
                   <DollarSign className="mr-1 h-4 w-4" />
-                  {service.servicePrice.toFixed(2)}
+                  {service.servicePrice} BYN
                 </p>
               </div>
               <div className="space-y-1">

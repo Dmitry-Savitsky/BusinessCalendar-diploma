@@ -343,7 +343,7 @@ export default function ExecutorDetailsPage() {
                               <SelectContent>
                                 {availableServices.map((service) => (
                                   <SelectItem key={service.publicId} value={service.publicId}>
-                                    {service.serviceName} - ${service.servicePrice.toFixed(2)}
+                                    {service.serviceName} - {service.servicePrice} BYN
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -398,7 +398,7 @@ export default function ExecutorDetailsPage() {
                           <div className="space-y-1">
                             <p className="font-medium">{service.serviceName}</p>
                             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                              <span>${service.servicePrice.toFixed(2)}</span>
+                              <span>{service.servicePrice} BYN</span>
                               <span>{t('services.service.duration', { minutes: service.durationMinutes })}</span>
                             </div>
                           </div>
@@ -476,7 +476,7 @@ export default function ExecutorDetailsPage() {
                                 {booking.items.map((item) => (
                                   <div key={item.serviceGuid} className="text-sm">
                                     <div className="font-medium">{item.serviceName}</div>
-                                    <div className="text-muted-foreground">${item.servicePrice.toFixed(2)}</div>
+                                    <div className="text-muted-foreground">{item.servicePrice} BYN</div>
                                   </div>
                                 ))}
                               </div>

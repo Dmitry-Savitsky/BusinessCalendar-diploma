@@ -36,6 +36,19 @@ const HOURS = Array.from({ length: 13 }, (_, i) => i + 8)
 
 const TIMEZONE = "Europe/Minsk"
 
+// Add date formatting options
+const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+}
+
+const WEEK_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  day: "numeric",
+  month: "long",
+}
+
 export default function ExecutorSchedulePage() {
   const t = useTranslations('executor.schedule')
   const { toast } = useToast()
@@ -266,12 +279,14 @@ export default function ExecutorSchedulePage() {
 
       <div className="flex items-center justify-center">
         {viewMode === "day" ? (
-          <h3 className="text-xl font-medium">{format(selectedDate, t('navigation.dateFormat.day'))}</h3>
+          <h3 className="text-xl font-medium">
+            {selectedDate.toLocaleDateString("ru-BY", DATE_FORMAT_OPTIONS)}
+          </h3>
         ) : (
           <h3 className="text-xl font-medium">
             {t('navigation.dateFormat.weekRange', {
-              startDate: format(weekDates[0], 'MMMM d'),
-              endDate: format(weekDates[6], 'MMMM d, yyyy')
+              startDate: weekDates[0].toLocaleDateString("ru-BY", WEEK_DATE_FORMAT_OPTIONS),
+              endDate: weekDates[6].toLocaleDateString("ru-BY", DATE_FORMAT_OPTIONS)
             })}
           </h3>
         )}
@@ -346,7 +361,7 @@ export default function ExecutorSchedulePage() {
                       <p className="text-sm text-muted-foreground">{t('orderDetails.sections.appointment.date')}</p>
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                        <p>{formatDate(selectedOrder.orderStart)}</p>
+                        <p>{new Date(selectedOrder.orderStart).toLocaleDateString("ru-BY", DATE_FORMAT_OPTIONS)}</p>
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -401,14 +416,16 @@ export default function ExecutorSchedulePage() {
                               <p className="text-sm text-muted-foreground">{formatTime(item.start)}</p>
                             </div>
                           </div>
-                          <p className="font-medium">${item.servicePrice.toFixed(2)}</p>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">{t('orderCard.service.price', { price: item.servicePrice })}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                   <div className="flex justify-between pt-2">
                     <p className="font-medium">{t('orderDetails.sections.services.total')}</p>
-                    <p className="font-bold">${calculateOrderTotal(selectedOrder).toFixed(2)}</p>
+                    <p className="font-bold">{t('orderCard.total', { amount: calculateOrderTotal(selectedOrder) })}</p>
                   </div>
                 </div>
 
@@ -531,8 +548,8 @@ const WeekView = ({
       {/* Day headers */}
       {weekDates.map((date, index) => (
         <div key={index} className="border-b border-r p-2 text-center">
-          <div className="font-medium">{format(date, "EEE")}</div>
-          <div className="text-sm">{format(date, "MMM d")}</div>
+          <div className="font-medium">{date.toLocaleDateString("ru-BY", { weekday: 'short' })}</div>
+          <div className="text-sm">{date.toLocaleDateString("ru-BY", { day: 'numeric', month: 'short' })}</div>
         </div>
       ))}
 

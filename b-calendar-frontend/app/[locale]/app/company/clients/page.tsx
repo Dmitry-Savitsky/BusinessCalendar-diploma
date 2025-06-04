@@ -128,7 +128,7 @@ export default function ClientsPage() {
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">${statistics.totalRevenue.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{statistics.totalRevenue.toLocaleString()} BYN</div>
                 <p className="text-xs text-muted-foreground">{t('metrics.totalRevenue.description')}</p>
               </CardContent>
             </Card>

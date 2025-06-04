@@ -528,7 +528,7 @@ export default function OrdersPage() {
                           <p className="text-sm text-muted-foreground">{service.durationMinutes} minutes</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold">${service.servicePrice.toFixed(2)}</p>
+                          <p className="font-bold">{service.servicePrice} BYN</p>
                           {service.requiresAddress && (
                             <div className="flex items-center text-xs text-muted-foreground mt-1">
                               <MapPin className="h-3 w-3 mr-1" />
@@ -560,7 +560,7 @@ export default function OrdersPage() {
               <div className="bg-muted p-3 rounded-md">
                 <p className="font-medium">Selected Service:</p>
                 <p>
-                  {selectedService.serviceName} - ${selectedService.servicePrice.toFixed(2)}
+                  {selectedService.serviceName} - {selectedService.servicePrice} BYN
                 </p>
               </div>
             )}
@@ -627,7 +627,7 @@ export default function OrdersPage() {
                 <div>
                   <p className="font-medium">Service:</p>
                   <p>
-                    {selectedService.serviceName} - ${selectedService.servicePrice.toFixed(2)}
+                    {selectedService.serviceName} - {selectedService.servicePrice} BYN
                   </p>
                 </div>
               )}
@@ -674,7 +674,7 @@ export default function OrdersPage() {
                 <div>
                   <p className="font-medium">Service:</p>
                   <p>
-                    {selectedService.serviceName} - ${selectedService.servicePrice.toFixed(2)}
+                    {selectedService.serviceName} - {selectedService.servicePrice} BYN
                   </p>
                 </div>
               )}
@@ -759,7 +759,7 @@ export default function OrdersPage() {
                       </div>
                       <div className="flex justify-between">
                         <span>Price:</span>
-                        <span className="font-medium">${selectedService.servicePrice.toFixed(2)}</span>
+                        <span className="font-medium">{selectedService.servicePrice} BYN</span>
                       </div>
                     </div>
                   </CardContent>
@@ -783,7 +783,7 @@ export default function OrdersPage() {
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span>${service?.servicePrice.toFixed(2)}</span>
+                          <span>{service?.servicePrice} BYN</span>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -832,13 +832,10 @@ export default function OrdersPage() {
               <h4 className="font-medium">Order Summary:</h4>
               <p>{orderItems.length} service(s)</p>
               <p className="font-medium mt-1">
-                Total: $
-                {orderItems
-                  .reduce((total, item) => {
-                    const service = services.find((s) => s.publicId === item.serviceGuid)
-                    return total + (service?.servicePrice || 0)
-                  }, 0)
-                  .toFixed(2)}
+                Total: {orderItems.reduce((total, item) => {
+                  const service = services.find((s) => s.publicId === item.serviceGuid)
+                  return total + (service?.servicePrice || 0)
+                }, 0)} BYN
               </p>
             </div>
 
@@ -1077,7 +1074,9 @@ export default function OrdersPage() {
 
                   <div className="flex flex-col items-end gap-2">
                     {renderStatusBadge(order)}
-                    <div className="font-medium">${calculateOrderTotal(order).toFixed(2)}</div>
+                    <div className="font-medium">
+                      {t('orderCard.total')}: {calculateOrderTotal(order)} BYN
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -1163,7 +1162,7 @@ export default function OrdersPage() {
                               <p className="text-sm text-muted-foreground">{formatTime(item.start)}</p>
                             </div>
                           </div>
-                          <p className="font-medium">${item.servicePrice.toFixed(2)}</p>
+                          <p className="font-medium">{item.servicePrice} BYN</p>
                         </div>
                         <div className="mt-2 pt-2 border-t">
                           <div className="flex items-center gap-2">
@@ -1176,7 +1175,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex justify-between pt-2">
                     <p className="font-medium">{t('details.sections.services.total')}</p>
-                    <p className="font-bold">${calculateOrderTotal(selectedOrder).toFixed(2)}</p>
+                    <p className="font-bold">{calculateOrderTotal(selectedOrder)} BYN</p>
                   </div>
                 </div>
 

@@ -276,7 +276,7 @@ export default function ExecutorMePage() {
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">{t('tabs.services.list.fields.price')}:</span>
-                            <span className="font-medium">${service.servicePrice}</span>
+                            <span className="font-medium">{service.servicePrice} BYN</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">{t('tabs.services.list.fields.duration')}:</span>

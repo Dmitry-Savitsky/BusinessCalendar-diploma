@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useState, useEffect, useMemo } from "react"
 import { format, addDays, startOfDay, isSameDay, startOfWeek, isWithinInterval } from "date-fns"
 import { formatInTimeZone } from 'date-fns-tz'
+import { ru } from 'date-fns/locale'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import {
@@ -48,6 +49,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { config } from "@/lib/config"
+import { useParams } from 'next/navigation'
 
 // Hours to display in the calendar (from 8:00 to 20:00)
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8)
@@ -57,11 +59,14 @@ const EXECUTORS_PER_PAGE = 4
 // Timezone
 const TIMEZONE = "Europe/Minsk"
 
+// Get locale for date formatting
+const getDateLocale = (locale: string) => locale === 'ru' ? ru : undefined
+
 // Function to format dates with timezone
-const formatDate = (dateStr: string) => {
+const formatDate = (dateStr: string, locale: string) => {
   try {
     const date = new Date(dateStr)
-    return formatInTimeZone(date, TIMEZONE, 'PPP')
+    return formatInTimeZone(date, TIMEZONE, 'PPP', { locale: getDateLocale(locale) })
   } catch (error) {
     console.error("Error formatting date:", error)
     return "Invalid Date"
@@ -93,6 +98,9 @@ export default function SchedulePage() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [viewMode, setViewMode] = useState<"day" | "week">("day")
   const [currentPage, setCurrentPage] = useState(0)
+  const params = useParams()
+  const locale = params.locale as string
+  const dateLocale = getDateLocale(locale)
 
   useEffect(() => {
     fetchData()
@@ -418,10 +426,12 @@ export default function SchedulePage() {
 
       <div className="flex items-center justify-center">
         {viewMode === "day" ? (
-          <h3 className="text-xl font-medium">{format(selectedDate, "EEEE, MMMM d, yyyy")}</h3>
+          <h3 className="text-xl font-medium">
+            {format(selectedDate, "EEEE, d MMMM yyyy", { locale: dateLocale })}
+          </h3>
         ) : (
           <h3 className="text-xl font-medium">
-            {format(weekDates[0], "MMMM d")} - {format(weekDates[6], "MMMM d, yyyy")}
+            {format(weekDates[0], "d MMMM", { locale: dateLocale })} - {format(weekDates[6], "d MMMM yyyy", { locale: dateLocale })}
           </h3>
         )}
       </div>
@@ -492,6 +502,7 @@ export default function SchedulePage() {
               handleOrderClick={handleOrderClick}
               getOrderCardStyle={getOrderCardStyle}
               getOrderCardColorClass={getOrderCardColorClass}
+              locale={locale}
             />
           ) : (
             <WeekView
@@ -500,6 +511,7 @@ export default function SchedulePage() {
               weekDates={weekDates}
               handleOrderClick={handleOrderClick}
               getOrderCardColorClass={getOrderCardColorClass}
+              locale={locale}
             />
           )}
         </div>
@@ -530,7 +542,7 @@ export default function SchedulePage() {
                       <p className="text-sm text-muted-foreground">{t('order.appointment.date')}</p>
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                        <p>{formatDate(selectedOrder.orderStart)}</p>
+                        <p>{formatDate(selectedOrder.orderStart, locale)}</p>
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -582,7 +594,7 @@ export default function SchedulePage() {
                               <p className="text-sm text-muted-foreground">{formatTime(item.start)}</p>
                             </div>
                           </div>
-                          <p className="font-medium">${item.servicePrice.toFixed(2)}</p>
+                          <p className="font-medium">{item.servicePrice} BYN</p>
                         </div>
                         <div className="mt-2 pt-2 border-t">
                           <div className="flex items-center gap-2">
@@ -595,7 +607,7 @@ export default function SchedulePage() {
                   </div>
                   <div className="flex justify-between pt-2">
                     <p className="font-medium">{t('order.services.total')}</p>
-                    <p className="font-bold">${calculateOrderTotal(selectedOrder).toFixed(2)}</p>
+                    <p className="font-bold">{calculateOrderTotal(selectedOrder)} BYN</p>
                   </div>
                 </div>
 
@@ -694,13 +706,16 @@ const DayView = ({
   handleOrderClick,
   getOrderCardStyle,
   getOrderCardColorClass,
+  locale,
 }: {
   executors: Executor[]
   ordersByExecutor: Record<string, Order[]>
   handleOrderClick: (order: Order) => void
   getOrderCardStyle: (order: Order) => React.CSSProperties
   getOrderCardColorClass: (order: Order) => string
+  locale: string
 }) => {
+  const dateLocale = getDateLocale(locale)
   return (
     <div className="flex relative">
       {/* Time column */}
@@ -757,13 +772,16 @@ const WeekView = ({
   weekDates,
   handleOrderClick,
   getOrderCardColorClass,
+  locale,
 }: {
   executors: Executor[]
   orders: Order[]
   weekDates: Date[]
   handleOrderClick: (order: Order) => void
   getOrderCardColorClass: (order: Order) => string
+  locale: string
 }) => {
+  const dateLocale = getDateLocale(locale)
   return (
     <div className="grid" style={{ gridTemplateColumns: "auto repeat(7, 1fr)" }}>
       {/* Empty cell in top-left corner */}
@@ -772,8 +790,8 @@ const WeekView = ({
       {/* Day headers */}
       {weekDates.map((date, index) => (
         <div key={index} className="border-b border-r p-2 text-center">
-          <div className="font-medium">{format(date, "EEE")}</div>
-          <div className="text-sm">{format(date, "MMM d")}</div>
+          <div className="font-medium">{format(date, "EEEEEE", { locale: dateLocale })}</div>
+          <div className="text-sm">{format(date, "d MMM", { locale: dateLocale }).replace('.', '')}</div>
         </div>
       ))}
 
