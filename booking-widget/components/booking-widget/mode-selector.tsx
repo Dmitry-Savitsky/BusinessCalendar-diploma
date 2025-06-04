@@ -70,7 +70,7 @@ export default function ModeSelector({ onComplete }: ModeSelectorProps) {
 
   return (
     <div style={containerStyle}>
-      <h3 style={titleStyle}>How would you like to book?</h3>
+      <h3 style={titleStyle}>Как вы хотите записаться?</h3>
       <div style={gridStyle}>
         <button
           style={cardStyle(mode === "service")}
@@ -91,9 +91,9 @@ export default function ModeSelector({ onComplete }: ModeSelectorProps) {
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          <div style={nameStyle(mode === "service")}>Browse All Services</div>
+          <div style={nameStyle(mode === "service")}>Просмотреть все услуги</div>
           <div style={descriptionStyle(mode === "service")}>
-            View all available services and choose a specialist later
+            Выберите услугу, а специалиста подберем позже
           </div>
         </button>
         <button
@@ -113,9 +113,9 @@ export default function ModeSelector({ onComplete }: ModeSelectorProps) {
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          <div style={nameStyle(mode === "service")}>Choose a Specialist</div>
+          <div style={nameStyle(mode === "service")}>Выбрать специалиста</div>
           <div style={descriptionStyle(mode === "service")}>
-            Pick your preferred specialist and see their services
+            Выберите конкретного специалиста и его услуги
           </div>
         </button>
       </div>

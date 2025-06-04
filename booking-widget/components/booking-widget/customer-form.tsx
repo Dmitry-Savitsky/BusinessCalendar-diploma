@@ -31,11 +31,11 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
 
   return (
     <div className="booking-widget-customer-form">
-      <h3 className="booking-widget-customer-form__title">Your Information</h3>
+      <h3 className="booking-widget-customer-form__title">Ваши данные</h3>
       <form className="booking-widget-customer-form__form" onSubmit={handleSubmit(onSubmit)}>
         <div className="booking-widget-customer-form__field">
           <label className="booking-widget-customer-form__label" htmlFor="name">
-            Name
+            Имя
           </label>
           <input
             type="text"
@@ -52,7 +52,7 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
 
         <div className="booking-widget-customer-form__field">
           <label className="booking-widget-customer-form__label" htmlFor="phone">
-            Phone
+            Телефон
           </label>
           <input
             type="tel"
@@ -69,7 +69,7 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
 
         <div className="booking-widget-customer-form__field">
           <label className="booking-widget-customer-form__label" htmlFor="notes">
-            Notes (Optional)
+            Комментарий (необязательно)
           </label>
           <textarea
             id="notes"
@@ -88,7 +88,7 @@ export default function CustomerForm({ onBack, onComplete }: CustomerFormProps) 
           className="booking-widget-customer-form__submit"
           disabled={isSubmitting}
         >
-          Continue
+          Продолжить
         </button>
       </form>
     </div>

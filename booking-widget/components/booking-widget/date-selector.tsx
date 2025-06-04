@@ -3,6 +3,7 @@
 import React from "react"
 import { useBookingWidget } from "./context"
 import { addDays, startOfToday, format } from "date-fns"
+import { ru } from 'date-fns/locale'
 import "../../styles/modules/DateSelector.module.css"
 
 interface DateSelectorProps {
@@ -78,7 +79,7 @@ export default function DateSelector({ onBack, onComplete }: DateSelectorProps) 
 
   return (
     <div className="booking-widget-date-selector">
-      <h3 className="booking-widget-date-selector__title">Select a Date</h3>
+      <h3 className="booking-widget-date-selector__title">Выберите дату</h3>
       <div className="booking-widget-date-selector__grid">
         {dates.map((date) => (
           <div
@@ -91,13 +92,13 @@ export default function DateSelector({ onBack, onComplete }: DateSelectorProps) 
             onClick={() => handleDateSelect(date)}
           >
             <span className="booking-widget-date-selector__weekday">
-              {format(date, "EEE")}
+              {format(date, "EEE", { locale: ru })}
             </span>
             <span className="booking-widget-date-selector__day">
               {format(date, "d")}
             </span>
             <span className="booking-widget-date-selector__month">
-              {format(date, "MMM")}
+              {format(date, "LLL", { locale: ru })}
             </span>
           </div>
         ))}

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { getExecutorWorkTime, updateExecutorWorkTime, type ExecutorWorkTime } from "@/lib/api/executor"
 import { Loader2 } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -17,6 +18,7 @@ interface ExecutorScheduleProps {
 }
 
 export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps) {
+  const t = useTranslations('schedule')
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -37,7 +39,7 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load executor schedule. Please try again.",
+        description: t('workHours.toast.loadError'),
         variant: "destructive",
       })
     } finally {
@@ -51,12 +53,12 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
       await updateExecutorWorkTime(executorGuid, workTime)
       toast({
         title: "Success",
-        description: "Schedule updated successfully",
+        description: t('workHours.toast.saveSuccess'),
       })
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update schedule. Please try again.",
+        description: t('workHours.toast.saveError'),
         variant: "destructive",
       })
     } finally {
@@ -94,14 +96,14 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
                     onCheckedChange={(checked) => handleWorkingChange(day.dayNo, checked === true)}
                   />
                   <Label htmlFor={`working-${day.dayNo}`} className="font-medium">
-                    {DAYS_OF_WEEK[day.dayNo]}
+                    {t(`workHours.days.${DAYS_OF_WEEK[day.dayNo].toLowerCase()}`)}
                   </Label>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:w-4/5">
                   <div className="space-y-2">
                     <Label htmlFor={`from-${day.dayNo}`} className="text-xs">
-                      From
+                      {t('workHours.fields.startTime')}
                     </Label>
                     <Input
                       id={`from-${day.dayNo}`}
@@ -114,7 +116,7 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
 
                   <div className="space-y-2">
                     <Label htmlFor={`till-${day.dayNo}`} className="text-xs">
-                      Till
+                      {t('workHours.fields.endTime')}
                     </Label>
                     <Input
                       id={`till-${day.dayNo}`}
@@ -127,7 +129,7 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
 
                   <div className="space-y-2">
                     <Label htmlFor={`break-start-${day.dayNo}`} className="text-xs">
-                      Break Start
+                      {t('workHours.fields.breakStart')}
                     </Label>
                     <Input
                       id={`break-start-${day.dayNo}`}
@@ -140,7 +142,7 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
 
                   <div className="space-y-2">
                     <Label htmlFor={`break-end-${day.dayNo}`} className="text-xs">
-                      Break End
+                      {t('workHours.fields.breakEnd')}
                     </Label>
                     <Input
                       id={`break-end-${day.dayNo}`}
@@ -162,10 +164,10 @@ export default function ExecutorSchedule({ executorGuid }: ExecutorScheduleProps
           {saving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
+              {t('workHours.actions.saving')}
             </>
           ) : (
-            "Save Schedule"
+            t('workHours.actions.save')
           )}
         </Button>
       </div>

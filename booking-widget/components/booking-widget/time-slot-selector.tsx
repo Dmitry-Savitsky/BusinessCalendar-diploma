@@ -35,7 +35,7 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
 
         setTimeSlots(data)
       } catch (err) {
-        setError("Failed to load time slots. Please try again.")
+        setError("Не удалось загрузить доступное время. Пожалуйста, попробуйте снова.")
         console.error("Error loading time slots:", err)
       } finally {
         setLoading(false)
@@ -55,7 +55,7 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
       <div className="booking-widget-time-slot-selector">
         <div className="booking-widget-time-slot-selector__loading">
           <Loader2 className="tw-h-8 tw-w-8 tw-animate-spin" />
-          <span className="tw-ml-2">Loading time slots...</span>
+          <span className="tw-ml-2">Загрузка доступного времени...</span>
         </div>
       </div>
     )
@@ -71,7 +71,7 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
 
   return (
     <div className="booking-widget-time-slot-selector">
-      <h3 className="booking-widget-time-slot-selector__title">Select a Time</h3>
+      <h3 className="booking-widget-time-slot-selector__title">Выберите время</h3>
       {timeSlots.length > 0 ? (
         <div className="booking-widget-time-slot-selector__grid">
           {timeSlots.map((slot) => (
@@ -85,13 +85,13 @@ export default function TimeSlotSelector({ onBack, onComplete }: TimeSlotSelecto
               onClick={() => slot.available && handleTimeSelect(slot)}
               disabled={!slot.available}
             >
-              {format(new Date(slot.time), "h:mm a")}
+              {format(new Date(slot.time), "HH:mm")}
             </button>
           ))}
         </div>
       ) : (
         <div className="booking-widget-time-slot-selector__no-slots">
-          No available time slots for this date
+          На эту дату нет доступного времени
         </div>
       )}
     </div>

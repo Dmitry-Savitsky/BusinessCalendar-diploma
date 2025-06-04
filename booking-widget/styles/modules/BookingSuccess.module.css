@@ -1,0 +1,30 @@
+.booking-widget-success {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.booking-widget-success__content {
+  text-align: center;
+}
+
+.booking-widget-success__icon {
+  width: 64px;
+  height: 64px;
+  color: #22c55e;
+  margin-bottom: 1.5rem;
+}
+
+.booking-widget-success__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.booking-widget-success__message {
+  font-size: 1.125rem;
+  color: #4b5563;
+} 

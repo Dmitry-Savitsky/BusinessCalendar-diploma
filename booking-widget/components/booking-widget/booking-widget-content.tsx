@@ -9,6 +9,7 @@ import DateSelector from "./date-selector"
 import TimeSlotSelector from "./time-slot-selector"
 import CustomerForm from "./customer-form"
 import BookingConfirmation from "./booking-confirmation"
+import BookingSuccess from "./booking-success"
 
 type BookingStep = "mode" | "service" | "executor" | "date" | "time" | "customer" | "confirmation" | "success"
 
@@ -19,7 +20,8 @@ export default function BookingWidgetContent() {
     selectedExecutor, 
     selectedDate, 
     selectedSlot, 
-    bookingResponse, 
+    bookingResponse,
+    isSuccess,
     anyExecutor,
     setSelectedService,
     setSelectedExecutor,
@@ -34,6 +36,7 @@ export default function BookingWidgetContent() {
 
   // Determine the current step based on the booking state
   const determineStep = (): BookingStep => {
+    if (isSuccess) return "success"
     if (bookingResponse) return "confirmation"
     if (selectedSlot) return "customer"
     if (selectedDate && selectedService && (selectedExecutor || anyExecutor)) return "time"
@@ -140,7 +143,7 @@ export default function BookingWidgetContent() {
 
   return (
     <div style={containerStyle}>
-      <h2 style={titleStyle}>Book an Appointment</h2>
+      <h2 style={titleStyle}>Забронируйте услугу</h2>
 
       <div style={contentStyle}>
         {currentStep === "mode" && (
@@ -187,8 +190,11 @@ export default function BookingWidgetContent() {
         {currentStep === "confirmation" && (
           <BookingConfirmation
             onBack={() => handleBack("customer")}
-            onComplete={() => handleStepComplete("success")}
           />
+        )}
+
+        {currentStep === "success" && (
+          <BookingSuccess />
         )}
       </div>
 
@@ -218,7 +224,7 @@ export default function BookingWidgetContent() {
             }
           }}
         >
-          Back
+          Назад
         </button>
       )}
     </div>

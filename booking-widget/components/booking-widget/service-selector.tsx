@@ -35,7 +35,7 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
 
         setError(null)
       } catch (err) {
-        setError("Failed to load services. Please try again.")
+        setError("Не удалось загрузить услуги. Пожалуйста, попробуйте снова.")
         console.error("Error loading services:", err)
       } finally {
         setLoading(false)
@@ -75,7 +75,7 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
     return (
       <div className="tw-flex tw-justify-center tw-items-center tw-py-12">
         <Loader2 className="tw-h-8 tw-w-8 tw-animate-spin" />
-        <span className="tw-ml-2">Loading services...</span>
+        <span className="tw-ml-2">Загрузка услуг...</span>
       </div>
     )
   }
@@ -88,7 +88,7 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
           onClick={() => window.location.reload()}
           className="booking-widget-service-selector__back-button"
         >
-          Retry
+          Повторить
         </button>
       </div>
     )
@@ -96,7 +96,7 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
 
   return (
     <div className="booking-widget-service-selector">
-      <h3 className="booking-widget-service-selector__title">Select a Service</h3>
+      <h3 className="booking-widget-service-selector__title">Выберите услугу</h3>
       <div className="booking-widget-service-selector__grid">
         {services.map((service) => {
           const isExecutorService = "servicePublicId" in service;
@@ -118,21 +118,17 @@ export default function ServiceSelector({ onBack, onComplete }: ServiceSelectorP
               <div className="booking-widget-service-selector__service-details">
                 <span className="booking-widget-service-selector__service-detail">
                   <Clock className="tw-w-4 tw-h-4" />
-                  {durationMinutes} min
+                  {durationMinutes} мин
                 </span>
                 {requiresAddress && (
                   <span className="booking-widget-service-selector__service-detail">
                     <MapPin className="tw-w-4 tw-h-4" />
-                    At your place
+                    У вас дома
                   </span>
                 )}
               </div>
               <span className="booking-widget-service-selector__service-price">
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 0,
-                }).format(servicePrice)}
+                {formatPrice(servicePrice)}
               </span>
             </div>
           );

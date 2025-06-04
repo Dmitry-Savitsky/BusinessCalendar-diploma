@@ -74,6 +74,7 @@ import { config } from "@/lib/config"
 
 export default function OrdersPage() {
   const t = useTranslations('orders')
+  const tc = useTranslations('createOrder.steps')
   const router = useRouter()
   const { toast } = useToast()
   const [orders, setOrders] = useState<Order[]>([])
@@ -506,7 +507,7 @@ export default function OrdersPage() {
       case 1: // Select service
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Select a Service</h3>
+            <h3 className="text-lg font-medium">{tc('selectService.title')}</h3>
             {servicesLoading ? (
               <div className="flex h-[300px] items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -525,14 +526,14 @@ export default function OrdersPage() {
                       <div className="flex justify-between items-center">
                         <div>
                           <h4 className="font-medium">{service.serviceName}</h4>
-                          <p className="text-sm text-muted-foreground">{service.durationMinutes} minutes</p>
+                          <p className="text-sm text-muted-foreground">{service.durationMinutes} {tc('selectService.duration')}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold">{service.servicePrice} BYN</p>
                           {service.requiresAddress && (
                             <div className="flex items-center text-xs text-muted-foreground mt-1">
                               <MapPin className="h-3 w-3 mr-1" />
-                              On-site
+                              {tc('selectService.onSite')}
                             </div>
                           )}
                         </div>
@@ -549,16 +550,16 @@ export default function OrdersPage() {
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Select an Executor</h3>
+              <h3 className="text-lg font-medium">{tc('selectExecutor.title')}</h3>
               <Button variant="ghost" size="sm" onClick={() => setCreateStep(1)}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
+                {tc('selectExecutor.back')}
               </Button>
             </div>
 
             {selectedService && (
               <div className="bg-muted p-3 rounded-md">
-                <p className="font-medium">Selected Service:</p>
+                <p className="font-medium">{tc('selectExecutor.selectedService')}:</p>
                 <p>
                   {selectedService.serviceName} - {selectedService.servicePrice} BYN
                 </p>
@@ -571,9 +572,9 @@ export default function OrdersPage() {
               </div>
             ) : executors.length === 0 ? (
               <div className="text-center py-8">
-                <p>No executors available for this service.</p>
+                <p>{tc('selectExecutor.noExecutors')}</p>
                 <Button variant="outline" className="mt-4" onClick={() => setCreateStep(1)}>
-                  Select Another Service
+                  {tc('selectExecutor.selectAnother')}
                 </Button>
               </div>
             ) : (
@@ -615,17 +616,17 @@ export default function OrdersPage() {
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Select a Date</h3>
+              <h3 className="text-lg font-medium">{tc('selectDate.title')}</h3>
               <Button variant="ghost" size="sm" onClick={() => setCreateStep(2)}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
+                {tc('selectDate.back')}
               </Button>
             </div>
 
             <div className="bg-muted p-3 rounded-md space-y-2">
               {selectedService && (
                 <div>
-                  <p className="font-medium">Service:</p>
+                  <p className="font-medium">{tc('selectDate.service')}:</p>
                   <p>
                     {selectedService.serviceName} - {selectedService.servicePrice} BYN
                   </p>
@@ -633,7 +634,7 @@ export default function OrdersPage() {
               )}
               {selectedExecutor && (
                 <div>
-                  <p className="font-medium">Executor:</p>
+                  <p className="font-medium">{tc('selectDate.executor')}:</p>
                   <p>{selectedExecutor.executorName}</p>
                 </div>
               )}
@@ -645,9 +646,8 @@ export default function OrdersPage() {
                 selected={selectedDate}
                 onSelect={handleDateSelect}
                 disabled={(date) => {
-                  // Allow selecting today and future dates, but not dates more than 3 months in the future
                   const today = new Date()
-                  today.setHours(0, 0, 0, 0) // Set to start of day for proper comparison
+                  today.setHours(0, 0, 0, 0)
                   const threeMonthsLater = new Date()
                   threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3)
                   return date < today || date > threeMonthsLater
@@ -662,17 +662,17 @@ export default function OrdersPage() {
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Select a Time Slot</h3>
+              <h3 className="text-lg font-medium">{tc('selectTime.title')}</h3>
               <Button variant="ghost" size="sm" onClick={() => setCreateStep(3)}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
+                {tc('selectTime.back')}
               </Button>
             </div>
 
             <div className="bg-muted p-3 rounded-md space-y-2">
               {selectedService && (
                 <div>
-                  <p className="font-medium">Service:</p>
+                  <p className="font-medium">{tc('selectTime.service')}:</p>
                   <p>
                     {selectedService.serviceName} - {selectedService.servicePrice} BYN
                   </p>
@@ -680,13 +680,13 @@ export default function OrdersPage() {
               )}
               {selectedExecutor && (
                 <div>
-                  <p className="font-medium">Executor:</p>
+                  <p className="font-medium">{tc('selectTime.executor')}:</p>
                   <p>{selectedExecutor.executorName}</p>
                 </div>
               )}
               {selectedDate && (
                 <div>
-                  <p className="font-medium">Date:</p>
+                  <p className="font-medium">{tc('selectTime.date')}:</p>
                   <p>{format(selectedDate, "PPP")}</p>
                 </div>
               )}
@@ -698,9 +698,9 @@ export default function OrdersPage() {
               </div>
             ) : timeSlots.length === 0 ? (
               <div className="text-center py-8">
-                <p>No available time slots for this date.</p>
+                <p>{tc('selectTime.noSlots')}</p>
                 <Button variant="outline" className="mt-4" onClick={() => setCreateStep(3)}>
-                  Select Another Date
+                  {tc('selectTime.selectAnother')}
                 </Button>
               </div>
             ) : (
@@ -727,10 +727,10 @@ export default function OrdersPage() {
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Review Service</h3>
+              <h3 className="text-lg font-medium">{tc('review.title')}</h3>
               <Button variant="ghost" size="sm" onClick={() => setCreateStep(4)}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
+                {tc('review.back')}
               </Button>
             </div>
 
@@ -739,26 +739,26 @@ export default function OrdersPage() {
               {currentOrderItem && selectedService && selectedExecutor && selectedTimeSlot && (
                 <Card className="border-primary">
                   <CardContent className="p-4">
-                    <h4 className="font-medium">Service to Add:</h4>
+                    <h4 className="font-medium">{tc('review.serviceToAdd')}:</h4>
                     <div className="mt-2 space-y-2">
                       <div className="flex justify-between">
-                        <span>Service:</span>
+                        <span>{tc('review.service')}:</span>
                         <span className="font-medium">{selectedService.serviceName}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Executor:</span>
+                        <span>{tc('review.executor')}:</span>
                         <span className="font-medium">{selectedExecutor.executorName}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Date:</span>
+                        <span>{tc('review.date')}:</span>
                         <span className="font-medium">{selectedDate ? format(selectedDate, "PPP") : ""}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Time:</span>
+                        <span>{tc('review.time')}:</span>
                         <span className="font-medium">{format(new Date(selectedTimeSlot), "h:mm a")}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Price:</span>
+                        <span>{tc('review.price')}:</span>
                         <span className="font-medium">{selectedService.servicePrice} BYN</span>
                       </div>
                     </div>
@@ -769,7 +769,7 @@ export default function OrdersPage() {
               {/* Already added services */}
               {orderItems.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="font-medium">Services in Order:</h4>
+                  <h4 className="font-medium">{tc('review.servicesInOrder')}:</h4>
                   {orderItems.map((item, index) => {
                     const service = services.find((s) => s.publicId === item.serviceGuid)
                     const executor = executors.find((e) => e.executorPublicId === item.executorGuid)
@@ -805,11 +805,11 @@ export default function OrdersPage() {
               <div className="flex justify-between pt-4">
                 <Button variant="outline" onClick={handleAddServiceToOrder}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Another Service
+                  {tc('review.addAnother')}
                 </Button>
                 <Button onClick={handleProceedToClientInfo}>
                   <ChevronRight className="mr-2 h-4 w-4" />
-                  Continue
+                  {tc('review.continue')}
                 </Button>
               </div>
             </div>
@@ -820,19 +820,19 @@ export default function OrdersPage() {
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Client Information</h3>
+              <h3 className="text-lg font-medium">{tc('clientInfo.title')}</h3>
               <Button variant="ghost" size="sm" onClick={() => setCreateStep(5)}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
+                {tc('clientInfo.back')}
               </Button>
             </div>
 
             {/* Order summary */}
             <div className="bg-muted p-3 rounded-md">
-              <h4 className="font-medium">Order Summary:</h4>
-              <p>{orderItems.length} service(s)</p>
+              <h4 className="font-medium">{tc('clientInfo.orderSummary')}:</h4>
+              <p>{orderItems.length} {tc('clientInfo.totalServices')}</p>
               <p className="font-medium mt-1">
-                Total: {orderItems.reduce((total, item) => {
+                {tc('clientInfo.total')}: {orderItems.reduce((total, item) => {
                   const service = services.find((s) => s.publicId === item.serviceGuid)
                   return total + (service?.servicePrice || 0)
                 }, 0)} BYN
@@ -841,10 +841,10 @@ export default function OrdersPage() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="client-name">Client Name *</Label>
+                <Label htmlFor="client-name">{tc('clientInfo.clientName')} *</Label>
                 <Input
                   id="client-name"
-                  placeholder="Enter client name"
+                  placeholder={tc('clientInfo.clientNamePlaceholder')}
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   required
@@ -852,10 +852,10 @@ export default function OrdersPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="client-phone">Client Phone *</Label>
+                <Label htmlFor="client-phone">{tc('clientInfo.clientPhone')} *</Label>
                 <Input
                   id="client-phone"
-                  placeholder="Enter client phone number"
+                  placeholder={tc('clientInfo.clientPhonePlaceholder')}
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
                   required
@@ -867,23 +867,23 @@ export default function OrdersPage() {
                 return service?.requiresAddress
               }) && (
                 <div className="space-y-2">
-                  <Label htmlFor="client-address">Client Address *</Label>
+                  <Label htmlFor="client-address">{tc('clientInfo.clientAddress')} *</Label>
                   <Input
                     id="client-address"
-                    placeholder="Enter client address"
+                    placeholder={tc('clientInfo.clientAddressPlaceholder')}
                     value={clientAddress}
                     onChange={(e) => setClientAddress(e.target.value)}
                     required
                   />
-                  <p className="text-xs text-muted-foreground">* Required for on-site services</p>
+                  <p className="text-xs text-muted-foreground">{tc('clientInfo.addressRequired')}</p>
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="order-comment">Comment (Optional)</Label>
+                <Label htmlFor="order-comment">{tc('clientInfo.comment')}</Label>
                 <Textarea
                   id="order-comment"
-                  placeholder="Add any additional notes or comments"
+                  placeholder={tc('clientInfo.commentPlaceholder')}
                   value={orderComment}
                   onChange={(e) => setOrderComment(e.target.value)}
                   rows={3}
@@ -907,10 +907,10 @@ export default function OrdersPage() {
                 {isCreatingOrder ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating Order...
+                    {tc('clientInfo.creatingOrder')}
                   </>
                 ) : (
-                  "Create Order"
+                  tc('clientInfo.createOrder')
                 )}
               </Button>
             </div>

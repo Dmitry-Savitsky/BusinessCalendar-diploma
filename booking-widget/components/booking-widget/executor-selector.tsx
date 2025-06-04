@@ -37,7 +37,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
         setExecutors(data)
         setLoading(false)
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load executors")
+        setError(err instanceof Error ? err.message : "Не удалось загрузить специалистов")
         setLoading(false)
       }
     }
@@ -52,7 +52,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
       name: executor.executorName,
       imgPath: executor.executorImgPath || "",
       phone: "",
-      description: executor.executorDescription || "Available for this service"
+      description: executor.executorDescription || "Доступен для этой услуги"
     } : executor;
     
     setSelectedExecutor(executorData)
@@ -70,7 +70,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
     return (
       <div className="tw-flex tw-justify-center tw-items-center tw-py-12">
         <Loader2 className="tw-h-8 tw-w-8 tw-animate-spin" />
-        <span className="tw-ml-2">Loading staff members...</span>
+        <span className="tw-ml-2">Загрузка специалистов...</span>
       </div>
     )
   }
@@ -83,7 +83,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
           onClick={() => window.location.reload()}
           className="booking-widget-executor-selector__back-button"
         >
-          Retry
+          Повторить
         </button>
       </div>
     )
@@ -91,13 +91,13 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
 
   return (
     <div className="booking-widget-executor-selector">
-      <h3 className="booking-widget-executor-selector__title">Select a Specialist</h3>
+      <h3 className="booking-widget-executor-selector__title">Выберите специалиста</h3>
       <div className="booking-widget-executor-selector__grid">
         {executors.map((executor) => {
           const isExecutorService = "executorPublicId" in executor;
           const executorId = isExecutorService ? executor.executorPublicId : executor.guid;
           const executorName = isExecutorService ? executor.executorName : executor.name;
-          const executorDescription = isExecutorService ? (executor.executorDescription || "Available for this service") : executor.description;
+          const executorDescription = isExecutorService ? (executor.executorDescription || "Доступен для этой услуги") : executor.description;
           const imgPath = isExecutorService ? executor.executorImgPath : executor.imgPath;
           const fullImgPath = imgPath ? `${STATIC_BASE_URL}${imgPath}` : "";
 
@@ -139,9 +139,9 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
           <div className="booking-widget-executor-selector__image-container">
             <div className="booking-widget-executor-selector__fallback-image">?</div>
           </div>
-          <span className="booking-widget-executor-selector__name">Any Available Specialist</span>
+          <span className="booking-widget-executor-selector__name">Любой доступный специалист</span>
           <span className="booking-widget-executor-selector__description">
-            We'll assign the best available specialist for you
+            Мы подберем лучшего доступного специалиста для вас
           </span>
         </div>
       </div>

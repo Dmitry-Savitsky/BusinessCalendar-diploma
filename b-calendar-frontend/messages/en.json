@@ -724,6 +724,46 @@
   },
   "schedule": {
     "title": "Schedule",
+    "workHours": {
+      "title": "Working Hours",
+      "description": "Set working hours for each day of the week",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "fields": {
+        "workingDay": "Working Day",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "breakStart": "Break Start",
+        "breakEnd": "Break End"
+      },
+      "actions": {
+        "save": "Save",
+        "saving": "Saving...",
+        "reset": "Reset"
+      },
+      "toast": {
+        "saveSuccess": "Schedule saved successfully",
+        "saveError": "Failed to save schedule",
+        "loadError": "Failed to load schedule"
+      }
+    },
+    "timeSlots": {
+      "title": "Time Slots",
+      "description": "Available time slots for booking",
+      "noSlots": "No available slots for this day",
+      "status": {
+        "available": "Available",
+        "booked": "Booked",
+        "break": "Break"
+      }
+    },
     "viewMode": {
       "day": "Day",
       "week": "Week"
@@ -1402,6 +1442,70 @@
           "title": "Error",
           "description": "Failed to load your orders. Please try again later."
         }
+      }
+    }
+  },
+  "createOrder": {
+    "steps": {
+      "selectService": {
+        "title": "Select a Service",
+        "loading": "Loading services...",
+        "duration": "minutes",
+        "onSite": "On-site"
+      },
+      "selectExecutor": {
+        "title": "Select an Executor",
+        "loading": "Loading executors...",
+        "noExecutors": "No executors available for this service.",
+        "selectAnother": "Select Another Service",
+        "selectedService": "Selected Service",
+        "back": "Back"
+      },
+      "selectDate": {
+        "title": "Select a Date",
+        "service": "Service",
+        "executor": "Executor",
+        "back": "Back"
+      },
+      "selectTime": {
+        "title": "Select a Time Slot",
+        "service": "Service",
+        "executor": "Executor",
+        "date": "Date",
+        "noSlots": "No available time slots for this date.",
+        "selectAnother": "Select Another Date",
+        "back": "Back"
+      },
+      "review": {
+        "title": "Review Service",
+        "serviceToAdd": "Service to Add",
+        "service": "Service",
+        "executor": "Executor",
+        "date": "Date",
+        "time": "Time",
+        "price": "Price",
+        "servicesInOrder": "Services in Order",
+        "addAnother": "Add Another Service",
+        "continue": "Continue",
+        "back": "Back"
+      },
+      "clientInfo": {
+        "title": "Client Information",
+        "orderSummary": "Order Summary",
+        "totalServices": "service(s)",
+        "total": "Total",
+        "clientName": "Client Name",
+        "clientNamePlaceholder": "Enter client name",
+        "clientPhone": "Client Phone",
+        "clientPhonePlaceholder": "Enter client phone number",
+        "clientAddress": "Client Address",
+        "clientAddressPlaceholder": "Enter client address",
+        "addressRequired": "* Required for on-site services",
+        "comment": "Comment (Optional)",
+        "commentPlaceholder": "Add any additional notes or comments",
+        "createOrder": "Create Order",
+        "creatingOrder": "Creating Order...",
+        "back": "Back"
       }
     }
   }

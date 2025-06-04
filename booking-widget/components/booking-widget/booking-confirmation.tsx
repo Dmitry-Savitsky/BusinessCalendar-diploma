@@ -5,14 +5,14 @@ import { Loader2 } from "lucide-react"
 import { useBookingWidget } from "./context"
 import { createBooking } from "@/services/booking-api"
 import { format } from "date-fns"
+import BookingSuccess from "./booking-success"
 import "../../styles/modules/BookingConfirmation.module.css"
 
 interface BookingConfirmationProps {
   onBack: () => void
-  onComplete: () => void
 }
 
-export default function BookingConfirmation({ onBack, onComplete }: BookingConfirmationProps) {
+export default function BookingConfirmation({ onBack }: BookingConfirmationProps) {
   const {
     companyGuid,
     selectedService,
@@ -21,7 +21,8 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
     selectedSlot,
     customerData,
     setBookingResponse,
-    resetBooking,
+    setIsSuccess,
+    isSuccess,
   } = useBookingWidget()
 
   const [loading, setLoading] = useState(false)
@@ -56,8 +57,7 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
       const response = await createBooking(request)
 
       setBookingResponse(response)
-      onComplete()
-      resetBooking()
+      setIsSuccess(true)
     } catch (err) {
       console.error("Error creating booking:", err)
       setError("Failed to create booking. Please try again.")
@@ -66,12 +66,16 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
     }
   }
 
+  if (isSuccess) {
+    return <BookingSuccess />
+  }
+
   if (loading) {
     return (
       <div className="booking-widget-confirmation">
         <div className="booking-widget-confirmation__loading">
           <Loader2 className="tw-h-8 tw-w-8 tw-animate-spin" />
-          <span className="tw-ml-2">Creating your booking...</span>
+          <span className="tw-ml-2">Создание бронирования...</span>
         </div>
       </div>
     )
@@ -79,13 +83,13 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
 
   return (
     <div className="booking-widget-confirmation">
-      <h3 className="booking-widget-confirmation__title">Confirm Your Booking</h3>
+      <h3 className="booking-widget-confirmation__title">Подтвердите бронирование</h3>
 
       {error && <div className="booking-widget-confirmation__error">{error}</div>}
 
       <div className="booking-widget-confirmation__content">
         <div className="booking-widget-confirmation__section">
-          <span className="booking-widget-confirmation__section-title">Service</span>
+          <span className="booking-widget-confirmation__section-title">Услуга</span>
           <span className="booking-widget-confirmation__section-content">
             {selectedService?.serviceName}
           </span>
@@ -100,25 +104,25 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
 
         {selectedExecutor && (
           <div className="booking-widget-confirmation__section">
-            <span className="booking-widget-confirmation__section-title">Specialist</span>
+            <span className="booking-widget-confirmation__section-title">Специалист</span>
             <span className="booking-widget-confirmation__section-content">{selectedExecutor.name}</span>
           </div>
         )}
 
         <div className="booking-widget-confirmation__section">
-          <span className="booking-widget-confirmation__section-title">Date & Time</span>
+          <span className="booking-widget-confirmation__section-title">Дата и время</span>
           <span className="booking-widget-confirmation__section-content">
-            {selectedDate?.toLocaleDateString("en-US", {
+            {selectedDate?.toLocaleDateString("ru-RU", {
               weekday: "long",
               month: "long",
               day: "numeric",
             })}{" "}
-            at {format(new Date(selectedSlot?.time || ""), "h:mm a")}
+            в {format(new Date(selectedSlot?.time || ""), "HH:mm")}
           </span>
         </div>
 
         <div className="booking-widget-confirmation__section">
-          <span className="booking-widget-confirmation__section-title">Your Information</span>
+          <span className="booking-widget-confirmation__section-title">Ваши данные</span>
           <span className="booking-widget-confirmation__section-content">{customerData?.name}</span>
           <span className="booking-widget-confirmation__section-content">{customerData?.phone}</span>
           {customerData?.notes && (
@@ -133,10 +137,10 @@ export default function BookingConfirmation({ onBack, onComplete }: BookingConfi
           onClick={handleConfirm}
           disabled={loading}
         >
-          Confirm Booking
+          Подтвердить
         </button>
         <button className="booking-widget-confirmation__back" onClick={onBack} disabled={loading}>
-          Back
+          Назад
         </button>
       </div>
     </div>

@@ -635,6 +635,46 @@
   },
   "schedule": {
     "title": "Расписание",
+    "workHours": {
+      "title": "Рабочие часы",
+      "description": "Настройте рабочие часы для каждого дня недели",
+      "days": {
+        "monday": "Понедельник",
+        "tuesday": "Вторник",
+        "wednesday": "Среда",
+        "thursday": "Четверг",
+        "friday": "Пятница",
+        "saturday": "Суббота",
+        "sunday": "Воскресенье"
+      },
+      "fields": {
+        "workingDay": "Рабочий день",
+        "startTime": "Начало работы",
+        "endTime": "Конец работы",
+        "breakStart": "Начало перерыва",
+        "breakEnd": "Конец перерыва"
+      },
+      "actions": {
+        "save": "Сохранить",
+        "saving": "Сохранение...",
+        "reset": "Сбросить"
+      },
+      "toast": {
+        "saveSuccess": "Расписание успешно сохранено",
+        "saveError": "Не удалось сохранить расписание",
+        "loadError": "Не удалось загрузить расписание"
+      }
+    },
+    "timeSlots": {
+      "title": "Временные слоты",
+      "description": "Доступные временные слоты для записи",
+      "noSlots": "Нет доступных слотов на этот день",
+      "status": {
+        "available": "Доступно",
+        "booked": "Занято",
+        "break": "Перерыв"
+      }
+    },
     "viewMode": {
       "day": "День",
       "week": "Неделя"
@@ -1238,6 +1278,70 @@
           "title": "Ошибка",
           "description": "Не удалось отметить заказ как выполненный. Пожалуйста, попробуйте снова."
         }
+      }
+    }
+  },
+  "createOrder": {
+    "steps": {
+      "selectService": {
+        "title": "Выберите услугу",
+        "loading": "Загрузка услуг...",
+        "duration": "минут",
+        "onSite": "Выездная"
+      },
+      "selectExecutor": {
+        "title": "Выберите исполнителя",
+        "loading": "Загрузка исполнителей...",
+        "noExecutors": "Нет доступных исполнителей для этой услуги.",
+        "selectAnother": "Выбрать другую услугу",
+        "selectedService": "Выбранная услуга",
+        "back": "Назад"
+      },
+      "selectDate": {
+        "title": "Выберите дату",
+        "service": "Услуга",
+        "executor": "Исполнитель",
+        "back": "Назад"
+      },
+      "selectTime": {
+        "title": "Выберите время",
+        "service": "Услуга",
+        "executor": "Исполнитель",
+        "date": "Дата",
+        "noSlots": "Нет доступных временных слотов на эту дату.",
+        "selectAnother": "Выбрать другую дату",
+        "back": "Назад"
+      },
+      "review": {
+        "title": "Проверка услуги",
+        "serviceToAdd": "Добавляемая услуга",
+        "service": "Услуга",
+        "executor": "Исполнитель",
+        "date": "Дата",
+        "time": "Время",
+        "price": "Цена",
+        "servicesInOrder": "Услуги в заказе",
+        "addAnother": "Добавить еще услугу",
+        "continue": "Продолжить",
+        "back": "Назад"
+      },
+      "clientInfo": {
+        "title": "Информация о клиенте",
+        "orderSummary": "Сводка заказа",
+        "totalServices": "услуг(и)",
+        "total": "Итого",
+        "clientName": "Имя клиента",
+        "clientNamePlaceholder": "Введите имя клиента",
+        "clientPhone": "Телефон клиента",
+        "clientPhonePlaceholder": "Введите номер телефона клиента",
+        "clientAddress": "Адрес клиента",
+        "clientAddressPlaceholder": "Введите адрес клиента",
+        "addressRequired": "* Обязательно для выездных услуг",
+        "comment": "Комментарий (Необязательно)",
+        "commentPlaceholder": "Добавьте дополнительные заметки или комментарии",
+        "createOrder": "Создать заказ",
+        "creatingOrder": "Создание заказа...",
+        "back": "Назад"
       }
     }
   }

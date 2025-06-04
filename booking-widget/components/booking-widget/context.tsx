@@ -15,6 +15,7 @@ interface BookingState {
   customerData: CustomerFormData | null
   bookingResponse: BookingResponse | null
   anyExecutor: boolean
+  isSuccess: boolean
 }
 
 interface BookingContextType extends BookingState {
@@ -26,6 +27,7 @@ interface BookingContextType extends BookingState {
   setCustomerData: (data: CustomerFormData | null) => void
   setBookingResponse: (response: BookingResponse | null) => void
   setAnyExecutor: (value: boolean) => void
+  setIsSuccess: (value: boolean) => void
   resetBooking: () => void
 }
 
@@ -46,6 +48,7 @@ export function BookingWidgetProvider({
   const [customerData, setCustomerData] = useState<CustomerFormData | null>(null)
   const [bookingResponse, setBookingResponse] = useState<BookingResponse | null>(null)
   const [anyExecutor, setAnyExecutor] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const resetBooking = () => {
     setMode("service")
@@ -56,6 +59,7 @@ export function BookingWidgetProvider({
     setCustomerData(null)
     setBookingResponse(null)
     setAnyExecutor(false)
+    setIsSuccess(false)
   }
 
   return (
@@ -70,6 +74,7 @@ export function BookingWidgetProvider({
         customerData,
         bookingResponse,
         anyExecutor,
+        isSuccess,
         setMode,
         setSelectedService,
         setSelectedExecutor,
@@ -78,6 +83,7 @@ export function BookingWidgetProvider({
         setCustomerData,
         setBookingResponse,
         setAnyExecutor,
+        setIsSuccess,
         resetBooking,
       }}
     >
