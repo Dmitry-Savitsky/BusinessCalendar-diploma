@@ -8,8 +8,10 @@ import { LayoutDashboard, Calendar, Users, Settings, LogOut, Menu, X, User, Shop
 import { useState } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { useTranslations } from 'next-intl'
 
 export default function ExecutorSidebar() {
+  const t = useTranslations('executor.sidebar')
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -19,33 +21,33 @@ export default function ExecutorSidebar() {
 
   const navItems = [
     {
-      title: "Dashboard",
+      title: t('nav.dashboard'),
       href: "/app/executor",
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
-      title: "Me",
+      title: t('nav.me'),
       href: "/app/executor/me",
       icon: <User className="h-5 w-5" />,
     },
     {
-      title: "Orders",
+      title: t('nav.orders'),
       href: "/app/executor/orders",
       icon: <ShoppingBag className="h-5 w-5" />,
     },
     {
-      title: "Schedule",
+      title: t('nav.schedule'),
       href: "/app/executor/schedule",
       icon: <Calendar className="h-5 w-5" />,
     },
     /*
     {
-      title: "Clients",
+      title: t('nav.clients'),
       href: "/app/executor/clients",
       icon: <Users className="h-5 w-5" />,
     },
     {
-      title: "Settings",
+      title: t('nav.settings'),
       href: "/app/executor/settings",
       icon: <Settings className="h-5 w-5" />,
     },*/
@@ -73,7 +75,7 @@ export default function ExecutorSidebar() {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b px-6">
             <Link href="/app/executor" className="flex items-center gap-2">
-              <span className="text-xl font-bold">B-Calendar</span>
+              <span className="text-xl font-bold">{t('title')}</span>
             </Link>
             <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -99,7 +101,7 @@ export default function ExecutorSidebar() {
               onClick={logout}
             >
               <LogOut className="h-5 w-5" />
-              Logout
+              {t('logout')}
             </Button>
           </div>
         </div>

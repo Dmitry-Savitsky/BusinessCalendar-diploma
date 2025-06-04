@@ -371,6 +371,85 @@
       "deleteSuccess": "Executor deleted successfully",
       "deleteError": "Failed to delete executor. Please try again.",
       "loadError": "Failed to load executors. Please try again."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "metrics": {
+        "todayAppointments": {
+          "title": "Today's Appointments",
+          "nextAt": "Next at {time}",
+          "noAppointments": "No appointments today"
+        },
+        "completedOrders": {
+          "title": "Completed Orders",
+          "completionRate": "{rate}% completion rate"
+        },
+        "upcomingWeek": {
+          "title": "Upcoming This Week",
+          "totalUpcoming": "{count} total upcoming"
+        },
+        "revenue": {
+          "title": "Total Revenue",
+          "upcoming": "${amount} upcoming"
+        }
+      },
+      "analytics": {
+        "serviceDistribution": {
+          "title": "Service Distribution",
+          "description": "Breakdown of your services by type",
+          "noData": "No service data available",
+          "orders": "{count} orders"
+        },
+        "orderStatus": {
+          "title": "Order Status",
+          "description": "Overview of your order statuses",
+          "statuses": {
+            "completed": "Completed",
+            "upcoming": "Upcoming",
+            "pending": "Pending"
+          },
+          "orders": "{count} orders"
+        }
+      },
+      "schedule": {
+        "tabs": {
+          "today": "Today",
+          "upcoming": "Upcoming"
+        },
+        "today": {
+          "title": "Today's Schedule",
+          "description": {
+            "hasAppointments": "You have {count} appointments scheduled for today",
+            "noAppointments": "You have no appointments scheduled for today"
+          }
+        },
+        "upcoming": {
+          "title": "Upcoming Appointments",
+          "description": {
+            "hasAppointments": "You have {count} upcoming appointments",
+            "noAppointments": "You have no upcoming appointments"
+          }
+        },
+        "appointment": {
+          "time": "{startTime} - {endTime}",
+          "client": {
+            "title": "Client",
+            "info": "{name} • {phone}"
+          },
+          "status": {
+            "completed": "Completed",
+            "confirmed": "Confirmed",
+            "pending": "Pending"
+          }
+        },
+        "noAppointments": "No appointments scheduled for today"
+      },
+      "errors": {
+        "loadFailed": {
+          "title": "Error",
+          "description": "Failed to load your orders. Please try again later."
+        }
+      }
     }
   },
   "executorDetails": {
@@ -452,6 +531,718 @@
       "assignError": "Failed to assign service to executor. Please try again.",
       "removeSuccess": "Service removed from executor successfully.",
       "removeError": "Failed to remove service from executor. Please try again."
+    }
+  },
+  "orders": {
+    "title": "Orders",
+    "actions": {
+      "refresh": "Refresh",
+      "create": "Create Order"
+    },
+    "filters": {
+      "search": {
+        "label": "Search",
+        "placeholder": "Search by client, service, or executor..."
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Filter by status",
+        "options": {
+          "all": "All Statuses",
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "completed": "Completed"
+        }
+      },
+      "date": {
+        "label": "Date",
+        "placeholder": "Filter by date",
+        "options": {
+          "all": "All Dates",
+          "today": "Today",
+          "upcoming": "Upcoming",
+          "thisWeek": "This Week",
+          "past": "Past"
+        }
+      }
+    },
+    "empty": {
+      "title": "No Orders Found",
+      "description": "There are no orders in the system yet.",
+      "withFilters": "Try adjusting your filters to find what you're looking for.",
+      "clearFilters": "Clear Filters"
+    },
+    "orderCard": {
+      "date": "Date",
+      "time": "Time",
+      "client": "Client",
+      "phone": "Phone",
+      "service": "Service",
+      "executor": "Executor",
+      "more": "more",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "completed": "Completed"
+      }
+    },
+    "details": {
+      "title": "Order Details",
+      "orderId": "Order ID",
+      "sections": {
+        "status": "Status",
+        "appointment": {
+          "title": "Appointment",
+          "date": "Date",
+          "time": "Time"
+        },
+        "client": {
+          "title": "Client Information",
+          "name": "Name",
+          "phone": "Phone",
+          "address": "Address"
+        },
+        "services": {
+          "title": "Services",
+          "time": "Time",
+          "executor": "Executor",
+          "total": "Total"
+        },
+        "comment": "Comment"
+      },
+      "actions": {
+        "confirm": {
+          "button": "Confirm",
+          "confirming": "Confirming..."
+        },
+        "complete": {
+          "button": "Mark as Completed",
+          "completing": "Completing..."
+        },
+        "delete": {
+          "button": "Delete",
+          "title": "Are you sure?",
+          "description": "This will permanently delete this order. This action cannot be undone.",
+          "confirm": "Delete",
+          "cancel": "Cancel",
+          "deleting": "Deleting..."
+        }
+      }
+    },
+    "create": {
+      "title": "Create New Order",
+      "description": "Create a new booking for a client by selecting services, executors, and time slots.",
+      "steps": {
+        "service": {
+          "title": "Select a Service",
+          "duration": "minutes",
+          "price": "Price",
+          "onSite": "On-site"
+        },
+        "executor": {
+          "title": "Select an Executor",
+          "selectedService": "Selected Service"
+        },
+        "date": {
+          "title": "Select a Date",
+          "service": "Service",
+          "executor": "Executor"
+        },
+        "time": {
+          "title": "Select a Time Slot",
+          "noSlots": {
+            "title": "No available time slots for this date.",
+            "action": "Select Another Date"
+          }
+        },
+        "review": {
+          "title": "Review Service",
+          "current": {
+            "title": "Service to Add",
+            "service": "Service",
+            "executor": "Executor",
+            "date": "Date",
+            "time": "Time",
+            "price": "Price"
+          },
+          "added": {
+            "title": "Services in Order"
+          },
+          "actions": {
+            "addAnother": "Add Another Service",
+            "continue": "Continue"
+          }
+        },
+        "client": {
+          "title": "Client Information",
+          "summary": {
+            "title": "Order Summary",
+            "services": "service(s)",
+            "total": "Total"
+          },
+          "form": {
+            "name": {
+              "label": "Client Name",
+              "placeholder": "Enter client name"
+            },
+            "phone": {
+              "label": "Client Phone",
+              "placeholder": "Enter client phone number"
+            },
+            "address": {
+              "label": "Client Address",
+              "placeholder": "Enter client address",
+              "required": "Required for on-site services"
+            },
+            "comment": {
+              "label": "Comment (Optional)",
+              "placeholder": "Add any additional notes or comments"
+            }
+          },
+          "submit": {
+            "button": "Create Order",
+            "creating": "Creating Order..."
+          }
+        }
+      }
+    },
+    "toast": {
+      "loadError": "Failed to load orders. Please try again.",
+      "confirmSuccess": "Order has been confirmed successfully.",
+      "confirmError": "Failed to confirm order. Please try again.",
+      "completeSuccess": "Order has been marked as completed.",
+      "completeError": "Failed to complete order. Please try again.",
+      "deleteSuccess": "Order has been deleted successfully.",
+      "deleteError": "Failed to delete order. Please try again.",
+      "createSuccess": "Order has been created successfully.",
+      "createError": "Failed to create order. Please try again."
+    }
+  },
+  "schedule": {
+    "title": "Schedule",
+    "viewMode": {
+      "day": "Day",
+      "week": "Week"
+    },
+    "navigation": {
+      "today": "Today",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {number} of {total}"
+    },
+    "loading": {
+      "schedule": "Loading schedule...",
+      "timeSlots": "Loading time slots..."
+    },
+    "executor": {
+      "title": "Executor",
+      "noImage": "No image"
+    },
+    "order": {
+      "title": "Order Details",
+      "id": "Order ID",
+      "status": {
+        "title": "Status",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "completed": "Completed"
+      },
+      "appointment": {
+        "title": "Appointment",
+        "date": "Date",
+        "time": "Time"
+      },
+      "client": {
+        "title": "Client Information",
+        "name": "Name",
+        "phone": "Phone",
+        "address": "Address"
+      },
+      "services": {
+        "title": "Services",
+        "time": "Time",
+        "executor": "Executor",
+        "total": "Total"
+      },
+      "comment": {
+        "title": "Comment"
+      },
+      "actions": {
+        "confirm": {
+          "button": "Confirm",
+          "confirming": "Confirming..."
+        },
+        "complete": {
+          "button": "Mark as Completed",
+          "completing": "Completing..."
+        },
+        "delete": {
+          "button": "Delete",
+          "title": "Are you sure?",
+          "description": "This will permanently delete this order. This action cannot be undone.",
+          "confirm": "Delete",
+          "cancel": "Cancel",
+          "deleting": "Deleting..."
+        }
+      }
+    },
+    "toast": {
+      "loadError": "Failed to load schedule data. Please try again.",
+      "confirmSuccess": "Order has been confirmed successfully.",
+      "confirmError": "Failed to confirm order. Please try again.",
+      "completeSuccess": "Order has been marked as completed.",
+      "completeError": "Failed to complete order. Please try again.",
+      "deleteSuccess": "Order has been deleted successfully.",
+      "deleteError": "Failed to delete order. Please try again."
+    }
+  },
+  "services": {
+    "title": "Services",
+    "actions": {
+      "add": {
+        "button": "Add Service",
+        "title": "Add New Service",
+        "description": "Create a new service that clients can book.",
+        "creating": "Creating..."
+      },
+      "edit": {
+        "button": "Edit",
+        "title": "Edit Service",
+        "description": "Update the service information.",
+        "updating": "Updating..."
+      },
+      "delete": {
+        "button": "Delete",
+        "title": "Are you sure?",
+        "description": "This will permanently delete the service \"{name}\". This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "details": "Details"
+    },
+    "form": {
+      "name": {
+        "label": "Service Name",
+        "placeholder": "Enter service name"
+      },
+      "type": {
+        "label": "Service Type",
+        "placeholder": "Select service type",
+        "options": {
+          "haircut": "Haircut",
+          "styling": "Styling",
+          "coloring": "Coloring",
+          "treatment": "Treatment",
+          "consultation": "Consultation",
+          "other": "Other"
+        }
+      },
+      "price": {
+        "label": "Price",
+        "placeholder": "Enter price"
+      },
+      "duration": {
+        "label": "Duration (minutes)",
+        "placeholder": "Enter duration in minutes",
+        "display": "{minutes} minutes"
+      },
+      "requiresAddress": {
+        "label": "Requires client address (for on-site services)"
+      },
+      "submit": {
+        "create": "Create Service",
+        "update": "Update Service"
+      }
+    },
+    "empty": {
+      "title": "No Services Found",
+      "description": "You haven't added any services yet. Add your first service to get started."
+    },
+    "card": {
+      "price": "Price",
+      "duration": "Duration",
+      "requiresAddress": "Requires client address"
+    },
+    "toast": {
+      "loadError": "Failed to load services. Please try again.",
+      "validation": {
+        "title": "Validation Error",
+        "description": "Please fill in all required fields."
+      },
+      "addSuccess": "Service added successfully",
+      "addError": "Failed to add service. Please try again.",
+      "updateSuccess": "Service updated successfully",
+      "updateError": "Failed to update service. Please try again.",
+      "deleteSuccess": "Service deleted successfully",
+      "deleteError": "Failed to delete service. Please try again."
+    },
+    "details": {
+      "navigation": {
+        "back": "Back",
+        "viewAll": "View All Services"
+      },
+      "notFound": {
+        "title": "Service Not Found",
+        "description": "The service you're looking for doesn't exist or has been deleted."
+      },
+      "info": {
+        "title": "Service Details",
+        "description": "Basic information about this service",
+        "fields": {
+          "type": "Service Type",
+          "price": "Price",
+          "duration": "Duration",
+          "location": "Location",
+          "onSite": "On-site (at client's location)",
+          "inStore": "In-store"
+        }
+      },
+      "stats": {
+        "title": "Service Statistics",
+        "description": "Performance metrics for this service",
+        "metrics": {
+          "totalBookings": "Total Bookings",
+          "revenue": "Revenue",
+          "avgRating": "Avg. Rating",
+          "popularity": "Popularity",
+          "na": "N/A"
+        }
+      },
+      "tabs": {
+        "executors": {
+          "title": "Assigned Executors",
+          "description": "Executors who can perform this service",
+          "assign": {
+            "button": "Assign Executor",
+            "title": "Assign Executor to Service",
+            "description": "Select an executor to assign to the service \"{name}\".",
+            "placeholder": "Select an executor",
+            "submitting": "Assigning...",
+            "submit": "Assign Executor"
+          },
+          "empty": {
+            "title": "No Executors Assigned",
+            "description": "Assign executors to this service to allow them to perform it.",
+            "noAvailable": "No available executors to assign. All executors are already assigned to this service."
+          },
+          "remove": {
+            "button": "Remove",
+            "title": "Are you sure?",
+            "description": "This will remove {executorName} from the service \"{serviceName}\". They will no longer be able to perform this service.",
+            "confirm": "Remove",
+            "cancel": "Cancel"
+          }
+        },
+        "bookings": {
+          "title": "Bookings",
+          "description": "All bookings for this service",
+          "empty": "No bookings found for this service.",
+          "status": {
+            "completed": "Completed",
+            "upcoming": "Upcoming",
+            "pending": "Pending"
+          },
+          "details": {
+            "client": "Client",
+            "executor": "Executor",
+            "comment": "Comment",
+            "address": "Address"
+          }
+        }
+      },
+      "toast": {
+        "loadError": "Failed to load service details. Please try again.",
+        "executorsLoadError": "Failed to load assigned executors. Please try again.",
+        "bookingsLoadError": "Failed to load service bookings. Please try again.",
+        "selectExecutorError": "Please select an executor to assign.",
+        "assignSuccess": "Executor assigned to service successfully.",
+        "assignError": "Failed to assign executor to service. Please try again.",
+        "removeSuccess": "Executor removed from service successfully.",
+        "removeError": "Failed to remove executor from service. Please try again."
+      }
+    }
+  },
+  "settings": {
+    "title": "Company Settings",
+    "description": "Manage your company profile and information.",
+    "form": {
+      "logo": {
+        "change": "Change Logo",
+        "preview": "Company logo preview",
+        "placeholder": "Company logo"
+      },
+      "fields": {
+        "companyName": {
+          "label": "Company Name",
+          "validation": "Company name must be at least 2 characters"
+        },
+        "phone": {
+          "label": "Phone Number",
+          "validation": "Phone number must be at least 5 characters"
+        },
+        "address": {
+          "label": "Address",
+          "validation": "Address must be at least 5 characters"
+        }
+      },
+      "submit": "Save Changes",
+      "saving": "Saving...",
+      "toast": {
+        "loadError": {
+          "title": "Error",
+          "description": "Failed to load company profile"
+        },
+        "updateSuccess": {
+          "title": "Success",
+          "description": "Company profile updated successfully"
+        },
+        "updateError": {
+          "title": "Error",
+          "description": "Failed to update company profile"
+        }
+      }
+    },
+    "widget": {
+      "title": "Booking Widget Integration",
+      "description": "Use this code to embed the booking widget on your website. The widget will appear in a modal window with a responsive layout.",
+      "features": {
+        "title": "Features:",
+        "list": {
+          "responsive": "Responsive modal window with dark overlay",
+          "width": "Maximum width of 600px, adapts to smaller screens",
+          "scroll": "Scrollable content for tall widgets",
+          "close": "Close button always visible at the top",
+          "button": "Styled button to open the widget"
+        }
+      },
+      "code": {
+        "showMore": "Show full code",
+        "showLess": "Show less",
+        "copy": {
+          "button": "Copy code",
+          "success": {
+            "title": "Copied!",
+            "description": "The embedding code has been copied to your clipboard."
+          },
+          "error": {
+            "title": "Error",
+            "description": "Failed to copy to clipboard"
+          }
+        }
+      },
+      "preview": {
+        "title": "Preview",
+        "description": "Here's how the booking widget will look on your website:",
+        "button": "Book Service",
+        "status": {
+          "loading": {
+            "react": "Loading React...",
+            "widget": "Loading Widget..."
+          },
+          "ready": "Ready"
+        }
+      }
+    }
+  },
+  "executor": {
+    "sidebar": {
+      "title": "B-Calendar",
+      "nav": {
+        "dashboard": "Dashboard",
+        "me": "Me",
+        "orders": "Orders",
+        "schedule": "Schedule",
+        "clients": "Clients",
+        "settings": "Settings"
+      },
+      "logout": "Logout"
+    },
+    "profile": {
+      "title": "My Profile",
+      "loading": "Loading your profile...",
+      "tabs": {
+        "about": {
+          "title": "About Me",
+          "personalInfo": {
+            "title": "Personal Information",
+            "description": "Your profile information visible to clients",
+            "fields": {
+              "name": "Name",
+              "phone": "Phone",
+              "description": "Description"
+            }
+          }
+        },
+        "schedule": {
+          "title": "My Schedule",
+          "workSchedule": {
+            "title": "My Work Schedule",
+            "description": "Your weekly working hours",
+            "fields": {
+              "from": "From",
+              "till": "Till",
+              "breakStart": "Break Start",
+              "breakEnd": "Break End"
+            },
+            "days": {
+              "sunday": "Sunday",
+              "monday": "Monday",
+              "tuesday": "Tuesday",
+              "wednesday": "Wednesday",
+              "thursday": "Thursday",
+              "friday": "Friday",
+              "saturday": "Saturday"
+            }
+          }
+        },
+        "services": {
+          "title": "My Services",
+          "list": {
+            "title": "My Services",
+            "description": "Services you are assigned to perform",
+            "empty": "You are not assigned to any services yet.",
+            "fields": {
+              "price": "Price",
+              "duration": "Duration",
+              "durationUnit": "{minutes} minutes"
+            }
+          }
+        }
+      },
+      "errors": {
+        "loadFailed": {
+          "title": "Error",
+          "description": "Failed to load your data. Please try again."
+        }
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "tabs": {
+        "upcoming": "Upcoming ({count})",
+        "pending": "Pending ({count})",
+        "completed": "Completed ({count})",
+        "all": "All Orders ({count})"
+      },
+      "empty": "No orders found",
+      "loading": "Loading orders...",
+      "errors": {
+        "loadFailed": {
+          "title": "Error",
+          "description": "Failed to load your orders. Please try again later."
+        }
+      },
+      "orderCard": {
+        "time": {
+          "range": "{startTime} - {endTime}"
+        },
+        "client": {
+          "title": "Client",
+          "services": "Services"
+        },
+        "service": {
+          "price": "${price}"
+        },
+        "total": "Total: ${amount}",
+        "viewDetails": "View Details"
+      },
+      "orderDetails": {
+        "title": "Order Details",
+        "orderId": "Order ID: {id}",
+        "sections": {
+          "dateTime": {
+            "title": "Date & Time",
+            "date": "{date}",
+            "time": "{startTime} - {endTime}"
+          },
+          "status": {
+            "completed": "Completed",
+            "confirmed": "Confirmed",
+            "pending": "Pending"
+          },
+          "client": {
+            "title": "Client Information",
+            "phone": "Phone"
+          },
+          "services": {
+            "title": "Services"
+          },
+          "comments": {
+            "title": "Comments"
+          },
+          "total": {
+            "title": "Total",
+            "amount": "${amount}"
+          }
+        }
+      }
+    },
+    "schedule": {
+      "title": "My Schedule",
+      "loading": "Loading schedule...",
+      "viewMode": {
+        "day": "Day",
+        "week": "Week"
+      },
+      "navigation": {
+        "today": "Today",
+        "dateFormat": {
+          "day": "EEEE, MMMM d, yyyy",
+          "weekRange": "{startDate} - {endDate}"
+        }
+      },
+      "executor": {
+        "title": "Executor",
+        "defaultRole": "Executor",
+        "noImage": "No image"
+      },
+      "orderCard": {
+        "time": {
+          "range": "{startTime} - {endTime}"
+        },
+        "services": "Services"
+      },
+      "orderDetails": {
+        "title": "Order Details",
+        "orderId": "Order ID: {id}",
+        "sections": {
+          "status": "Status",
+          "appointment": {
+            "title": "Appointment",
+            "date": "Date",
+            "time": "Time"
+          },
+          "client": {
+            "title": "Client Information"
+          },
+          "services": {
+            "title": "Services",
+            "time": "Time",
+            "total": "Total"
+          },
+          "comments": "Comment"
+        },
+        "actions": {
+          "complete": {
+            "button": "Mark as Completed",
+            "loading": "Completing..."
+          }
+        }
+      },
+      "toast": {
+        "loadError": {
+          "title": "Error",
+          "description": "Failed to load schedule data. Please try again."
+        },
+        "completeSuccess": {
+          "title": "Success",
+          "description": "Order has been marked as completed."
+        },
+        "completeError": {
+          "title": "Error",
+          "description": "Failed to complete order. Please try again."
+        }
+      }
     }
   }
 } 

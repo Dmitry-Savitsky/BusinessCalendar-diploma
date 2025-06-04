@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Clock, CheckCircle, AlertCircle, DollarSign } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useTranslations } from 'next-intl'
 import { getToken, parseToken } from "@/lib/auth"
 import { getMyOrders, calculateOrderStats } from "@/lib/api/executor-orders"
 import type { Order } from "@/lib/api/orders"
@@ -14,6 +15,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 
 export default function ExecutorDashboard() {
+  const t = useTranslations('executor.dashboard')
   const [executorName, setExecutorName] = useState("Executor")
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -32,8 +34,8 @@ export default function ExecutorDashboard() {
       } catch (error) {
         console.error("Error fetching data:", error)
         toast({
-          title: "Error",
-          description: "Failed to load your orders. Please try again later.",
+          title: t('errors.loadFailed.title'),
+          description: t('errors.loadFailed.description'),
           variant: "destructive",
         })
       } finally {
@@ -42,7 +44,7 @@ export default function ExecutorDashboard() {
     }
 
     fetchData()
-  }, [])
+  }, [t])
 
   const stats = calculateOrderStats(orders)
 
@@ -59,7 +61,7 @@ export default function ExecutorDashboard() {
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
           <p className="text-muted-foreground">{todayFormatted}</p>
         </div>
       </div>
@@ -85,48 +87,56 @@ export default function ExecutorDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('metrics.todayAppointments.title')}</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.todaysOrders.length}</div>
               {stats.todaysOrders.length > 0 ? (
-                <p className="text-xs text-muted-foreground">Next at {formatTime(stats.todaysOrders[0].orderStart)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t('metrics.todayAppointments.nextAt', { time: formatTime(stats.todaysOrders[0].orderStart) })}
+                </p>
               ) : (
-                <p className="text-xs text-muted-foreground">No appointments today</p>
+                <p className="text-xs text-muted-foreground">{t('metrics.todayAppointments.noAppointments')}</p>
               )}
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed Orders</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('metrics.completedOrders.title')}</CardTitle>
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.completedOrders}</div>
               <p className="text-xs text-muted-foreground">
-                {((stats.completedOrders / stats.totalOrders) * 100 || 0).toFixed(0)}% completion rate
+                {t('metrics.completedOrders.completionRate', {
+                  rate: ((stats.completedOrders / stats.totalOrders) * 100 || 0).toFixed(0)
+                })}
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Upcoming This Week</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('metrics.upcomingWeek.title')}</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.thisWeeksOrders.length}</div>
-              <p className="text-xs text-muted-foreground">{stats.upcomingOrders} total upcoming</p>
+              <p className="text-xs text-muted-foreground">
+                {t('metrics.upcomingWeek.totalUpcoming', { count: stats.upcomingOrders })}
+              </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('metrics.revenue.title')}</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${stats.totalRevenue}</div>
-              <p className="text-xs text-muted-foreground">${stats.upcomingRevenue} upcoming</p>
+              <p className="text-xs text-muted-foreground">
+                {t('metrics.revenue.upcoming', { amount: stats.upcomingRevenue })}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -136,8 +146,8 @@ export default function ExecutorDashboard() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Service Distribution</CardTitle>
-            <CardDescription>Breakdown of your services by type</CardDescription>
+            <CardTitle>{t('analytics.serviceDistribution.title')}</CardTitle>
+            <CardDescription>{t('analytics.serviceDistribution.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -159,7 +169,9 @@ export default function ExecutorDashboard() {
                     <div key={service.type} className="space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">{service.name}</span>
-                        <span className="text-sm text-muted-foreground">{service.count} orders</span>
+                        <span className="text-sm text-muted-foreground">
+                          {t('analytics.serviceDistribution.orders', { count: service.count })}
+                        </span>
                       </div>
                       <Progress value={percentage} className="h-2" />
                     </div>
@@ -167,15 +179,15 @@ export default function ExecutorDashboard() {
                 })}
               </div>
             ) : (
-              <p className="text-muted-foreground">No service data available</p>
+              <p className="text-muted-foreground">{t('analytics.serviceDistribution.noData')}</p>
             )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Order Status</CardTitle>
-            <CardDescription>Overview of your order statuses</CardDescription>
+            <CardTitle>{t('analytics.orderStatus.title')}</CardTitle>
+            <CardDescription>{t('analytics.orderStatus.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -193,22 +205,28 @@ export default function ExecutorDashboard() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Completed</span>
-                    <span className="text-sm text-muted-foreground">{stats.completedOrders} orders</span>
+                    <span className="text-sm font-medium">{t('analytics.orderStatus.statuses.completed')}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {t('analytics.orderStatus.orders', { count: stats.completedOrders })}
+                    </span>
                   </div>
                   <Progress value={(stats.completedOrders / stats.totalOrders) * 100 || 0} className="h-2 bg-muted" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Upcoming</span>
-                    <span className="text-sm text-muted-foreground">{stats.upcomingOrders} orders</span>
+                    <span className="text-sm font-medium">{t('analytics.orderStatus.statuses.upcoming')}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {t('analytics.orderStatus.orders', { count: stats.upcomingOrders })}
+                    </span>
                   </div>
                   <Progress value={(stats.upcomingOrders / stats.totalOrders) * 100 || 0} className="h-2 bg-muted" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Pending</span>
-                    <span className="text-sm text-muted-foreground">{stats.pendingOrders} orders</span>
+                    <span className="text-sm font-medium">{t('analytics.orderStatus.statuses.pending')}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {t('analytics.orderStatus.orders', { count: stats.pendingOrders })}
+                    </span>
                   </div>
                   <Progress value={(stats.pendingOrders / stats.totalOrders) * 100 || 0} className="h-2 bg-muted" />
                 </div>
@@ -220,17 +238,17 @@ export default function ExecutorDashboard() {
 
       <Tabs defaultValue="today">
         <TabsList>
-          <TabsTrigger value="today">Today</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+          <TabsTrigger value="today">{t('schedule.tabs.today')}</TabsTrigger>
+          <TabsTrigger value="upcoming">{t('schedule.tabs.upcoming')}</TabsTrigger>
         </TabsList>
         <TabsContent value="today" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Today's Schedule</CardTitle>
+              <CardTitle>{t('schedule.today.title')}</CardTitle>
               <CardDescription>
                 {stats.todaysOrders.length > 0
-                  ? `You have ${stats.todaysOrders.length} appointments scheduled for today`
-                  : "You have no appointments scheduled for today"}
+                  ? t('schedule.today.description.hasAppointments', { count: stats.todaysOrders.length })
+                  : t('schedule.today.description.noAppointments')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -260,16 +278,22 @@ export default function ExecutorDashboard() {
                       <div key={order.publicId} className="flex items-center space-x-4 rounded-md border p-4">
                         <div className="flex-1 space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {formatTime(order.orderStart)} - {formatTime(order.orderEnd)}
+                            {t('schedule.appointment.time', {
+                              startTime: formatTime(order.orderStart),
+                              endTime: formatTime(order.orderEnd)
+                            })}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {order.items.map((item) => item.serviceName).join(", ")}
                           </p>
                         </div>
                         <div className="flex-1 space-y-1">
-                          <p className="text-sm font-medium leading-none">Client</p>
+                          <p className="text-sm font-medium leading-none">{t('schedule.appointment.client.title')}</p>
                           <p className="text-sm text-muted-foreground">
-                            {order.clientName} • {order.clientPhone}
+                            {t('schedule.appointment.client.info', {
+                              name: order.clientName,
+                              phone: order.clientPhone
+                            })}
                           </p>
                         </div>
                         <div>
@@ -279,7 +303,7 @@ export default function ExecutorDashboard() {
                               className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                             >
                               <CheckCircle className="mr-1 h-3 w-3" />
-                              Completed
+                              {t('schedule.appointment.status.completed')}
                             </Badge>
                           ) : order.confirmed ? (
                             <Badge
@@ -287,7 +311,7 @@ export default function ExecutorDashboard() {
                               className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
                             >
                               <Clock className="mr-1 h-3 w-3" />
-                              Confirmed
+                              {t('schedule.appointment.status.confirmed')}
                             </Badge>
                           ) : (
                             <Badge
@@ -295,7 +319,7 @@ export default function ExecutorDashboard() {
                               className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
                             >
                               <AlertCircle className="mr-1 h-3 w-3" />
-                              Pending
+                              {t('schedule.appointment.status.pending')}
                             </Badge>
                           )}
                         </div>
@@ -303,7 +327,7 @@ export default function ExecutorDashboard() {
                     ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-center py-8">No appointments scheduled for today</p>
+                <p className="text-muted-foreground text-center py-8">{t('schedule.noAppointments')}</p>
               )}
             </CardContent>
           </Card>
@@ -311,11 +335,11 @@ export default function ExecutorDashboard() {
         <TabsContent value="upcoming" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Appointments</CardTitle>
+              <CardTitle>{t('schedule.upcoming.title')}</CardTitle>
               <CardDescription>
                 {stats.upcomingOrders > 0
-                  ? `You have ${stats.upcomingOrders} upcoming appointments`
-                  : "You have no upcoming appointments"}
+                  ? t('schedule.upcoming.description.hasAppointments', { count: stats.upcomingOrders })
+                  : t('schedule.upcoming.description.noAppointments')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -365,7 +389,7 @@ export default function ExecutorDashboard() {
                               className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
                             >
                               <Clock className="mr-1 h-3 w-3" />
-                              Confirmed
+                              {t('schedule.appointment.status.confirmed')}
                             </Badge>
                           ) : (
                             <Badge
@@ -373,7 +397,7 @@ export default function ExecutorDashboard() {
                               className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
                             >
                               <AlertCircle className="mr-1 h-3 w-3" />
-                              Pending
+                              {t('schedule.appointment.status.pending')}
                             </Badge>
                           )}
                         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from 'next-intl'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -72,6 +73,7 @@ import { cn } from "@/lib/utils"
 import { config } from "@/lib/config"
 
 export default function OrdersPage() {
+  const t = useTranslations('orders')
   const router = useRouter()
   const { toast } = useToast()
   const [orders, setOrders] = useState<Order[]>([])
@@ -209,7 +211,7 @@ export default function OrdersPage() {
 
       toast({
         title: "Success",
-        description: "Order has been confirmed successfully.",
+        description: t('toast.confirmSuccess'),
       })
 
       // Update the order in the state
@@ -221,7 +223,7 @@ export default function OrdersPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to confirm order. Please try again.",
+        description: t('toast.confirmError'),
         variant: "destructive",
       })
     } finally {
@@ -238,7 +240,7 @@ export default function OrdersPage() {
 
       toast({
         title: "Success",
-        description: "Order has been marked as completed.",
+        description: t('toast.completeSuccess'),
       })
 
       // Update the order in the state
@@ -250,7 +252,7 @@ export default function OrdersPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to complete order. Please try again.",
+        description: t('toast.completeError'),
         variant: "destructive",
       })
     } finally {
@@ -267,7 +269,7 @@ export default function OrdersPage() {
 
       toast({
         title: "Success",
-        description: "Order has been deleted successfully.",
+        description: t('toast.deleteSuccess'),
       })
 
       // Remove the order from the state
@@ -278,7 +280,7 @@ export default function OrdersPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete order. Please try again.",
+        description: t('toast.deleteError'),
         variant: "destructive",
       })
     } finally {
@@ -288,6 +290,15 @@ export default function OrdersPage() {
 
   const renderStatusBadge = (order: Order) => {
     const status = getOrderStatusInfo(order)
+    let statusText = ""
+
+    if (order.completed) {
+      statusText = t('orderCard.status.completed')
+    } else if (order.confirmed) {
+      statusText = t('orderCard.status.confirmed')
+    } else {
+      statusText = t('orderCard.status.pending')
+    }
 
     return (
       <Badge
@@ -302,7 +313,7 @@ export default function OrdersPage() {
         {status.icon === "clock" && <Clock className="mr-1 h-3 w-3" />}
         {status.icon === "alert-circle" && <AlertCircle className="mr-1 h-3 w-3" />}
         {status.icon === "activity" && <Activity className="mr-1 h-3 w-3" />}
-        {status.label}
+        {statusText}
       </Badge>
     )
   }
@@ -453,7 +464,7 @@ export default function OrdersPage() {
     if (!clientName || !clientPhone) {
       toast({
         title: "Error",
-        description: "Please enter client name and phone number.",
+        description: t('toast.createError'),
         variant: "destructive",
       })
       return
@@ -473,7 +484,7 @@ export default function OrdersPage() {
 
       toast({
         title: "Success",
-        description: "Order has been created successfully.",
+        description: t('toast.createSuccess'),
       })
 
       // Close dialog and refresh orders
@@ -482,7 +493,7 @@ export default function OrdersPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create order. Please try again.",
+        description: t('toast.createError'),
         variant: "destructive",
       })
     } finally {
@@ -917,15 +928,15 @@ export default function OrdersPage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <div className="flex gap-2">
           <Button variant="outline" onClick={fetchOrders}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            {t('actions.refresh')}
           </Button>
           <Button onClick={openCreateOrderDialog}>
             <Plus className="mr-2 h-4 w-4" />
-            Create Order
+            {t('actions.create')}
           </Button>
         </div>
       </div>
@@ -933,13 +944,13 @@ export default function OrdersPage() {
       <div className="flex flex-col space-y-4 md:flex-row md:items-end md:space-x-4 md:space-y-0">
         <div className="flex-1 space-y-2">
           <label htmlFor="search" className="text-sm font-medium">
-            Search
+            {t('filters.search.label')}
           </label>
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="search"
-              placeholder="Search by client, service, or executor..."
+              placeholder={t('filters.search.placeholder')}
               className="pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -949,35 +960,35 @@ export default function OrdersPage() {
 
         <div className="w-full md:w-[180px] space-y-2">
           <label htmlFor="status-filter" className="text-sm font-medium">
-            Status
+            {t('filters.status.label')}
           </label>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger id="status-filter">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('filters.status.placeholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="all">{t('filters.status.options.all')}</SelectItem>
+              <SelectItem value="pending">{t('filters.status.options.pending')}</SelectItem>
+              <SelectItem value="confirmed">{t('filters.status.options.confirmed')}</SelectItem>
+              <SelectItem value="completed">{t('filters.status.options.completed')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="w-full md:w-[180px] space-y-2">
           <label htmlFor="date-filter" className="text-sm font-medium">
-            Date
+            {t('filters.date.label')}
           </label>
           <Select value={dateFilter} onValueChange={setDateFilter}>
             <SelectTrigger id="date-filter">
-              <SelectValue placeholder="Filter by date" />
+              <SelectValue placeholder={t('filters.date.placeholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Dates</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="upcoming">Upcoming</SelectItem>
-              <SelectItem value="thisWeek">This Week</SelectItem>
-              <SelectItem value="past">Past</SelectItem>
+              <SelectItem value="all">{t('filters.date.options.all')}</SelectItem>
+              <SelectItem value="today">{t('filters.date.options.today')}</SelectItem>
+              <SelectItem value="upcoming">{t('filters.date.options.upcoming')}</SelectItem>
+              <SelectItem value="thisWeek">{t('filters.date.options.thisWeek')}</SelectItem>
+              <SelectItem value="past">{t('filters.date.options.past')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -987,17 +998,17 @@ export default function OrdersPage() {
         <div className="flex h-[400px] items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Loading orders...</p>
+            <p className="text-sm text-muted-foreground">{t('toast.loadError')}</p>
           </div>
         </div>
       ) : filteredOrders.length === 0 ? (
         <div className="flex h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
           <ShoppingBag className="h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-medium">No Orders Found</h3>
+          <h3 className="mt-4 text-lg font-medium">{t('empty.title')}</h3>
           <p className="mt-2 text-sm text-muted-foreground">
             {searchQuery || statusFilter !== "all" || dateFilter !== "all"
-              ? "Try adjusting your filters to find what you're looking for."
-              : "There are no orders in the system yet."}
+              ? t('empty.withFilters')
+              : t('empty.description')}
           </p>
           {(searchQuery || statusFilter !== "all" || dateFilter !== "all") && (
             <Button
@@ -1010,7 +1021,7 @@ export default function OrdersPage() {
               }}
             >
               <Filter className="mr-2 h-4 w-4" />
-              Clear Filters
+              {t('empty.clearFilters')}
             </Button>
           )}
         </div>
@@ -1051,14 +1062,14 @@ export default function OrdersPage() {
                   <div className="space-y-2">
                     <div className="font-medium">
                       {order.items.length > 1
-                        ? `${order.items[0].serviceName} +${order.items.length - 1} more`
+                        ? `${order.items[0].serviceName} +${order.items.length - 1} ${t('orderCard.more')}`
                         : order.items[0]?.serviceName}
                     </div>
                     <div className="flex items-center gap-2">
                       <Scissors className="h-4 w-4 text-muted-foreground" />
                       <span>
                         {order.items.length > 1
-                          ? `${order.items[0].executorName} +${order.items.length - 1} more`
+                          ? `${order.items[0].executorName} +${order.items.length - 1} ${t('orderCard.more')}`
                           : order.items[0]?.executorName}
                       </span>
                     </div>
@@ -1081,30 +1092,30 @@ export default function OrdersPage() {
           {selectedOrder && (
             <>
               <SheetHeader>
-                <SheetTitle>Order Details</SheetTitle>
-                <SheetDescription>Order ID: {selectedOrder.publicId.substring(0, 8)}...</SheetDescription>
+                <SheetTitle>{t('details.title')}</SheetTitle>
+                <SheetDescription>{t('details.orderId')}: {selectedOrder.publicId.substring(0, 8)}...</SheetDescription>
               </SheetHeader>
 
               <div className="mt-6 space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">Status</h3>
+                  <h3 className="text-lg font-medium">{t('details.sections.status')}</h3>
                   {renderStatusBadge(selectedOrder)}
                 </div>
 
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Appointment</h3>
+                  <h3 className="text-lg font-medium">{t('details.sections.appointment.title')}</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Date</p>
+                      <p className="text-sm text-muted-foreground">{t('details.sections.appointment.date')}</p>
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         <p>{formatDate(selectedOrder.orderStart)}</p>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Time</p>
+                      <p className="text-sm text-muted-foreground">{t('details.sections.appointment.time')}</p>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <p>
@@ -1118,7 +1129,7 @@ export default function OrdersPage() {
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Client Information</h3>
+                  <h3 className="text-lg font-medium">{t('details.sections.client.title')}</h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-muted-foreground" />
@@ -1140,7 +1151,7 @@ export default function OrdersPage() {
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Services</h3>
+                  <h3 className="text-lg font-medium">{t('details.sections.services.title')}</h3>
                   <div className="space-y-4">
                     {selectedOrder.items.map((item, index) => (
                       <div key={index} className="rounded-md border p-4">
@@ -1157,14 +1168,14 @@ export default function OrdersPage() {
                         <div className="mt-2 pt-2 border-t">
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4 text-muted-foreground" />
-                            <p className="text-sm">Executor: {item.executorName}</p>
+                            <p className="text-sm">{t('details.sections.services.executor')}: {item.executorName}</p>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
                   <div className="flex justify-between pt-2">
-                    <p className="font-medium">Total</p>
+                    <p className="font-medium">{t('details.sections.services.total')}</p>
                     <p className="font-bold">${calculateOrderTotal(selectedOrder).toFixed(2)}</p>
                   </div>
                 </div>
@@ -1173,7 +1184,7 @@ export default function OrdersPage() {
                   <>
                     <Separator />
                     <div className="space-y-2">
-                      <h3 className="text-lg font-medium">Comment</h3>
+                      <h3 className="text-lg font-medium">{t('details.sections.comment')}</h3>
                       <p className="text-sm">{selectedOrder.comment}</p>
                     </div>
                   </>
@@ -1187,12 +1198,12 @@ export default function OrdersPage() {
                       {isConfirming ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Confirming...
+                          {t('details.actions.confirm.confirming')}
                         </>
                       ) : (
                         <>
                           <CheckSquare className="mr-2 h-4 w-4" />
-                          Confirm
+                          {t('details.actions.confirm.button')}
                         </>
                       )}
                     </Button>
@@ -1203,12 +1214,12 @@ export default function OrdersPage() {
                       {isCompleting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Completing...
+                          {t('details.actions.complete.completing')}
                         </>
                       ) : (
                         <>
                           <CheckCircle className="mr-2 h-4 w-4" />
-                          Mark as Completed
+                          {t('details.actions.complete.button')}
                         </>
                       )}
                     </Button>
@@ -1218,18 +1229,18 @@ export default function OrdersPage() {
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" className="flex-1">
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        {t('details.actions.delete.button')}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('details.actions.delete.title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently delete this order. This action cannot be undone.
+                          {t('details.actions.delete.description')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('details.actions.delete.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={handleDeleteOrder}
                           className="bg-red-500 hover:bg-red-600"
@@ -1238,10 +1249,10 @@ export default function OrdersPage() {
                           {isDeleting ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Deleting...
+                              {t('details.actions.delete.deleting')}
                             </>
                           ) : (
-                            "Delete"
+                            t('details.actions.delete.confirm')
                           )}
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -1258,9 +1269,9 @@ export default function OrdersPage() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-md md:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Create New Order</DialogTitle>
+            <DialogTitle>{t('create.title')}</DialogTitle>
             <DialogDescription>
-              Create a new booking for a client by selecting services, executors, and time slots.
+              {t('create.description')}
             </DialogDescription>
           </DialogHeader>
 

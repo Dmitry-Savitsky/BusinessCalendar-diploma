@@ -27,6 +27,9 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { config } from "@/lib/config"
+import { useTranslations } from 'next-intl'
+
+type TranslationFunction = ReturnType<typeof useTranslations>
 
 // Hours to display in the calendar (from 8:00 to 20:00)
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8)
@@ -34,6 +37,7 @@ const HOURS = Array.from({ length: 13 }, (_, i) => i + 8)
 const TIMEZONE = "Europe/Minsk"
 
 export default function ExecutorSchedulePage() {
+  const t = useTranslations('executor.schedule')
   const { toast } = useToast()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [executor, setExecutor] = useState<any>(null)
@@ -57,8 +61,8 @@ export default function ExecutorSchedulePage() {
       setOrders(ordersData)
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load schedule data. Please try again.",
+        title: t('toast.loadError.title'),
+        description: t('toast.loadError.description'),
         variant: "destructive",
       })
     } finally {
@@ -89,10 +93,9 @@ export default function ExecutorSchedulePage() {
     setIsCompleting(true)
     try {
       // In a real implementation, you would call an API to mark the order as completed
-      // For now, we'll just update the state
       toast({
-        title: "Success",
-        description: "Order has been marked as completed.",
+        title: t('toast.completeSuccess.title'),
+        description: t('toast.completeSuccess.description'),
       })
 
       // Update the order in the state
@@ -103,8 +106,8 @@ export default function ExecutorSchedulePage() {
       setSelectedOrder({ ...selectedOrder, completed: true })
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to complete order. Please try again.",
+        title: t('toast.completeError.title'),
+        description: t('toast.completeError.description'),
         variant: "destructive",
       })
     } finally {
@@ -228,7 +231,7 @@ export default function ExecutorSchedulePage() {
       <div className="flex h-[400px] items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Loading schedule...</p>
+          <p className="text-sm text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     )
@@ -237,14 +240,14 @@ export default function ExecutorSchedulePage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">My Schedule</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Button variant={viewMode === "day" ? "default" : "outline"} size="sm" onClick={() => setViewMode("day")}>
-              Day
+              {t('viewMode.day')}
             </Button>
             <Button variant={viewMode === "week" ? "default" : "outline"} size="sm" onClick={() => setViewMode("week")}>
-              Week
+              {t('viewMode.week')}
             </Button>
           </div>
           <div className="flex items-center space-x-2">
@@ -252,7 +255,7 @@ export default function ExecutorSchedulePage() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button variant="outline" onClick={handleToday}>
-              Today
+              {t('navigation.today')}
             </Button>
             <Button variant="outline" size="sm" onClick={viewMode === "day" ? handleNextDay : handleNextWeek}>
               <ChevronRight className="h-4 w-4" />
@@ -263,10 +266,13 @@ export default function ExecutorSchedulePage() {
 
       <div className="flex items-center justify-center">
         {viewMode === "day" ? (
-          <h3 className="text-xl font-medium">{format(selectedDate, "EEEE, MMMM d, yyyy")}</h3>
+          <h3 className="text-xl font-medium">{format(selectedDate, t('navigation.dateFormat.day'))}</h3>
         ) : (
           <h3 className="text-xl font-medium">
-            {format(weekDates[0], "MMMM d")} - {format(weekDates[6], "MMMM d, yyyy")}
+            {t('navigation.dateFormat.weekRange', {
+              startDate: format(weekDates[0], 'MMMM d'),
+              endDate: format(weekDates[6], 'MMMM d, yyyy')
+            })}
           </h3>
         )}
       </div>
@@ -287,7 +293,7 @@ export default function ExecutorSchedulePage() {
           </div>
           <div>
             <h3 className="text-lg font-medium">{executor.name}</h3>
-            <p className="text-sm text-muted-foreground">{executor.description || "Executor"}</p>
+            <p className="text-sm text-muted-foreground">{executor.description || t('executor.defaultRole')}</p>
             <p className="text-sm text-muted-foreground">{executor.phone}</p>
           </div>
         </div>
@@ -300,6 +306,7 @@ export default function ExecutorSchedulePage() {
             handleOrderClick={handleOrderClick}
             getOrderCardStyle={getOrderCardStyle}
             getOrderCardColorClass={getOrderCardColorClass}
+            t={t}
           />
         ) : (
           <WeekView
@@ -307,6 +314,7 @@ export default function ExecutorSchedulePage() {
             weekDates={weekDates}
             handleOrderClick={handleOrderClick}
             getOrderCardColorClass={getOrderCardColorClass}
+            t={t}
           />
         )}
       </div>
@@ -317,34 +325,39 @@ export default function ExecutorSchedulePage() {
           {selectedOrder && (
             <>
               <SheetHeader>
-                <SheetTitle>Order Details</SheetTitle>
-                <SheetDescription>Order ID: {selectedOrder.publicId.substring(0, 8)}...</SheetDescription>
+                <SheetTitle>{t('orderDetails.title')}</SheetTitle>
+                <SheetDescription>
+                  {t('orderDetails.orderId', { id: selectedOrder.publicId.substring(0, 8) })}...
+                </SheetDescription>
               </SheetHeader>
 
               <div className="mt-6 space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">Status</h3>
+                  <h3 className="text-lg font-medium">{t('orderDetails.sections.status')}</h3>
                   {renderStatusBadge(selectedOrder)}
                 </div>
 
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Appointment</h3>
+                  <h3 className="text-lg font-medium">{t('orderDetails.sections.appointment.title')}</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Date</p>
+                      <p className="text-sm text-muted-foreground">{t('orderDetails.sections.appointment.date')}</p>
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         <p>{formatDate(selectedOrder.orderStart)}</p>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Time</p>
+                      <p className="text-sm text-muted-foreground">{t('orderDetails.sections.appointment.time')}</p>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <p>
-                          {formatTime(selectedOrder.orderStart)} - {formatTime(selectedOrder.orderEnd)}
+                          {t('orderCard.time.range', {
+                            startTime: formatTime(selectedOrder.orderStart),
+                            endTime: formatTime(selectedOrder.orderEnd)
+                          })}
                         </p>
                       </div>
                     </div>
@@ -354,7 +367,7 @@ export default function ExecutorSchedulePage() {
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Client Information</h3>
+                  <h3 className="text-lg font-medium">{t('orderDetails.sections.client.title')}</h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-muted-foreground" />
@@ -376,7 +389,7 @@ export default function ExecutorSchedulePage() {
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Services</h3>
+                  <h3 className="text-lg font-medium">{t('orderDetails.sections.services.title')}</h3>
                   <div className="space-y-4">
                     {selectedOrder.items.map((item, index) => (
                       <div key={index} className="rounded-md border p-4">
@@ -394,7 +407,7 @@ export default function ExecutorSchedulePage() {
                     ))}
                   </div>
                   <div className="flex justify-between pt-2">
-                    <p className="font-medium">Total</p>
+                    <p className="font-medium">{t('orderDetails.sections.services.total')}</p>
                     <p className="font-bold">${calculateOrderTotal(selectedOrder).toFixed(2)}</p>
                   </div>
                 </div>
@@ -403,7 +416,7 @@ export default function ExecutorSchedulePage() {
                   <>
                     <Separator />
                     <div className="space-y-2">
-                      <h3 className="text-lg font-medium">Comment</h3>
+                      <h3 className="text-lg font-medium">{t('orderDetails.sections.comments')}</h3>
                       <p className="text-sm">{selectedOrder.comment}</p>
                     </div>
                   </>
@@ -417,12 +430,12 @@ export default function ExecutorSchedulePage() {
                       {isCompleting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Completing...
+                          {t('orderDetails.actions.complete.loading')}
                         </>
                       ) : (
                         <>
                           <CheckCircle className="mr-2 h-4 w-4" />
-                          Mark as Completed
+                          {t('orderDetails.actions.complete.button')}
                         </>
                       )}
                     </Button>
@@ -443,11 +456,13 @@ const DayView = ({
   handleOrderClick,
   getOrderCardStyle,
   getOrderCardColorClass,
+  t,
 }: {
   orders: Order[]
   handleOrderClick: (order: Order) => void
   getOrderCardStyle: (order: Order) => React.CSSProperties
   getOrderCardColorClass: (order: Order) => string
+  t: TranslationFunction
 }) => {
   return (
     <div className="flex relative">
@@ -479,7 +494,10 @@ const DayView = ({
             onClick={() => handleOrderClick(order)}
           >
             <div className="text-xs font-medium truncate">
-              {formatTime(order.orderStart)} - {formatTime(order.orderEnd)}
+              {t('orderCard.time.range', {
+                startTime: formatTime(order.orderStart),
+                endTime: formatTime(order.orderEnd)
+              })}
             </div>
             <div className="font-medium truncate">{order.clientName}</div>
             <div className="text-xs truncate">{order.items.map((item) => item.serviceName).join(", ")}</div>
@@ -497,11 +515,13 @@ const WeekView = ({
   weekDates,
   handleOrderClick,
   getOrderCardColorClass,
+  t,
 }: {
   orders: Order[]
   weekDates: Date[]
   handleOrderClick: (order: Order) => void
   getOrderCardColorClass: (order: Order) => string
+  t: TranslationFunction
 }) => {
   return (
     <div className="grid" style={{ gridTemplateColumns: "auto repeat(7, 1fr)" }}>
@@ -518,7 +538,7 @@ const WeekView = ({
 
       {/* Appointments row */}
       <div className="border-b border-r p-2 sticky left-0 bg-background">
-        <div className="font-medium">Appointments</div>
+        <div className="font-medium">{t('orderCard.services')}</div>
       </div>
 
       {/* Day cells with appointments */}
@@ -542,7 +562,10 @@ const WeekView = ({
                 onClick={() => handleOrderClick(order)}
               >
                 <div className="font-medium truncate">
-                  {formatTime(order.orderStart)} - {formatTime(order.orderEnd)}
+                  {t('orderCard.time.range', {
+                    startTime: formatTime(order.orderStart),
+                    endTime: formatTime(order.orderEnd)
+                  })}
                 </div>
                 <div className="truncate">{order.clientName}</div>
                 <div className="truncate">{order.items.map((item) => item.serviceName).join(", ")}</div>

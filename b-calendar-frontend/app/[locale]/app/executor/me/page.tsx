@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Loader2, Clock, CalendarIcon, Briefcase } from "lucide-react"
 import { getToken, parseToken } from "@/lib/auth"
 import { config } from "@/lib/config"
+import { useTranslations } from 'next-intl'
 
 // Types
 interface ExecutorProfile {
@@ -44,6 +45,7 @@ interface ExecutorService {
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 export default function ExecutorMePage() {
+  const t = useTranslations('executor.profile')
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<ExecutorProfile | null>(null)
@@ -117,8 +119,8 @@ export default function ExecutorMePage() {
     } catch (error) {
       console.error("Error fetching executor data:", error)
       toast({
-        title: "Error",
-        description: "Failed to load your data. Please try again.",
+        title: t('errors.loadFailed.title'),
+        description: t('errors.loadFailed.description'),
         variant: "destructive",
       })
     } finally {
@@ -126,12 +128,17 @@ export default function ExecutorMePage() {
     }
   }
 
+  const getDayName = (dayNo: number) => {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    return t(`tabs.schedule.workSchedule.days.${days[dayNo]}`)
+  }
+
   if (loading) {
     return (
       <div className="flex h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Loading your profile...</p>
+          <p className="text-sm text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     )
@@ -140,22 +147,22 @@ export default function ExecutorMePage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">My Profile</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
       </div>
 
       <Tabs defaultValue="about" className="space-y-4">
         <TabsList>
           <TabsTrigger value="about" className="flex items-center gap-2">
             <CalendarIcon className="h-4 w-4" />
-            About Me
+            {t('tabs.about.title')}
           </TabsTrigger>
           <TabsTrigger value="schedule" className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            My Schedule
+            {t('tabs.schedule.title')}
           </TabsTrigger>
           <TabsTrigger value="services" className="flex items-center gap-2">
             <Briefcase className="h-4 w-4" />
-            My Services
+            {t('tabs.services.title')}
           </TabsTrigger>
         </TabsList>
 
@@ -164,8 +171,8 @@ export default function ExecutorMePage() {
           {profile && (
             <Card>
               <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Your profile information visible to clients</CardDescription>
+                <CardTitle>{t('tabs.about.personalInfo.title')}</CardTitle>
+                <CardDescription>{t('tabs.about.personalInfo.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex flex-col gap-6 md:flex-row">
@@ -183,17 +190,17 @@ export default function ExecutorMePage() {
 
                   <div className="flex-1 space-y-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">{t('tabs.about.personalInfo.fields.name')}</Label>
                       <Input id="name" value={profile.name || ""} readOnly />
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone">{t('tabs.about.personalInfo.fields.phone')}</Label>
                       <Input id="phone" value={profile.phone || ""} readOnly />
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="description">Description</Label>
+                      <Label htmlFor="description">{t('tabs.about.personalInfo.fields.description')}</Label>
                       <Textarea id="description" value={profile.description || ""} readOnly />
                     </div>
                   </div>
@@ -207,8 +214,8 @@ export default function ExecutorMePage() {
         <TabsContent value="schedule" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>My Work Schedule</CardTitle>
-              <CardDescription>Your weekly working hours</CardDescription>
+              <CardTitle>{t('tabs.schedule.workSchedule.title')}</CardTitle>
+              <CardDescription>{t('tabs.schedule.workSchedule.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
@@ -218,28 +225,28 @@ export default function ExecutorMePage() {
                       <div className="flex items-center space-x-2 md:w-1/5">
                         <Checkbox id={`working-${day.dayNo}`} checked={day.isWorking} disabled />
                         <Label htmlFor={`working-${day.dayNo}`} className="font-medium">
-                          {DAYS_OF_WEEK[day.dayNo]}
+                          {getDayName(day.dayNo)}
                         </Label>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:w-4/5">
                         <div className="space-y-2">
-                          <Label className="text-xs">From</Label>
+                          <Label className="text-xs">{t('tabs.schedule.workSchedule.fields.from')}</Label>
                           <div className="rounded-md border px-3 py-2 text-sm">{day.fromTime.substring(0, 5)}</div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs">Till</Label>
+                          <Label className="text-xs">{t('tabs.schedule.workSchedule.fields.till')}</Label>
                           <div className="rounded-md border px-3 py-2 text-sm">{day.tillTime.substring(0, 5)}</div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs">Break Start</Label>
+                          <Label className="text-xs">{t('tabs.schedule.workSchedule.fields.breakStart')}</Label>
                           <div className="rounded-md border px-3 py-2 text-sm">{day.breakStart.substring(0, 5)}</div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs">Break End</Label>
+                          <Label className="text-xs">{t('tabs.schedule.workSchedule.fields.breakEnd')}</Label>
                           <div className="rounded-md border px-3 py-2 text-sm">{day.breakEnd.substring(0, 5)}</div>
                         </div>
                       </div>
@@ -255,8 +262,8 @@ export default function ExecutorMePage() {
         <TabsContent value="services" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>My Services</CardTitle>
-              <CardDescription>Services you are assigned to perform</CardDescription>
+              <CardTitle>{t('tabs.services.list.title')}</CardTitle>
+              <CardDescription>{t('tabs.services.list.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -268,12 +275,14 @@ export default function ExecutorMePage() {
                         <h3 className="font-semibold text-lg mb-2">{service.serviceName}</h3>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Price:</span>
+                            <span className="text-muted-foreground">{t('tabs.services.list.fields.price')}:</span>
                             <span className="font-medium">${service.servicePrice}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Duration:</span>
-                            <span className="font-medium">{service.durationMinutes} minutes</span>
+                            <span className="text-muted-foreground">{t('tabs.services.list.fields.duration')}:</span>
+                            <span className="font-medium">
+                              {t('tabs.services.list.fields.durationUnit', { minutes: service.durationMinutes })}
+                            </span>
                           </div>
                         </div>
                       </CardContent>
@@ -281,7 +290,7 @@ export default function ExecutorMePage() {
                   ))
                 ) : (
                   <div className="col-span-full text-center py-8">
-                    <p className="text-muted-foreground">You are not assigned to any services yet.</p>
+                    <p className="text-muted-foreground">{t('tabs.services.list.empty')}</p>
                   </div>
                 )}
               </div>

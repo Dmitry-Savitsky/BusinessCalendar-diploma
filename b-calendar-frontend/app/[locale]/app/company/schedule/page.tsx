@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-
+import { useTranslations } from 'next-intl'
 import { useState, useEffect, useMemo } from "react"
 import { format, addDays, startOfDay, isSameDay, startOfWeek, isWithinInterval } from "date-fns"
 import { formatInTimeZone } from 'date-fns-tz'
@@ -80,6 +80,7 @@ const formatTime = (dateStr: string) => {
 }
 
 export default function SchedulePage() {
+  const t = useTranslations('schedule')
   const { toast } = useToast()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [executors, setExecutors] = useState<Executor[]>([])
@@ -106,7 +107,7 @@ export default function SchedulePage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load schedule data. Please try again.",
+        description: t('toast.loadError'),
         variant: "destructive",
       })
     } finally {
@@ -140,7 +141,7 @@ export default function SchedulePage() {
 
       toast({
         title: "Success",
-        description: "Order has been confirmed successfully.",
+        description: t('toast.confirmSuccess'),
       })
 
       // Update the order in the state
@@ -152,7 +153,7 @@ export default function SchedulePage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to confirm order. Please try again.",
+        description: t('toast.confirmError'),
         variant: "destructive",
       })
     } finally {
@@ -169,7 +170,7 @@ export default function SchedulePage() {
 
       toast({
         title: "Success",
-        description: "Order has been marked as completed.",
+        description: t('toast.completeSuccess'),
       })
 
       // Update the order in the state
@@ -181,7 +182,7 @@ export default function SchedulePage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to complete order. Please try again.",
+        description: t('toast.completeError'),
         variant: "destructive",
       })
     } finally {
@@ -198,7 +199,7 @@ export default function SchedulePage() {
 
       toast({
         title: "Success",
-        description: "Order has been deleted successfully.",
+        description: t('toast.deleteSuccess'),
       })
 
       // Remove the order from the state
@@ -209,7 +210,7 @@ export default function SchedulePage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete order. Please try again.",
+        description: t('toast.deleteError'),
         variant: "destructive",
       })
     } finally {
@@ -219,6 +220,16 @@ export default function SchedulePage() {
 
   const renderStatusBadge = (order: Order) => {
     const status = getOrderStatusInfo(order)
+    let statusText = ""
+
+    if (order.completed) {
+      statusText = t('order.status.completed')
+    } else if (order.confirmed) {
+      statusText = t('order.status.confirmed')
+    } else {
+      statusText = t('order.status.pending')
+    }
+
     return (
       <Badge
         className={`
@@ -232,7 +243,7 @@ export default function SchedulePage() {
         {status.icon === "clock" && <Clock className="mr-1 h-3 w-3" />}
         {status.icon === "alert-circle" && <AlertCircle className="mr-1 h-3 w-3" />}
         {status.icon === "activity" && <Activity className="mr-1 h-3 w-3" />}
-        {status.label}
+        {statusText}
       </Badge>
     )
   }
@@ -372,7 +383,7 @@ export default function SchedulePage() {
       <div className="flex h-[400px] items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Loading schedule...</p>
+          <p className="text-sm text-muted-foreground">{t('loading.schedule')}</p>
         </div>
       </div>
     )
@@ -381,14 +392,14 @@ export default function SchedulePage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Schedule</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Button variant={viewMode === "day" ? "default" : "outline"} size="sm" onClick={() => setViewMode("day")}>
-              Day
+              {t('viewMode.day')}
             </Button>
             <Button variant={viewMode === "week" ? "default" : "outline"} size="sm" onClick={() => setViewMode("week")}>
-              Week
+              {t('viewMode.week')}
             </Button>
           </div>
           <div className="flex items-center space-x-2">
@@ -396,7 +407,7 @@ export default function SchedulePage() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button variant="outline" onClick={handleToday}>
-              Today
+              {t('navigation.today')}
             </Button>
             <Button variant="outline" size="sm" onClick={viewMode === "day" ? handleNextDay : handleNextWeek}>
               <ChevronRight className="h-4 w-4" />
@@ -425,10 +436,10 @@ export default function SchedulePage() {
             disabled={currentPage === 0}
             className="flex items-center gap-1"
           >
-            <ChevronLeft className="h-4 w-4" /> Previous
+            <ChevronLeft className="h-4 w-4" /> {t('navigation.previous')}
           </Button>
           <div className="text-sm text-muted-foreground">
-            Page {currentPage + 1} of {totalPages}
+            {t('navigation.page', { number: currentPage + 1, total: totalPages })}
           </div>
           <Button
             variant="outline"
@@ -437,7 +448,7 @@ export default function SchedulePage() {
             disabled={currentPage >= totalPages - 1}
             className="flex items-center gap-1"
           >
-            Next <ChevronRight className="h-4 w-4" />
+            {t('navigation.next')} <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       )}
@@ -500,30 +511,30 @@ export default function SchedulePage() {
           {selectedOrder && (
             <>
               <SheetHeader>
-                <SheetTitle>Order Details</SheetTitle>
-                <SheetDescription>Order ID: {selectedOrder.publicId.substring(0, 8)}...</SheetDescription>
+                <SheetTitle>{t('order.title')}</SheetTitle>
+                <SheetDescription>{t('order.id')}: {selectedOrder.publicId.substring(0, 8)}...</SheetDescription>
               </SheetHeader>
 
               <div className="mt-6 space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">Status</h3>
+                  <h3 className="text-lg font-medium">{t('order.status.title')}</h3>
                   {renderStatusBadge(selectedOrder)}
                 </div>
 
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Appointment</h3>
+                  <h3 className="text-lg font-medium">{t('order.appointment.title')}</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Date</p>
+                      <p className="text-sm text-muted-foreground">{t('order.appointment.date')}</p>
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         <p>{formatDate(selectedOrder.orderStart)}</p>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Time</p>
+                      <p className="text-sm text-muted-foreground">{t('order.appointment.time')}</p>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <p>
@@ -537,7 +548,7 @@ export default function SchedulePage() {
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Client Information</h3>
+                  <h3 className="text-lg font-medium">{t('order.client.title')}</h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-muted-foreground" />
@@ -559,7 +570,7 @@ export default function SchedulePage() {
                 <Separator />
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Services</h3>
+                  <h3 className="text-lg font-medium">{t('order.services.title')}</h3>
                   <div className="space-y-4">
                     {selectedOrder.items.map((item, index) => (
                       <div key={index} className="rounded-md border p-4">
@@ -576,14 +587,14 @@ export default function SchedulePage() {
                         <div className="mt-2 pt-2 border-t">
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4 text-muted-foreground" />
-                            <p className="text-sm">Executor: {item.executorName}</p>
+                            <p className="text-sm">{t('order.services.executor')}: {item.executorName}</p>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
                   <div className="flex justify-between pt-2">
-                    <p className="font-medium">Total</p>
+                    <p className="font-medium">{t('order.services.total')}</p>
                     <p className="font-bold">${calculateOrderTotal(selectedOrder).toFixed(2)}</p>
                   </div>
                 </div>
@@ -592,7 +603,7 @@ export default function SchedulePage() {
                   <>
                     <Separator />
                     <div className="space-y-2">
-                      <h3 className="text-lg font-medium">Comment</h3>
+                      <h3 className="text-lg font-medium">{t('order.comment.title')}</h3>
                       <p className="text-sm">{selectedOrder.comment}</p>
                     </div>
                   </>
@@ -606,12 +617,12 @@ export default function SchedulePage() {
                       {isConfirming ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Confirming...
+                          {t('order.actions.confirm.confirming')}
                         </>
                       ) : (
                         <>
                           <CheckSquare className="mr-2 h-4 w-4" />
-                          Confirm
+                          {t('order.actions.confirm.button')}
                         </>
                       )}
                     </Button>
@@ -622,12 +633,12 @@ export default function SchedulePage() {
                       {isCompleting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Completing...
+                          {t('order.actions.complete.completing')}
                         </>
                       ) : (
                         <>
                           <CheckCircle className="mr-2 h-4 w-4" />
-                          Mark as Completed
+                          {t('order.actions.complete.button')}
                         </>
                       )}
                     </Button>
@@ -637,18 +648,18 @@ export default function SchedulePage() {
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" className="flex-1">
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        {t('order.actions.delete.button')}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('order.actions.delete.title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently delete this order. This action cannot be undone.
+                          {t('order.actions.delete.description')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('order.actions.delete.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={handleDeleteOrder}
                           className="bg-red-500 hover:bg-red-600"
@@ -657,10 +668,10 @@ export default function SchedulePage() {
                           {isDeleting ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Deleting...
+                              {t('order.actions.delete.deleting')}
                             </>
                           ) : (
-                            "Delete"
+                            t('order.actions.delete.confirm')
                           )}
                         </AlertDialogAction>
                       </AlertDialogFooter>

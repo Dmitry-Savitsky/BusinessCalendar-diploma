@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from 'next-intl'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -40,6 +41,7 @@ import {
 import { Clock, DollarSign, Edit, Trash2, Plus, Scissors, MapPin, Loader2, ExternalLink } from "lucide-react"
 
 export default function ServicesPage() {
+  const t = useTranslations('services')
   const { toast } = useToast()
   const router = useRouter()
   const [services, setServices] = useState<Service[]>([])
@@ -75,7 +77,7 @@ export default function ServicesPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load services. Please try again.",
+        description: t('toast.loadError'),
         variant: "destructive",
       })
     } finally {
@@ -87,8 +89,8 @@ export default function ServicesPage() {
     // Validate form
     if (!newServiceName || !newServicePrice || !newServiceDuration) {
       toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields.",
+        title: t('toast.validation.title'),
+        description: t('toast.validation.description'),
         variant: "destructive",
       })
       return
@@ -108,7 +110,7 @@ export default function ServicesPage() {
 
       toast({
         title: "Success",
-        description: "Service added successfully",
+        description: t('toast.addSuccess'),
       })
 
       // Reset form and close dialog
@@ -120,7 +122,7 @@ export default function ServicesPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add service. Please try again.",
+        description: t('toast.addError'),
         variant: "destructive",
       })
     } finally {
@@ -134,8 +136,8 @@ export default function ServicesPage() {
     // Validate form
     if (!editServiceName || !editServicePrice || !editServiceDuration) {
       toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields.",
+        title: t('toast.validation.title'),
+        description: t('toast.validation.description'),
         variant: "destructive",
       })
       return
@@ -155,7 +157,7 @@ export default function ServicesPage() {
 
       toast({
         title: "Success",
-        description: "Service updated successfully",
+        description: t('toast.updateSuccess'),
       })
 
       // Reset form and close dialog
@@ -168,7 +170,7 @@ export default function ServicesPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update service. Please try again.",
+        description: t('toast.updateError'),
         variant: "destructive",
       })
     } finally {
@@ -182,7 +184,7 @@ export default function ServicesPage() {
 
       toast({
         title: "Success",
-        description: "Service deleted successfully",
+        description: t('toast.deleteSuccess'),
       })
 
       // Refresh services list
@@ -190,7 +192,7 @@ export default function ServicesPage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete service. Please try again.",
+        description: t('toast.deleteError'),
         variant: "destructive",
       })
     }
@@ -229,53 +231,53 @@ export default function ServicesPage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Services</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Service
+              {t('actions.add.button')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Service</DialogTitle>
-              <DialogDescription>Create a new service that clients can book.</DialogDescription>
+              <DialogTitle>{t('actions.add.title')}</DialogTitle>
+              <DialogDescription>{t('actions.add.description')}</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Service Name</Label>
+                <Label htmlFor="name">{t('form.name.label')}</Label>
                 <Input
                   id="name"
-                  placeholder="Enter service name"
+                  placeholder={t('form.name.placeholder')}
                   value={newServiceName}
                   onChange={(e) => setNewServiceName(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="type">Service Type</Label>
+                <Label htmlFor="type">{t('form.type.label')}</Label>
                 <Select value={newServiceType} onValueChange={setNewServiceType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select service type" />
+                    <SelectValue placeholder={t('form.type.placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">Haircut</SelectItem>
-                    <SelectItem value="2">Styling</SelectItem>
-                    <SelectItem value="3">Coloring</SelectItem>
-                    <SelectItem value="4">Treatment</SelectItem>
-                    <SelectItem value="5">Consultation</SelectItem>
-                    <SelectItem value="6">Other</SelectItem>
+                    <SelectItem value="1">{t('form.type.options.haircut')}</SelectItem>
+                    <SelectItem value="2">{t('form.type.options.styling')}</SelectItem>
+                    <SelectItem value="3">{t('form.type.options.coloring')}</SelectItem>
+                    <SelectItem value="4">{t('form.type.options.treatment')}</SelectItem>
+                    <SelectItem value="5">{t('form.type.options.consultation')}</SelectItem>
+                    <SelectItem value="6">{t('form.type.options.other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="price">Price</Label>
+                <Label htmlFor="price">{t('form.price.label')}</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="price"
                     type="number"
-                    placeholder="Enter price"
+                    placeholder={t('form.price.placeholder')}
                     className="pl-10"
                     value={newServicePrice}
                     onChange={(e) => setNewServicePrice(e.target.value)}
@@ -283,13 +285,13 @@ export default function ServicesPage() {
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Label htmlFor="duration">{t('form.duration.label')}</Label>
                 <div className="relative">
                   <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="duration"
                     type="number"
-                    placeholder="Enter duration in minutes"
+                    placeholder={t('form.duration.placeholder')}
                     className="pl-10"
                     value={newServiceDuration}
                     onChange={(e) => setNewServiceDuration(e.target.value)}
@@ -302,7 +304,7 @@ export default function ServicesPage() {
                   checked={newServiceRequiresAddress}
                   onCheckedChange={setNewServiceRequiresAddress}
                 />
-                <Label htmlFor="requires-address">Requires client address (for on-site services)</Label>
+                <Label htmlFor="requires-address">{t('form.requiresAddress.label')}</Label>
               </div>
             </div>
             <DialogFooter>
@@ -310,10 +312,10 @@ export default function ServicesPage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    {t('actions.add.creating')}
                   </>
                 ) : (
-                  "Create Service"
+                  t('form.submit.create')
                 )}
               </Button>
             </DialogFooter>
@@ -329,13 +331,13 @@ export default function ServicesPage() {
         <Card className="flex h-[400px] flex-col items-center justify-center text-center">
           <CardContent className="pt-6">
             <Scissors className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No Services Found</h3>
+            <h3 className="mt-4 text-lg font-medium">{t('empty.title')}</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              You haven't added any services yet. Add your first service to get started.
+              {t('empty.description')}
             </p>
             <Button className="mt-4" onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Service
+              {t('actions.add.button')}
             </Button>
           </CardContent>
         </Card>
@@ -352,21 +354,21 @@ export default function ServicesPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <DollarSign className="mr-2 h-4 w-4 text-muted-foreground" />
-                      <span>Price</span>
+                      <span>{t('card.price')}</span>
                     </div>
                     <span className="font-medium">${service.servicePrice.toFixed(2)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                      <span>Duration</span>
+                      <span>{t('card.duration')}</span>
                     </div>
-                    <span className="font-medium">{service.durationMinutes} minutes</span>
+                    <span className="font-medium">{t('form.duration.display', { minutes: service.durationMinutes })}</span>
                   </div>
                   {service.requiresAddress && (
                     <div className="flex items-center mt-2">
                       <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Requires client address</span>
+                      <span className="text-sm text-muted-foreground">{t('card.requiresAddress')}</span>
                     </div>
                   )}
                 </div>
@@ -374,33 +376,33 @@ export default function ServicesPage() {
               <CardFooter className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" onClick={() => handleViewDetails(service.publicId)}>
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  Details
+                  {t('actions.details')}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleEditClick(service)}>
                   <Edit className="mr-2 h-4 w-4" />
-                  Edit
+                  {t('actions.edit.button')}
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600">
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {t('actions.delete.button')}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogTitle>{t('actions.delete.title')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will permanently delete the service "{service.serviceName}". This action cannot be undone.
+                        {t('actions.delete.description', { name: service.serviceName })}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t('actions.delete.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => handleDeleteService(service.publicId)}
                         className="bg-red-500 hover:bg-red-600"
                       >
-                        Delete
+                        {t('actions.delete.confirm')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -415,43 +417,43 @@ export default function ServicesPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Service</DialogTitle>
-            <DialogDescription>Update the service information.</DialogDescription>
+            <DialogTitle>{t('actions.edit.title')}</DialogTitle>
+            <DialogDescription>{t('actions.edit.description')}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-name">Service Name</Label>
+              <Label htmlFor="edit-name">{t('form.name.label')}</Label>
               <Input
                 id="edit-name"
-                placeholder="Enter service name"
+                placeholder={t('form.name.placeholder')}
                 value={editServiceName}
                 onChange={(e) => setEditServiceName(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-type">Service Type</Label>
+              <Label htmlFor="edit-type">{t('form.type.label')}</Label>
               <Select value={editServiceType} onValueChange={setEditServiceType}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select service type" />
+                  <SelectValue placeholder={t('form.type.placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">Haircut</SelectItem>
-                  <SelectItem value="2">Styling</SelectItem>
-                  <SelectItem value="3">Coloring</SelectItem>
-                  <SelectItem value="4">Treatment</SelectItem>
-                  <SelectItem value="5">Consultation</SelectItem>
-                  <SelectItem value="6">Other</SelectItem>
+                  <SelectItem value="1">{t('form.type.options.haircut')}</SelectItem>
+                  <SelectItem value="2">{t('form.type.options.styling')}</SelectItem>
+                  <SelectItem value="3">{t('form.type.options.coloring')}</SelectItem>
+                  <SelectItem value="4">{t('form.type.options.treatment')}</SelectItem>
+                  <SelectItem value="5">{t('form.type.options.consultation')}</SelectItem>
+                  <SelectItem value="6">{t('form.type.options.other')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-price">Price</Label>
+              <Label htmlFor="edit-price">{t('form.price.label')}</Label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="edit-price"
                   type="number"
-                  placeholder="Enter price"
+                  placeholder={t('form.price.placeholder')}
                   className="pl-10"
                   value={editServicePrice}
                   onChange={(e) => setEditServicePrice(e.target.value)}
@@ -459,13 +461,13 @@ export default function ServicesPage() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-duration">Duration (minutes)</Label>
+              <Label htmlFor="edit-duration">{t('form.duration.label')}</Label>
               <div className="relative">
                 <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="edit-duration"
                   type="number"
-                  placeholder="Enter duration in minutes"
+                  placeholder={t('form.duration.placeholder')}
                   className="pl-10"
                   value={editServiceDuration}
                   onChange={(e) => setEditServiceDuration(e.target.value)}
@@ -478,7 +480,7 @@ export default function ServicesPage() {
                 checked={editServiceRequiresAddress}
                 onCheckedChange={setEditServiceRequiresAddress}
               />
-              <Label htmlFor="edit-requires-address">Requires client address (for on-site services)</Label>
+              <Label htmlFor="edit-requires-address">{t('form.requiresAddress.label')}</Label>
             </div>
           </div>
           <DialogFooter>
@@ -486,10 +488,10 @@ export default function ServicesPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  {t('actions.edit.updating')}
                 </>
               ) : (
-                "Update Service"
+                t('form.submit.update')
               )}
             </Button>
           </DialogFooter>

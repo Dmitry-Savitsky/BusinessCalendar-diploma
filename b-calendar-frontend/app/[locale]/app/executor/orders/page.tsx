@@ -14,8 +14,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { CheckCircle, Clock, AlertCircle, MapPin, Phone, User, Calendar, DollarSign } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useTranslations } from 'next-intl'
 
 export default function ExecutorOrdersPage() {
+  const t = useTranslations('executor.orders')
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
@@ -29,8 +31,8 @@ export default function ExecutorOrdersPage() {
       } catch (error) {
         console.error("Error fetching orders:", error)
         toast({
-          title: "Error",
-          description: "Failed to load your orders. Please try again later.",
+          title: t('errors.loadFailed.title'),
+          description: t('errors.loadFailed.description'),
           variant: "destructive",
         })
       } finally {
@@ -39,7 +41,7 @@ export default function ExecutorOrdersPage() {
     }
 
     fetchOrders()
-  }, [])
+  }, [t])
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order)
@@ -62,15 +64,15 @@ export default function ExecutorOrdersPage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">My Orders</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
       </div>
 
       <Tabs defaultValue="upcoming">
         <TabsList>
-          <TabsTrigger value="upcoming">Upcoming ({upcomingOrders.length})</TabsTrigger>
-          <TabsTrigger value="pending">Pending ({pendingOrders.length})</TabsTrigger>
-          <TabsTrigger value="completed">Completed ({completedOrders.length})</TabsTrigger>
-          <TabsTrigger value="all">All Orders ({orders.length})</TabsTrigger>
+          <TabsTrigger value="upcoming">{t('tabs.upcoming', { count: upcomingOrders.length })}</TabsTrigger>
+          <TabsTrigger value="pending">{t('tabs.pending', { count: pendingOrders.length })}</TabsTrigger>
+          <TabsTrigger value="completed">{t('tabs.completed', { count: completedOrders.length })}</TabsTrigger>
+          <TabsTrigger value="all">{t('tabs.all', { count: orders.length })}</TabsTrigger>
         </TabsList>
 
         {["upcoming", "pending", "completed", "all"].map((tab) => (
@@ -128,7 +130,10 @@ export default function ExecutorOrdersPage() {
                             </Badge>
                           </div>
                           <CardDescription>
-                            {formatTime(order.orderStart)} - {formatTime(order.orderEnd)}
+                            {t('orderCard.time.range', {
+                              startTime: formatTime(order.orderStart),
+                              endTime: formatTime(order.orderEnd)
+                            })}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="pb-2">
@@ -144,11 +149,11 @@ export default function ExecutorOrdersPage() {
                             <div className="flex items-start gap-2">
                               <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
                               <div>
-                                <p className="text-sm font-medium">Services</p>
+                                <p className="text-sm font-medium">{t('orderCard.client.services')}</p>
                                 <ul className="text-xs text-muted-foreground">
                                   {order.items.map((item, index) => (
                                     <li key={index}>
-                                      {item.serviceName} - ${item.servicePrice}
+                                      {item.serviceName} - {t('orderCard.service.price', { price: item.servicePrice })}
                                     </li>
                                   ))}
                                 </ul>
@@ -164,13 +169,15 @@ export default function ExecutorOrdersPage() {
 
                             <div className="flex items-start gap-2">
                               <DollarSign className="h-4 w-4 text-muted-foreground mt-0.5" />
-                              <p className="text-sm font-medium">Total: ${calculateTotal(order)}</p>
+                              <p className="text-sm font-medium">
+                                {t('orderCard.total', { amount: calculateTotal(order) })}
+                              </p>
                             </div>
                           </div>
                         </CardContent>
                         <CardFooter>
                           <Button variant="outline" className="w-full" onClick={() => handleViewDetails(order)}>
-                            View Details
+                            {t('orderCard.viewDetails')}
                           </Button>
                         </CardFooter>
                       </Card>
@@ -188,7 +195,7 @@ export default function ExecutorOrdersPage() {
                     ? completedOrders.length === 0
                     : orders.length === 0) && (
                 <div className="text-center py-10">
-                  <p className="text-muted-foreground">No orders found</p>
+                  <p className="text-muted-foreground">{t('empty')}</p>
                 </div>
               )}
           </TabsContent>
@@ -201,40 +208,45 @@ export default function ExecutorOrdersPage() {
           {selectedOrder && (
             <>
               <DialogHeader>
-                <DialogTitle>Order Details</DialogTitle>
-                <DialogDescription>Order ID: {selectedOrder.publicId}</DialogDescription>
+                <DialogTitle>{t('orderDetails.title')}</DialogTitle>
+                <DialogDescription>{t('orderDetails.orderId', { id: selectedOrder.publicId })}</DialogDescription>
               </DialogHeader>
 
               <div className="space-y-4 py-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h4 className="font-medium">Date & Time</h4>
-                    <p className="text-sm text-muted-foreground">{formatDate(selectedOrder.orderStart)}</p>
+                    <h4 className="font-medium">{t('orderDetails.sections.dateTime.title')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      {formatTime(selectedOrder.orderStart)} - {formatTime(selectedOrder.orderEnd)}
+                      {t('orderDetails.sections.dateTime.date', { date: formatDate(selectedOrder.orderStart) })}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {t('orderDetails.sections.dateTime.time', {
+                        startTime: formatTime(selectedOrder.orderStart),
+                        endTime: formatTime(selectedOrder.orderEnd)
+                      })}
                     </p>
                   </div>
 
                   {getOrderStatusInfo(selectedOrder).icon === "check-circle" ? (
                     <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                       <CheckCircle className="mr-1 h-3 w-3" />
-                      Completed
+                      {t('orderDetails.sections.status.completed')}
                     </Badge>
                   ) : selectedOrder.confirmed ? (
                     <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
                       <Clock className="mr-1 h-3 w-3" />
-                      Confirmed
+                      {t('orderDetails.sections.status.confirmed')}
                     </Badge>
                   ) : (
                     <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
                       <AlertCircle className="mr-1 h-3 w-3" />
-                      Pending
+                      {t('orderDetails.sections.status.pending')}
                     </Badge>
                   )}
                 </div>
 
                 <div>
-                  <h4 className="font-medium">Client Information</h4>
+                  <h4 className="font-medium">{t('orderDetails.sections.client.title')}</h4>
                   <div className="flex items-center gap-3 mt-2">
                     <Avatar>
                       <AvatarFallback>{selectedOrder.clientName.charAt(0)}</AvatarFallback>
@@ -255,7 +267,7 @@ export default function ExecutorOrdersPage() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium">Services</h4>
+                  <h4 className="font-medium">{t('orderDetails.sections.services.title')}</h4>
                   <div className="mt-2 space-y-2">
                     {selectedOrder.items.map((item, index) => (
                       <div key={index} className="flex justify-between items-center">
@@ -269,7 +281,7 @@ export default function ExecutorOrdersPage() {
                             <p className="text-xs text-muted-foreground">{item.executorName}</p>
                           </div>
                         </div>
-                        <p className="text-sm font-medium">${item.servicePrice}</p>
+                        <p className="text-sm font-medium">{t('orderCard.service.price', { price: item.servicePrice })}</p>
                       </div>
                     ))}
                   </div>
@@ -277,14 +289,16 @@ export default function ExecutorOrdersPage() {
 
                 {selectedOrder.comment && (
                   <div>
-                    <h4 className="font-medium">Comments</h4>
+                    <h4 className="font-medium">{t('orderDetails.sections.comments.title')}</h4>
                     <p className="text-sm mt-1">{selectedOrder.comment}</p>
                   </div>
                 )}
 
                 <div className="flex justify-between items-center pt-2 border-t">
-                  <h4 className="font-medium">Total</h4>
-                  <p className="text-lg font-bold">${calculateTotal(selectedOrder)}</p>
+                  <h4 className="font-medium">{t('orderDetails.sections.total.title')}</h4>
+                  <p className="text-lg font-bold">
+                    {t('orderDetails.sections.total.amount', { amount: calculateTotal(selectedOrder) })}
+                  </p>
                 </div>
               </div>
             </>

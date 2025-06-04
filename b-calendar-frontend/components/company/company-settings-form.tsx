@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Building2, Loader2, Copy, Check, ChevronDown, ChevronUp } from "lucide-react"
 import { config } from "@/lib/config"
+import { useTranslations } from 'next-intl'
 import Script from "next/script"
 
 import { Button } from "@/components/ui/button"
@@ -37,13 +38,8 @@ declare global {
   }
 }
 
-const formSchema = z.object({
-  CompanyName: z.string().min(2, "Company name must be at least 2 characters"),
-  CompanyPhone: z.string().min(5, "Phone number must be at least 5 characters"),
-  CompanyAddress: z.string().min(5, "Address must be at least 5 characters"),
-})
-
 export function CompanySettingsForm() {
+  const t = useTranslations('settings')
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [company, setCompany] = useState<Company | null>(null)
@@ -54,6 +50,12 @@ export function CompanySettingsForm() {
   const [isReactLoaded, setIsReactLoaded] = useState(false)
   const [isWidgetLoaded, setIsWidgetLoaded] = useState(false)
   const [showFullCode, setShowFullCode] = useState(false)
+
+  const formSchema = z.object({
+    CompanyName: z.string().min(2, t('form.fields.companyName.validation')),
+    CompanyPhone: z.string().min(5, t('form.fields.phone.validation')),
+    CompanyAddress: z.string().min(5, t('form.fields.address.validation')),
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,13 +80,13 @@ export function CompanySettingsForm() {
       } catch (error) {
         toast({
           variant: "destructive",
-          title: "Error",
-          description: "Failed to load company profile",
+          title: t('form.toast.loadError.title'),
+          description: t('form.toast.loadError.description'),
         })
       }
     }
     fetchCompany()
-  }, [form, toast])
+  }, [form, toast, t])
 
   useEffect(() => {
     const loadReactAndWidget = async () => {
@@ -168,14 +170,14 @@ export function CompanySettingsForm() {
       }
       await updateCompanyProfile(updateData)
       toast({
-        title: "Success",
-        description: "Company profile updated successfully",
+        title: t('form.toast.updateSuccess.title'),
+        description: t('form.toast.updateSuccess.description'),
       })
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to update company profile",
+        title: t('form.toast.updateError.title'),
+        description: t('form.toast.updateError.description'),
       })
     } finally {
       setLoading(false)
@@ -188,14 +190,14 @@ export function CompanySettingsForm() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
       toast({
-        title: "Copied!",
-        description: "The embedding code has been copied to your clipboard.",
+        title: t('widget.code.copy.success.title'),
+        description: t('widget.code.copy.success.description'),
       })
     } catch (err) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to copy to clipboard",
+        title: t('widget.code.copy.error.title'),
+        description: t('widget.code.copy.error.description'),
       })
     }
   }
@@ -263,19 +265,18 @@ export function CompanySettingsForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid gap-6 md:grid-cols-[200px_1fr]">
-            {/* Левая колонка с логотипом */}
             <div className="flex flex-col items-center space-y-4">
               <div className="h-32 w-32 overflow-hidden rounded-full">
                 {selectedImage ? (
                   <img
                     src={imagePreview}
-                    alt="Company logo preview"
+                    alt={t('form.logo.preview')}
                     className="h-full w-full object-cover"
                   />
                 ) : imagePreview ? (
                   <img
                     src={`${config.apiUrl}${imagePreview}`}
-                    alt="Company logo"
+                    alt={t('form.logo.placeholder')}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -287,7 +288,7 @@ export function CompanySettingsForm() {
               <FormItem>
                 <FormLabel className="cursor-pointer">
                   <Button type="button" variant="outline" size="sm">
-                    Change Logo
+                    {t('form.logo.change')}
                   </Button>
                   <Input
                     type="file"
@@ -299,7 +300,6 @@ export function CompanySettingsForm() {
               </FormItem>
             </div>
 
-            {/* Правая колонка с полями формы */}
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
@@ -307,7 +307,7 @@ export function CompanySettingsForm() {
                   name="CompanyName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Name</FormLabel>
+                      <FormLabel>{t('form.fields.companyName.label')}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -321,7 +321,7 @@ export function CompanySettingsForm() {
                   name="CompanyPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>{t('form.fields.phone.label')}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -336,7 +336,7 @@ export function CompanySettingsForm() {
                 name="CompanyAddress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>{t('form.fields.address.label')}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -348,7 +348,7 @@ export function CompanySettingsForm() {
               <div className="flex justify-end">
                 <Button type="submit" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Save Changes
+                  {loading ? t('form.saving') : t('form.submit')}
                 </Button>
               </div>
             </div>
@@ -358,20 +358,18 @@ export function CompanySettingsForm() {
 
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Booking Widget Integration</CardTitle>
-          <CardDescription>
-            Use this code to embed the booking widget on your website. The widget will appear in a modal window with a responsive layout.
-          </CardDescription>
+          <CardTitle>{t('widget.title')}</CardTitle>
+          <CardDescription>{t('widget.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h4 className="text-sm font-medium mb-2">Features:</h4>
+            <h4 className="text-sm font-medium mb-2">{t('widget.features.title')}</h4>
             <ul className="text-sm text-muted-foreground list-disc pl-4 space-y-1 mb-4">
-              <li>Responsive modal window with dark overlay</li>
-              <li>Maximum width of 600px, adapts to smaller screens</li>
-              <li>Scrollable content for tall widgets</li>
-              <li>Close button always visible at the top</li>
-              <li>Styled button to open the widget</li>
+              <li>{t('widget.features.list.responsive')}</li>
+              <li>{t('widget.features.list.width')}</li>
+              <li>{t('widget.features.list.scroll')}</li>
+              <li>{t('widget.features.list.close')}</li>
+              <li>{t('widget.features.list.button')}</li>
             </ul>
           </div>
 
@@ -389,11 +387,11 @@ export function CompanySettingsForm() {
                 >
                   {showFullCode ? (
                     <>
-                      Show less <ChevronUp className="h-4 w-4" />
+                      {t('widget.code.showLess')} <ChevronUp className="h-4 w-4" />
                     </>
                   ) : (
                     <>
-                      Show full code <ChevronDown className="h-4 w-4" />
+                      {t('widget.code.showMore')} <ChevronDown className="h-4 w-4" />
                     </>
                   )}
                 </Button>
@@ -414,19 +412,20 @@ export function CompanySettingsForm() {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-2">Preview</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Here's how the booking widget will look on your website:
-            </p>
+            <h3 className="text-lg font-semibold mb-2">{t('widget.preview.title')}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{t('widget.preview.description')}</p>
             <div className="flex flex-col items-center gap-4">
               <Button 
                 variant="default" 
                 onClick={() => setShowWidget(!showWidget)}
               >
-                Забронировать услугу
+                {t('widget.preview.button')}
               </Button>
               <div className="text-sm text-muted-foreground">
-                Status: {!isReactLoaded ? 'Loading React...' : !isWidgetLoaded ? 'Loading Widget...' : 'Ready'}
+                {t('widget.preview.status.loading.react')}
+                {!isReactLoaded ? t('widget.preview.status.loading.react') : 
+                  !isWidgetLoaded ? t('widget.preview.status.loading.widget') : 
+                  t('widget.preview.status.ready')}
               </div>
             </div>
 
