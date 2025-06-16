@@ -135,7 +135,7 @@ export default function ExecutorDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalRevenue} BYN</div>
               <p className="text-xs text-muted-foreground">
-                {t('metrics.revenue.upcoming', { amount: stats.upcomingRevenue + ' BYN' })}
+                {t('metrics.revenue.upcoming', { amount: stats.upcomingRevenue })}
               </p>
             </CardContent>
           </Card>

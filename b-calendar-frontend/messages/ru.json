@@ -749,6 +749,16 @@
       "completeError": "Не удалось отметить заказ как выполненный. Пожалуйста, попробуйте снова.",
       "deleteSuccess": "Заказ успешно удален.",
       "deleteError": "Не удалось удалить заказ. Пожалуйста, попробуйте снова."
+    },
+    "orderCard": {
+      "time": {
+        "range": "{startTime} - {endTime}"
+      },
+      "services": "Услуги",
+      "service": {
+        "price": "{price} BYN"
+      },
+      "total": "Итого: {amount} BYN"
     }
   },
   "services": {
@@ -1236,7 +1246,11 @@
         "time": {
           "range": "{startTime} - {endTime}"
         },
-        "services": "Услуги"
+        "services": "Услуги",
+        "service": {
+          "price": "{price} BYN"
+        },
+        "total": "Итого: {amount} BYN"
       },
       "orderDetails": {
         "title": "Детали заказа",
@@ -1344,5 +1358,11 @@
         "back": "Назад"
       }
     }
+  },
+  "orderCard": {
+    "service": {
+      "price": "{price} BYN"
+    },
+    "total": "Итого: {amount} BYN"
   }
 } 

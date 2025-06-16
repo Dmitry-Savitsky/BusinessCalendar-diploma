@@ -594,7 +594,7 @@ export default function SchedulePage() {
                               <p className="text-sm text-muted-foreground">{formatTime(item.start)}</p>
                             </div>
                           </div>
-                          <p className="font-medium">{item.servicePrice} BYN</p>
+                          <p className="font-medium">{t('orderCard.service.price', { price: item.servicePrice })}</p>
                         </div>
                         <div className="mt-2 pt-2 border-t">
                           <div className="flex items-center gap-2">
@@ -607,7 +607,7 @@ export default function SchedulePage() {
                   </div>
                   <div className="flex justify-between pt-2">
                     <p className="font-medium">{t('order.services.total')}</p>
-                    <p className="font-bold">{calculateOrderTotal(selectedOrder)} BYN</p>
+                    <p className="font-bold">{t('orderCard.total', { amount: calculateOrderTotal(selectedOrder) })}</p>
                   </div>
                 </div>
 

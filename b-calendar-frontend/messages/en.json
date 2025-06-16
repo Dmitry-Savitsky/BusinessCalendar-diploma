@@ -838,6 +838,16 @@
       "completeError": "Failed to complete order. Please try again.",
       "deleteSuccess": "Order has been deleted successfully.",
       "deleteError": "Failed to delete order. Please try again."
+    },
+    "orderCard": {
+      "time": {
+        "range": "{startTime} - {endTime}"
+      },
+      "services": "Services",
+      "service": {
+        "price": "{price} BYN"
+      },
+      "total": "Total: {amount} BYN"
     }
   },
   "services": {
@@ -1245,7 +1255,11 @@
         "time": {
           "range": "{startTime} - {endTime}"
         },
-        "services": "Services"
+        "services": "Services",
+        "service": {
+          "price": "{price} BYN"
+        },
+        "total": "Total: {amount} BYN"
       },
       "orderDetails": {
         "title": "Order Details",
@@ -1508,5 +1522,11 @@
         "back": "Back"
       }
     }
+  },
+  "orderCard": {
+    "service": {
+      "price": "{price} BYN"
+    },
+    "total": "Total: {amount} BYN"
   }
 } 

@@ -153,7 +153,7 @@ export default function ExecutorOrdersPage() {
                                 <ul className="text-xs text-muted-foreground">
                                   {order.items.map((item, index) => (
                                     <li key={index}>
-                                      {item.serviceName} - {t('orderCard.service.price', { price: `${item.servicePrice} BYN` })}
+                                      {item.serviceName} - {t('orderCard.service.price', { price: item.servicePrice })}
                                     </li>
                                   ))}
                                 </ul>
@@ -280,7 +280,7 @@ export default function ExecutorOrdersPage() {
                             <p className="text-xs text-muted-foreground">{item.executorName}</p>
                           </div>
                         </div>
-                        <p className="text-sm font-medium">{t('orderCard.service.price', { price: `${item.servicePrice} BYN` })}</p>
+                        <p className="text-sm font-medium">{t('orderCard.service.price', { price: item.servicePrice })}</p>
                       </div>
                     ))}
                   </div>
@@ -296,7 +296,7 @@ export default function ExecutorOrdersPage() {
                 <div className="flex justify-between items-center pt-2 border-t">
                   <h4 className="font-medium">{t('orderDetails.sections.total.title')}</h4>
                   <p className="text-lg font-bold">
-                    {t('orderDetails.sections.total.amount', { amount: `${calculateTotal(selectedOrder)} BYN` })}
+                    {t('orderCard.total', { amount: calculateTotal(selectedOrder) })}
                   </p>
                 </div>
               </div>

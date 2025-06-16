@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Widget Test</title>
+    <style>
+        body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden}
+        #booking-container{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);justify-content:center;align-items:center;z-index:1000;overflow:hidden}
+        .modal-content{position:relative;width:600px;max-width:95%;max-height:95vh;overflow:hidden}
+        #close-btn{position:absolute;right:1rem;top:1rem;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;z-index:1001}
+        #open-btn{padding:.5rem 1rem;background:#0284c7;color:#fff;border:none;border-radius:.375rem;cursor:pointer}
+        .modal-content ::-webkit-scrollbar{display:none}
+    </style>
+</head>
+<body>
+    <h1>Пример встраивания виджета</h1>
+    <p>Нажмите на кнопку, чтобы вызвать форму бронирования.</p>
+    <div id="booking-container"><div class="modal-content"><button id="close-btn">×</button><booking-widget company-guid="5134b320-8436-4445-a690-97959bd569fb"></booking-widget></div></div>
+    <button id="open-btn">Забронировать услугу</button>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
+    <script src="http://localhost:3001/booking-widget.js"></script>
+    <script>
+        window.addEventListener('load',()=>{const e=document.getElementById('open-btn'),t=document.getElementById('close-btn'),n=document.getElementById('booking-container'),o=e=>{document.body.style.overflow=e?'auto':'hidden',document.documentElement.style.overflow=e?'auto':'hidden'};e.addEventListener('click',()=>{n.style.display='flex',o(!1)}),t.addEventListener('click',()=>{n.style.display='none',o(!0)}),n.addEventListener('click',e=>{e.target===n&&(n.style.display='none',o(!0))})});
+    </script>
+</body>
+</html> 

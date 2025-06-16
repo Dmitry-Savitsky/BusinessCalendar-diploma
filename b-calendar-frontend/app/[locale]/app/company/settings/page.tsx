@@ -204,60 +204,166 @@ export default function SettingsPage() {
 
   const getEssentialEmbeddingCode = () => {
     if (!company?.publicId) return ""
-    return `<!-- Контейнер для виджета -->
-<div id="booking-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
-    <div style="position: relative; background: transparent; border-radius: 0.5rem; max-width: 100%; width: 600px; max-height: 90vh; overflow: auto;">
-        <button id="close-btn" style="position: absolute; right: 1rem; top: 1rem; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 1001;">×</button>
+    return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Widget Test</title>
+    <style>
+        body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden}
+        #booking-container{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);justify-content:center;align-items:center;z-index:1000;overflow:hidden}
+        .modal-content{position:relative;width:600px;max-width:95%;max-height:95vh;overflow:hidden}
+        #close-btn{position:absolute;right:1rem;top:1rem;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;z-index:1001}
+        #open-btn{padding:.5rem 1rem;background:#0284c7;color:#fff;border:none;border-radius:.375rem;cursor:pointer}
+        .modal-content ::-webkit-scrollbar{display:none}
+    </style>
+</head>
+<body>
+    <h1>Пример встраивания виджета</h1>
+    <p>Нажмите на кнопку, чтобы вызвать форму бронирования.</p>
+    <div id="booking-container">
+        <div class="modal-content">
+            <button id="close-btn">×</button>
         <booking-widget company-guid="${company.publicId}"></booking-widget>
     </div>
 </div>
-
-<!-- Кнопка открытия -->
-<button id="open-btn" style="padding: 0.5rem 1rem; background-color: #0284c7; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
-    Забронировать услугу
-</button>
-
-<!-- Подключение зависимостей... -->`
+    <button id="open-btn">Забронировать услугу</button>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
+    <script src="http://localhost:3001/booking-widget.js"></script>
+    <script>
+        window.addEventListener('load',()=>{const e=document.getElementById('open-btn'),t=document.getElementById('close-btn'),n=document.getElementById('booking-container'),o=e=>{document.body.style.overflow=e?'auto':'hidden',document.documentElement.style.overflow=e?'auto':'hidden'};e.addEventListener('click',()=>{n.style.display='flex',o(!1)}),t.addEventListener('click',()=>{n.style.display='none',o(!0)}),n.addEventListener('click',e=>{e.target===n&&(n.style.display='none',o(!0))})});
+    </script>
+</body>
+</html>`
   }
 
   const getEmbeddingCode = () => {
     if (!company?.publicId) return ""
-    return `<!-- Контейнер для виджета -->
-<div id="booking-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
-    <div style="position: relative; background: transparent; border-radius: 0.5rem; max-width: 100%; width: 600px; max-height: 90vh; overflow: auto;">
-        <button id="close-btn" style="position: absolute; right: 1rem; top: 1rem; background: none; border: none; color: white; font-size: 24px; cursor: pointer; z-index: 1001;">×</button>
+    return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Widget Test</title>
+    <style>
+        /* Базовые стили для страницы */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Контейнер модального окна */
+        #booking-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        /* Контент модального окна */
+        .modal-content {
+            position: relative;
+            width: 600px;
+            max-width: 95%;
+            max-height: 95vh;
+            overflow: hidden;
+        }
+
+        /* Кнопка закрытия */
+        #close-btn {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Кнопка открытия */
+        #open-btn {
+            padding: 0.5rem 1rem;
+            background: #0284c7;
+            color: #fff;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+
+        /* Скрываем скроллбар в модальном окне */
+        .modal-content ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Пример встраивания виджета</h1>
+    <p>Нажмите на кнопку, чтобы вызвать форму бронирования.</p>
+
+    <!-- Контейнер для виджета -->
+    <div id="booking-container">
+        <div class="modal-content">
+            <button id="close-btn">×</button>
         <booking-widget company-guid="${company.publicId}"></booking-widget>
     </div>
 </div>
 
 <!-- Кнопка открытия -->
-<button id="open-btn" style="padding: 0.5rem 1rem; background-color: #0284c7; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
-    Забронировать услугу
-</button>
+    <button id="open-btn">Забронировать услугу</button>
 
 <!-- Подключение зависимостей -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-<!-- Подключение виджета -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
 <script src="http://localhost:3001/booking-widget.js"></script>
 
+    <!-- Инициализация виджета -->
 <script>
-    // Инициализация после загрузки всех скриптов
     window.addEventListener('load', () => {
         const openBtn = document.getElementById('open-btn');
         const closeBtn = document.getElementById('close-btn');
         const container = document.getElementById('booking-container');
 
+            // Функция для управления скроллом страницы
+            const toggleScroll = (enable) => {
+                document.body.style.overflow = enable ? 'auto' : 'hidden';
+                document.documentElement.style.overflow = enable ? 'auto' : 'hidden';
+            };
+
+            // Открытие виджета
         openBtn.addEventListener('click', () => {
             container.style.display = 'flex';
+                toggleScroll(false);
         });
+
+            // Закрытие виджета по кнопке
         closeBtn.addEventListener('click', () => {
             container.style.display = 'none';
+                toggleScroll(true);
+            });
+
+            // Закрытие виджета по клику вне контента
+            container.addEventListener('click', (e) => {
+                if (e.target === container) {
+                    container.style.display = 'none';
+                    toggleScroll(true);
+                }
         });
     });
-</script>`
+    </script>
+</body>
+</html>`
   }
 
   return (
