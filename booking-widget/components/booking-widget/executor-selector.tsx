@@ -6,9 +6,7 @@ import { useBookingWidget } from "./context"
 import { fetchExecutors, fetchExecutorsForService } from "@/services/booking-api"
 import type { Executor, ExecutorService } from "@/types/booking"
 import "../../styles/modules/ExecutorSelector.module.css"
-
-const API_BASE_URL = "http://localhost:5221/api"
-const STATIC_BASE_URL = "http://localhost:5221"
+import { config } from '../../lib/config'
 
 export default function ExecutorSelector({ onBack, onComplete }: { onBack: () => void, onComplete: () => void }) {
   const { selectedExecutor, setSelectedExecutor, anyExecutor, setAnyExecutor, companyGuid, mode, selectedService } = useBookingWidget()
@@ -99,7 +97,7 @@ export default function ExecutorSelector({ onBack, onComplete }: { onBack: () =>
           const executorName = isExecutorService ? executor.executorName : executor.name;
           const executorDescription = isExecutorService ? (executor.executorDescription || "Доступен для этой услуги") : executor.description;
           const imgPath = isExecutorService ? executor.executorImgPath : executor.imgPath;
-          const fullImgPath = imgPath ? `${STATIC_BASE_URL}${imgPath}` : "";
+          const fullImgPath = imgPath ? `${config.staticBaseUrl}${imgPath}` : "";
 
           return (
             <div

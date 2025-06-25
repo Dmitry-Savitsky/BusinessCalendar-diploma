@@ -9,13 +9,14 @@ import '../../styles/modules/ExecutorSelector.module.css';
 import '../../styles/modules/TimeSlotSelector.module.css';
 import '../../styles/modules/CustomerForm.module.css';
 import '../../styles/modules/BookingConfirmation.module.css';
+import { config } from '../../lib/config';
 
 const WIDGET_NAME = 'booking-widget'
 
 // Функция для загрузки CSS
 async function loadStyles() {
   try {
-    const response = await fetch('http://localhost:3001/booking-widget.css');
+    const response = await fetch(config.widgetCssPath);
     if (!response.ok) throw new Error('Failed to load styles');
     return await response.text();
   } catch (error) {

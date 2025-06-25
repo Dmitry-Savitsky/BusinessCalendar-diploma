@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { InternalAxiosRequestConfig } from "axios"
 import { config } from "@/lib/config"
 
 const $host = axios.create({
@@ -9,7 +9,7 @@ const $authHost = axios.create({
   baseURL: config.apiUrl,
 })
 
-const authInterceptor = (config) => {
+const authInterceptor = (config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("token")
   if (token) {
     config.headers.authorization = `Bearer ${token}`

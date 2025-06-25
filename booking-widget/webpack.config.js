@@ -1,13 +1,22 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+// Загружаем ts-node для поддержки TypeScript
+require('ts-node').register({
+  compilerOptions: {
+    module: 'commonjs',
+  },
+});
+
+const { config } = require('./lib/config');
+
 module.exports = {
   mode: 'development',
   entry: './components/booking-widget/index.tsx',
   output: {
     filename: 'booking-widget.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: 'http://localhost:3001/',
+    publicPath: config.widgetPublicPath,
   },
   module: {
     rules: [
@@ -85,12 +94,12 @@ module.exports = {
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
       "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
     },
-    port: 3001,
+    port: config.widgetPort,
     host: 'localhost',
     hot: true,
     allowedHosts: 'all',
     devMiddleware: {
-      publicPath: 'http://localhost:3001/',
+      publicPath: config.widgetPublicPath,
       writeToDisk: true,
     },
     setupMiddlewares: (middlewares, devServer) => {

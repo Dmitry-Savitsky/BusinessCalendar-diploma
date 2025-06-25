@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { config } = require('./lib/config');
 
 const app = express();
 
@@ -18,7 +19,6 @@ app.get('/booking-widget.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'booking-widget.js'));
 });
 
-const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(config.widgetPort, () => {
+  console.log(`Server is running on http://localhost:${config.widgetPort}`);
 }); 
