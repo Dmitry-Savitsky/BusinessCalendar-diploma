@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 // Загружаем ts-node для поддержки TypeScript
 require('ts-node').register({
@@ -11,107 +12,57 @@ require('ts-node').register({
 const { config } = require('./lib/config');
 
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: './components/booking-widget/index.tsx',
   output: {
     filename: 'booking-widget.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'public'),
     publicPath: config.widgetPublicPath,
   },
-  module: {
-    rules: [
-      {
-        test: /\.(ts|tsx)$/,
-        use: [
-          {
-            loader: 'ts-loader',
-            options: {
-              configFile: 'tsconfig.widget.json',
-            },
-          },
-        ],
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.css$/,
-        oneOf: [
-          {
-            test: /\.module\.css$/,
-            use: [
-              MiniCssExtractPlugin.loader,
-              {
-                loader: 'css-loader',
-                options: {
-                  modules: {
-                    localIdentName: '[local]',
-                    exportLocalsConvention: 'camelCase',
-                  },
-                  importLoaders: 1,
-                },
-              },
-              'postcss-loader',
-            ],
-          },
-          {
-            use: [
-              MiniCssExtractPlugin.loader,
-              {
-                loader: 'css-loader',
-                options: {
-                  modules: false,
-                  importLoaders: 1,
-                },
-              },
-              'postcss-loader',
-            ],
-          },
-        ],
-      },
-    ],
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'booking-widget.css',
     }),
   ],
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.css'],
-    alias: {
-      '@': path.resolve(__dirname),
-    },
+  module: {
+    rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                '@babel/preset-react',
+                '@babel/preset-typescript',
+              ],
+            },
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                auto: true,
+                localIdentName: '[name]__[local]--[hash:base64:5]',
+              },
+            },
+          },
+        ],
+      },
+    ],
   },
-  externals: {
-    'react': 'window.React',
-    'react-dom': 'window.ReactDOM',
-    'react-dom/client': 'window.ReactDOM',
-  },
-  devServer: {
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
-    },
-    port: config.widgetPort,
-    host: 'localhost',
-    hot: true,
-    allowedHosts: 'all',
-    devMiddleware: {
-      publicPath: config.widgetPublicPath,
-      writeToDisk: true,
-    },
-    setupMiddlewares: (middlewares, devServer) => {
-      if (!devServer) {
-        throw new Error('webpack-dev-server is not defined');
-      }
-
-      devServer.app.get('/', (_, response) => {
-        response.send('webpack-dev-server');
-      });
-
-      return middlewares;
-    },
-  },
-}; 
+};

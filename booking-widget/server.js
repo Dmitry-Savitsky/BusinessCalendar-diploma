@@ -5,18 +5,16 @@ const { config } = require('./lib/config');
 
 const app = express();
 
-// Включаем CORS для всех запросов
+// Базовая настройка CORS - одной этой настройки должно быть достаточно
 app.use(cors());
 
-// Раздаем статические файлы из директории dist
-app.use(express.static(path.join(__dirname, 'dist')));
+// Раздаем статические файлы из директории public
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Раздаем HTML файл для тестирования
-app.use(express.static(path.join(__dirname)));
-
-// Обработка всех запросов к /booking-widget.js
-app.get('/booking-widget.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'booking-widget.js'));
+// Добавляем обработку ошибок
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 app.listen(config.widgetPort, () => {

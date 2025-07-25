@@ -1,11 +1,13 @@
 // API service for interacting with the booking API
 
 import type { Service, Executor, ExecutorService, TimeSlot, BookingRequest, BookingResponse } from "@/types/booking"
-import { config } from '../lib/config';
+import { config } from "@/lib/config"
+
+const API_BASE_URL = config.apiBaseUrl;
 
 // Fetch services for a company
 export async function fetchServices(companyGuid: string): Promise<Service[]> {
-  const response = await fetch(`${config.apiBaseUrl}/service/widget/services/${companyGuid}`)
+  const response = await fetch(`${API_BASE_URL}/service/widget/services/${companyGuid}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch services: ${response.status}`)
@@ -16,7 +18,7 @@ export async function fetchServices(companyGuid: string): Promise<Service[]> {
 
 // Fetch executors for a company
 export async function fetchExecutors(companyGuid: string): Promise<Executor[]> {
-  const response = await fetch(`${config.apiBaseUrl}/Executor/widget/executors/${companyGuid}`)
+  const response = await fetch(`${API_BASE_URL}/Executor/widget/executors/${companyGuid}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch executors: ${response.status}`)
@@ -27,7 +29,7 @@ export async function fetchExecutors(companyGuid: string): Promise<Executor[]> {
 
 // Fetch executors for a specific service
 export async function fetchExecutorsForService(companyGuid: string, serviceGuid: string): Promise<ExecutorService[]> {
-  const response = await fetch(`${config.apiBaseUrl}/executor-services/widget/service/${companyGuid}/${serviceGuid}`)
+  const response = await fetch(`${API_BASE_URL}/executor-services/widget/service/${companyGuid}/${serviceGuid}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch executors for service: ${response.status}`)
@@ -38,7 +40,7 @@ export async function fetchExecutorsForService(companyGuid: string, serviceGuid:
 
 // Fetch services for a specific executor
 export async function fetchServicesForExecutor(companyGuid: string, executorGuid: string): Promise<ExecutorService[]> {
-  const response = await fetch(`${config.apiBaseUrl}/executor-services/widget/executor/${companyGuid}/${executorGuid}`)
+  const response = await fetch(`${API_BASE_URL}/executor-services/widget/executor/${companyGuid}/${executorGuid}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch services for executor: ${response.status}`)
@@ -58,7 +60,7 @@ export async function fetchTimeSlots(serviceGuid: string, executorGuid: string |
   
   const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00${timezone}`;
 
-  const url = `${config.apiBaseUrl}/booking/widget/slots?serviceGuid=${serviceGuid}${executorGuid ? `&executorGuid=${executorGuid}` : ''}&date=${encodeURIComponent(formattedDate)}`;
+  const url = `${API_BASE_URL}/booking/widget/slots?serviceGuid=${serviceGuid}${executorGuid ? `&executorGuid=${executorGuid}` : ''}&date=${encodeURIComponent(formattedDate)}`;
   console.log('Fetching time slots from URL:', url);
 
   const response = await fetch(url)
@@ -80,7 +82,7 @@ export async function fetchTimeSlots(serviceGuid: string, executorGuid: string |
 
 // Create a booking
 export async function createBooking(bookingData: BookingRequest): Promise<BookingResponse> {
-  const response = await fetch(`${config.apiBaseUrl}/orders/widget`, {
+  const response = await fetch(`${API_BASE_URL}/orders/widget`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

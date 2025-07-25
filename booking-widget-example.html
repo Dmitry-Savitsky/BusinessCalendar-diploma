@@ -12,18 +12,51 @@
         #open-btn{padding:.5rem 1rem;background:#0284c7;color:#fff;border:none;border-radius:.375rem;cursor:pointer}
         .modal-content ::-webkit-scrollbar{display:none}
     </style>
+    <!-- React и ReactDOM из надежного CDN -->
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <!-- Виджет -->
+    <link rel="stylesheet" href="https://jobplanner.ru/widget/booking-widget.css">
+    <script src="https://jobplanner.ru/widget/booking-widget.js"></script>
 </head>
 <body>
     <h1>Пример встраивания виджета</h1>
     <p>Нажмите на кнопку, чтобы вызвать форму бронирования.</p>
-    <div id="booking-container"><div class="modal-content"><button id="close-btn">×</button><booking-widget company-guid="5134b320-8436-4445-a690-97959bd569fb"></booking-widget></div></div>
+    <div id="booking-container">
+        <div class="modal-content">
+            <button id="close-btn">×</button>
+            <booking-widget company-guid="5134b320-8436-4445-a690-97959bd569fb"></booking-widget>
+        </div>
+    </div>
     <button id="open-btn">Забронировать услугу</button>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
-    <script src="http://localhost:3001/booking-widget.js"></script>
     <script>
-        window.addEventListener('load',()=>{const e=document.getElementById('open-btn'),t=document.getElementById('close-btn'),n=document.getElementById('booking-container'),o=e=>{document.body.style.overflow=e?'auto':'hidden',document.documentElement.style.overflow=e?'auto':'hidden'};e.addEventListener('click',()=>{n.style.display='flex',o(!1)}),t.addEventListener('click',()=>{n.style.display='none',o(!0)}),n.addEventListener('click',e=>{e.target===n&&(n.style.display='none',o(!0))})});
+        window.addEventListener('load',()=>{
+            const openBtn = document.getElementById('open-btn'),
+                  closeBtn = document.getElementById('close-btn'),
+                  container = document.getElementById('booking-container');
+            
+            const toggleScroll = (enable) => {
+                document.body.style.overflow = enable ? 'auto' : 'hidden';
+                document.documentElement.style.overflow = enable ? 'auto' : 'hidden';
+            };
+
+            openBtn.addEventListener('click',()=>{
+                container.style.display = 'flex';
+                toggleScroll(false);
+            });
+
+            closeBtn.addEventListener('click',()=>{
+                container.style.display = 'none';
+                toggleScroll(true);
+            });
+
+            container.addEventListener('click',(e)=>{
+                if(e.target === container) {
+                    container.style.display = 'none';
+                    toggleScroll(true);
+                }
+            });
+        });
     </script>
 </body>
 </html> 
