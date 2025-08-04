@@ -6,7 +6,7 @@ const { config } = require('./lib/config');
 const app = express();
 
 // Базовая настройка CORS - одной этой настройки должно быть достаточно
-// app.use(cors());
+//app.use(cors());
 
 // Раздаем статические файлы из директории public
 app.use(express.static(path.join(__dirname, 'public')));

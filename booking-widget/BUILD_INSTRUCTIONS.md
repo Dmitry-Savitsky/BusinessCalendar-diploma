@@ -29,11 +29,14 @@ rm -rf dist
 
 ## 3. Глубокая локальная отладка (без Docker)
 **Перейдите в директорию `booking-widget` перед выполнением команд:**
+
+``` //app.use(cors()); ``` **- расскомментировать в booking-widget\server.js**
+
 ```sh
 cd booking-widget
 pnpm install                   # Установка зависимостей
-pnpm run build:widget          # Сборка JS/CSS виджета (создаст файлы в public/)
-NODE_ENV=development node server.js   # Запуск локального сервера (порт 3001)
+pnpm run test:widget          # Сборка JS/CSS виджета (создаст файлы в public/)
+set NODE_ENV=development && node server.js   # Запуск локального сервера (порт 3001)
 ```
 - Для работы backend и базы данных — запустите их аналогично вручную (см. соответствующие инструкции).
 
