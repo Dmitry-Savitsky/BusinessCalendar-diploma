@@ -9,6 +9,7 @@
     "lint": "next lint",
     "build:widget": "webpack --mode production",
     "dev:widget": "webpack serve --mode development",
+    "test:widget": "webpack --mode development",
     "serve:widget": "node server.js"
   },
   "dependencies": {

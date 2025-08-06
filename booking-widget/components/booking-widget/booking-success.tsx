@@ -1,6 +1,6 @@
 import React from "react"
 import { CheckCircle2 } from "lucide-react"
-import "../../styles/modules/BookingSuccess.module.css"
+//import "../../styles/modules/BookingSuccess.module.css"
 
 export default function BookingSuccess() {
   return (

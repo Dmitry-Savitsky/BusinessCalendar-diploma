@@ -6,7 +6,7 @@ import { useBookingWidget } from "./context"
 import { createBooking } from "@/services/booking-api"
 import { format } from "date-fns"
 import BookingSuccess from "./booking-success"
-import "../../styles/modules/BookingConfirmation.module.css"
+//import "../../styles/modules/BookingConfirmation.module.css"
 
 interface BookingConfirmationProps {
   onBack: () => void

@@ -122,7 +122,7 @@ export default function SettingsPage() {
         // Load CSS
         const cssLink = document.createElement('link');
         cssLink.rel = 'stylesheet';
-        cssLink.href = 'http://localhost:3001/booking-widget.css';
+        cssLink.href = 'https://jobplanner.ru/widget/booking-widget.css';
         document.head.appendChild(cssLink);
 
         // Set React as loaded
@@ -131,7 +131,7 @@ export default function SettingsPage() {
         // Finally load the widget
         console.log('Loading widget...');
         const widgetScript = document.createElement('script');
-        widgetScript.src = 'http://localhost:3001/booking-widget.js';
+        widgetScript.src = 'https://jobplanner.ru/widget/booking-widget.js';
         await new Promise<void>((resolve, reject) => {
           widgetScript.onload = () => {
             console.log('Widget loaded successfully');
@@ -231,8 +231,8 @@ export default function SettingsPage() {
     <button id="open-btn">Забронировать услугу</button>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
-    <script src="http://localhost:3001/booking-widget.js"></script>
+    <link rel="stylesheet" href="https://jobplanner.ru/widget/booking-widget.css">
+    <script src="https://jobplanner.ru/widget/booking-widget.js"></script>
     <script>
         window.addEventListener('load',()=>{const e=document.getElementById('open-btn'),t=document.getElementById('close-btn'),n=document.getElementById('booking-container'),o=e=>{document.body.style.overflow=e?'auto':'hidden',document.documentElement.style.overflow=e?'auto':'hidden'};e.addEventListener('click',()=>{n.style.display='flex',o(!1)}),t.addEventListener('click',()=>{n.style.display='none',o(!0)}),n.addEventListener('click',e=>{e.target===n&&(n.style.display='none',o(!0))})});
     </script>
@@ -325,8 +325,8 @@ export default function SettingsPage() {
 <!-- Подключение зависимостей -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<link rel="stylesheet" href="http://localhost:3001/booking-widget.css">
-<script src="http://localhost:3001/booking-widget.js"></script>
+<link rel="stylesheet" href="https://jobplanner.ru/widget/booking-widget.css">
+<script src="https://jobplanner.ru/widget/booking-widget.js"></script>
 
     <!-- Инициализация виджета -->
 <script>

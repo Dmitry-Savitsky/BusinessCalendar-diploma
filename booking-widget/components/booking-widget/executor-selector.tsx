@@ -5,7 +5,7 @@ import { Loader2, User } from "lucide-react"
 import { useBookingWidget } from "./context"
 import { fetchExecutors, fetchExecutorsForService } from "@/services/booking-api"
 import type { Executor, ExecutorService } from "@/types/booking"
-import "../../styles/modules/ExecutorSelector.module.css"
+//import "../../styles/modules/ExecutorSelector.module.css"
 import { config } from '../../lib/config'
 
 export default function ExecutorSelector({ onBack, onComplete }: { onBack: () => void, onComplete: () => void }) {

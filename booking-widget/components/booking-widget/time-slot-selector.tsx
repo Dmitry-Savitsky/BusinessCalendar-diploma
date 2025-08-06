@@ -6,7 +6,7 @@ import { useBookingWidget } from "./context"
 import { fetchTimeSlots } from "@/services/booking-api"
 import { format } from "date-fns"
 import type { TimeSlot } from "@/types/booking"
-import "../../styles/modules/TimeSlotSelector.module.css"
+//import "../../styles/modules/TimeSlotSelector.module.css"
 
 interface TimeSlotSelectorProps {
   onBack: () => void

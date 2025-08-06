@@ -20,11 +20,13 @@ import { useState } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 
 export default function CompanySidebar() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const t = useTranslations('sidebar')
+  const locale = useLocale()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -33,37 +35,37 @@ export default function CompanySidebar() {
   const navItems = [
     {
       title: t('nav.dashboard'),
-      href: "/app/company",
+      href: `/${locale}/app/company`,
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
       title: t('nav.executors'),
-      href: "/app/company/executors",
+      href: `/${locale}/app/company/executors`,
       icon: <Users className="h-5 w-5" />,
     },
     {
       title: t('nav.services'),
-      href: "/app/company/services",
+      href: `/${locale}/app/company/services`,
       icon: <Scissors className="h-5 w-5" />,
     },
     {
       title: t('nav.orders'),
-      href: "/app/company/orders",
+      href: `/${locale}/app/company/orders`,
       icon: <ShoppingBag className="h-5 w-5" />,
     },
     {
       title: t('nav.schedule'),
-      href: "/app/company/schedule",
+      href: `/${locale}/app/company/schedule`,
       icon: <Calendar className="h-5 w-5" />,
     },
     {
       title: t('nav.clients'),
-      href: "/app/company/clients",
+      href: `/${locale}/app/company/clients`,
       icon: <UserRound className="h-5 w-5" />,
     },
     {
       title: t('nav.settings'),
-      href: "/app/company/settings",
+      href: `/${locale}/app/company/settings`,
       icon: <Settings className="h-5 w-5" />,
     },
   ]

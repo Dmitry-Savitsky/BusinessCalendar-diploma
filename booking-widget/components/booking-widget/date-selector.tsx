@@ -4,7 +4,7 @@ import React from "react"
 import { useBookingWidget } from "./context"
 import { addDays, startOfToday, format } from "date-fns"
 import { ru } from 'date-fns/locale'
-import "../../styles/modules/DateSelector.module.css"
+//import "../../styles/modules/DateSelector.module.css"
 
 interface DateSelectorProps {
   onBack: () => void

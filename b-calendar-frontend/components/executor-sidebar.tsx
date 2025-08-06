@@ -9,11 +9,13 @@ import { useState } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 
 export default function ExecutorSidebar() {
   const t = useTranslations('executor.sidebar')
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const locale = useLocale()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -22,33 +24,33 @@ export default function ExecutorSidebar() {
   const navItems = [
     {
       title: t('nav.dashboard'),
-      href: "/app/executor",
+      href: `/${locale}/app/executor`,
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
       title: t('nav.me'),
-      href: "/app/executor/me",
+      href: `/${locale}/app/executor/me`,
       icon: <User className="h-5 w-5" />,
     },
     {
       title: t('nav.orders'),
-      href: "/app/executor/orders",
+      href: `/${locale}/app/executor/orders`,
       icon: <ShoppingBag className="h-5 w-5" />,
     },
     {
       title: t('nav.schedule'),
-      href: "/app/executor/schedule",
+      href: `/${locale}/app/executor/schedule`,
       icon: <Calendar className="h-5 w-5" />,
     },
     /*
     {
       title: t('nav.clients'),
-      href: "/app/executor/clients",
+      href: `/${locale}/app/executor/clients`,
       icon: <Users className="h-5 w-5" />,
     },
     {
       title: t('nav.settings'),
-      href: "/app/executor/settings",
+      href: `/${locale}/app/executor/settings`,
       icon: <Settings className="h-5 w-5" />,
     },*/
   ]

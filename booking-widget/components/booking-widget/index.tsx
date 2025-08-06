@@ -4,11 +4,12 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import BookingWidgetContent from './booking-widget-content';
 import { BookingWidgetProvider } from './context';
-import '../../styles/modules/ServiceSelector.module.css';
-import '../../styles/modules/ExecutorSelector.module.css';
-import '../../styles/modules/TimeSlotSelector.module.css';
-import '../../styles/modules/CustomerForm.module.css';
-import '../../styles/modules/BookingConfirmation.module.css';
+import '../../styles/modules/ServiceSelector.css';
+import '../../styles/modules/ExecutorSelector.css';
+import '../../styles/modules/TimeSlotSelector.css';
+import '../../styles/modules/CustomerForm.css';
+import '../../styles/modules/BookingConfirmation.css';
+import "../../styles/modules/DateSelector.css"
 import { config } from '../../lib/config';
 
 const WIDGET_NAME = 'booking-widget'

@@ -6,7 +6,7 @@ import { useBookingWidget } from "./context"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { customerFormSchema } from "@/lib/validations/booking"
 import type { CustomerFormData } from "@/types/booking"
-import "../../styles/modules/CustomerForm.module.css"
+//import "../../styles/modules/CustomerForm.module.css"
 
 interface CustomerFormProps {
   onBack: () => void

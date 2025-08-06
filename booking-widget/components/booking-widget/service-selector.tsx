@@ -5,7 +5,7 @@ import { Loader2, Clock, MapPin } from "lucide-react"
 import { useBookingWidget } from "./context"
 import { fetchServices, fetchServicesForExecutor } from "@/services/booking-api"
 import type { Service, ExecutorService } from "@/types/booking"
-import "../../styles/modules/ServiceSelector.module.css"
+//import "../../styles/modules/ServiceSelector.css"
 
 interface ServiceSelectorProps {
   onBack: () => void
