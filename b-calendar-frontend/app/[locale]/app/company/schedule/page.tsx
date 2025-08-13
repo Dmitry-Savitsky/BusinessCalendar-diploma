@@ -1,392 +1,48 @@
 "use client"
 
-import React from "react"
+import React, { useMemo } from "react"
 import { useTranslations } from 'next-intl'
-import { useState, useEffect, useMemo } from "react"
-import { format, addDays, startOfDay, isSameDay, startOfWeek, isWithinInterval } from "date-fns"
-import { formatInTimeZone } from 'date-fns-tz'
-import { ru } from 'date-fns/locale'
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/hooks/use-toast"
-import { getExecutors, type Executor } from "@/lib/api/executor"
-import {
-  getAllOrders,
-  confirmOrder,
-  completeOrder,
-  deleteOrder,
-  calculateOrderTotal,
-  getOrderStatusInfo,
-  type Order,
-} from "@/lib/api/orders"
-import {
-  CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  User,
-  Phone,
-  MapPin,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  Activity,
-  Trash2,
-  CheckSquare,
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { config } from "@/lib/config"
+import { ChevronLeft, ChevronRight, Loader2, User } from "lucide-react"
 import { useParams } from 'next/navigation'
-
-// Hours to display in the calendar (from 8:00 to 20:00)
-const HOURS = Array.from({ length: 13 }, (_, i) => i + 8)
-// Number of executors to display at once
-const EXECUTORS_PER_PAGE = 4
-
-// Timezone
-const TIMEZONE = "Europe/Minsk"
-
-// Get locale for date formatting
-const getDateLocale = (locale: string) => locale === 'ru' ? ru : undefined
-
-// Function to format dates with timezone
-const formatDate = (dateStr: string, locale: string) => {
-  try {
-    const date = new Date(dateStr)
-    return formatInTimeZone(date, TIMEZONE, 'PPP', { locale: getDateLocale(locale) })
-  } catch (error) {
-    console.error("Error formatting date:", error)
-    return "Invalid Date"
-  }
-}
-
-// Function to format times with timezone
-const formatTime = (dateStr: string) => {
-  try {
-    const date = new Date(dateStr)
-    return formatInTimeZone(date, TIMEZONE, 'HH:mm')
-  } catch (error) {
-    console.error("Error formatting time:", error)
-    return "Invalid Time"
-  }
-}
+import { config } from "@/lib/config"
+import { useCompanySchedule, getWeekDates, filterOrdersByView } from "./_hooks/useCompanySchedule"
+import { DayView, WeekView } from "./_components/ScheduleViews"
+import OrderDetailsSheet from "./_components/OrderDetailsSheet"
+import { getOrderStatusInfo, type Order } from "@/lib/api/orders"
+import { Badge } from "@/components/ui/badge"
+import { Clock, CheckCircle, AlertCircle, Activity } from "lucide-react"
 
 export default function SchedulePage() {
   const t = useTranslations('schedule')
-  const { toast } = useToast()
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [executors, setExecutors] = useState<Executor[]>([])
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [isConfirming, setIsConfirming] = useState(false)
-  const [isCompleting, setIsCompleting] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [viewMode, setViewMode] = useState<"day" | "week">("day")
-  const [currentPage, setCurrentPage] = useState(0)
+  const [state, api, constants] = useCompanySchedule()
   const params = useParams()
   const locale = params.locale as string
-  const dateLocale = getDateLocale(locale)
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  const weekDates = useMemo(() => getWeekDates(state.selectedDate), [state.selectedDate])
+  const filteredOrders = useMemo(() => filterOrdersByView(state.orders, state.selectedDate, state.viewMode, weekDates), [state.orders, state.selectedDate, state.viewMode, weekDates])
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const [executorsData, ordersData] = await Promise.all([getExecutors(), getAllOrders()])
-      setExecutors(executorsData)
-      setOrders(ordersData)
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: t('toast.loadError'),
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+  const totalPages = Math.ceil(state.executors.length / constants.EXECUTORS_PER_PAGE)
+  const currentExecutors = useMemo(() => {
+    const startIndex = state.currentPage * constants.EXECUTORS_PER_PAGE
+    return state.executors.slice(startIndex, startIndex + constants.EXECUTORS_PER_PAGE)
+  }, [state.executors, state.currentPage, constants.EXECUTORS_PER_PAGE])
 
-  const handlePrevDay = () => {
-    setSelectedDate((prev) => addDays(prev, -1))
-  }
-
-  const handleNextDay = () => {
-    setSelectedDate((prev) => addDays(prev, 1))
-  }
-
-  const handleToday = () => {
-    setSelectedDate(new Date())
-  }
-
-  const handleOrderClick = (order: Order) => {
-    setSelectedOrder(order)
-    setIsDrawerOpen(true)
-  }
-
-  const handleConfirmOrder = async () => {
-    if (!selectedOrder) return
-
-    setIsConfirming(true)
-    try {
-      await confirmOrder(selectedOrder.publicId)
-
-      toast({
-        title: "Success",
-        description: t('toast.confirmSuccess'),
-      })
-
-      // Update the order in the state
-      const updatedOrders = orders.map((order) =>
-        order.publicId === selectedOrder.publicId ? { ...order, confirmed: true } : order,
-      )
-      setOrders(updatedOrders)
-      setSelectedOrder({ ...selectedOrder, confirmed: true })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: t('toast.confirmError'),
-        variant: "destructive",
-      })
-    } finally {
-      setIsConfirming(false)
-    }
-  }
-
-  const handleCompleteOrder = async () => {
-    if (!selectedOrder) return
-
-    setIsCompleting(true)
-    try {
-      await completeOrder(selectedOrder.publicId)
-
-      toast({
-        title: "Success",
-        description: t('toast.completeSuccess'),
-      })
-
-      // Update the order in the state
-      const updatedOrders = orders.map((order) =>
-        order.publicId === selectedOrder.publicId ? { ...order, completed: true } : order,
-      )
-      setOrders(updatedOrders)
-      setSelectedOrder({ ...selectedOrder, completed: true })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: t('toast.completeError'),
-        variant: "destructive",
-      })
-    } finally {
-      setIsCompleting(false)
-    }
-  }
-
-  const handleDeleteOrder = async () => {
-    if (!selectedOrder) return
-
-    setIsDeleting(true)
-    try {
-      await deleteOrder(selectedOrder.publicId)
-
-      toast({
-        title: "Success",
-        description: t('toast.deleteSuccess'),
-      })
-
-      // Remove the order from the state
-      const updatedOrders = orders.filter((order) => order.publicId !== selectedOrder.publicId)
-      setOrders(updatedOrders)
-      setIsDrawerOpen(false)
-      setSelectedOrder(null)
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: t('toast.deleteError'),
-        variant: "destructive",
-      })
-    } finally {
-      setIsDeleting(false)
-    }
-  }
-
-  const renderStatusBadge = (order: Order) => {
-    const status = getOrderStatusInfo(order)
-    let statusText = ""
-
-    if (order.completed) {
-      statusText = t('order.status.completed')
-    } else if (order.confirmed) {
-      statusText = t('order.status.confirmed')
-    } else {
-      statusText = t('order.status.pending')
-    }
-
-    return (
-      <Badge
-        className={`
-          ${status.color === "green" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : ""}
-          ${status.color === "blue" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" : ""}
-          ${status.color === "yellow" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" : ""}
-          ${status.color === "orange" ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" : ""}
-        `}
-      >
-        {status.icon === "check-circle" && <CheckCircle className="mr-1 h-3 w-3" />}
-        {status.icon === "clock" && <Clock className="mr-1 h-3 w-3" />}
-        {status.icon === "alert-circle" && <AlertCircle className="mr-1 h-3 w-3" />}
-        {status.icon === "activity" && <Activity className="mr-1 h-3 w-3" />}
-        {statusText}
-      </Badge>
-    )
-  }
-
-  // Get dates for the current week
-  const getWeekDates = (date: Date) => {
-    const start = startOfWeek(date, { weekStartsOn: 1 }) // Start week on Monday
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i))
-  }
-
-  // Week dates
-  const weekDates = useMemo(() => getWeekDates(selectedDate), [selectedDate])
-
-  // Handle previous week
-  const handlePrevWeek = () => {
-    setSelectedDate((prev) => addDays(prev, -7))
-  }
-
-  // Handle next week
-  const handleNextWeek = () => {
-    setSelectedDate((prev) => addDays(prev, 7))
-  }
-
-  // Get color class based on service type
-  const getServiceColorClass = (serviceType: number) => {
-    const colorClasses = [
-      "bg-blue-100 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700",
-      "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700",
-      "bg-purple-100 border-purple-300 dark:bg-purple-900/30 dark:border-purple-700",
-      "bg-pink-100 border-pink-300 dark:bg-pink-900/30 dark:border-pink-700",
-      "bg-orange-100 border-orange-300 dark:bg-orange-900/30 dark:border-orange-700",
-      "bg-cyan-100 border-cyan-300 dark:bg-cyan-900/30 dark:border-cyan-700",
-    ]
-
-    return colorClasses[(serviceType - 1) % colorClasses.length]
-  }
-
-  // Get color class based on order status and service type
-  const getOrderCardColorClass = (order: Order) => {
-    // If completed, always show green
-    if (order.completed) {
-      return "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700"
-    }
-
-    // Otherwise, use service type for color
-    const serviceType = order.items[0]?.serviceType || 1
-    return getServiceColorClass(serviceType)
-  }
-
-  // Filter orders for the selected date or week
-  const filteredOrders = useMemo(() => {
-    if (viewMode === "day") {
-      return orders.filter((order) => {
-        const orderDate = new Date(order.orderStart)
-        return isSameDay(orderDate, selectedDate)
-      })
-    } else {
-      // Week view - get orders for the entire week
-      const weekStart = startOfDay(weekDates[0])
-      const weekEnd = new Date(weekDates[6])
-      weekEnd.setHours(23, 59, 59, 999)
-
-      return orders.filter((order) => {
-        const orderDate = new Date(order.orderStart)
-        return isWithinInterval(orderDate, { start: weekStart, end: weekEnd })
-      })
-    }
-  }, [orders, selectedDate, viewMode, weekDates])
-
-  // Group orders by executor
   const ordersByExecutor = useMemo(() => {
     const result: Record<string, Order[]> = {}
-
-    executors.forEach((executor) => {
-      result[executor.guid] = []
-    })
-
+    currentExecutors.forEach((e) => { result[e.guid] = [] })
     filteredOrders.forEach((order) => {
       order.items.forEach((item) => {
         if (result[item.executorGuid]) {
-          // Check if this order is already added for this executor
-          const alreadyAdded = result[item.executorGuid].some((o) => o.publicId === order.publicId)
-          if (!alreadyAdded) {
-            result[item.executorGuid].push(order)
-          }
+          const already = result[item.executorGuid].some((o) => o.publicId === order.publicId)
+          if (!already) result[item.executorGuid].push(order)
         }
       })
     })
-
     return result
-  }, [executors, filteredOrders])
+  }, [currentExecutors, filteredOrders])
 
-  // Calculate position and height for an order card
-  const getOrderCardStyle = (order: Order) => {
-    const startTime = new Date(order.orderStart)
-    const endTime = new Date(order.orderEnd)
-
-    // Calculate position from top (in percentage)
-    const dayStart = startOfDay(startTime)
-    const hourHeight = 100 / HOURS.length // Height of one hour in percentage
-
-    const startHour = startTime.getHours()
-    const startMinute = startTime.getMinutes()
-    const topPosition = (startHour - HOURS[0] + startMinute / 60) * hourHeight
-
-    // Calculate height (in percentage)
-    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
-    const height = Math.max(durationHours * hourHeight, 10) // Minimum height of 10%
-
-    return {
-      top: `${topPosition}%`,
-      height: `${height}%`,
-      minHeight: "60px", // Minimum absolute height
-    }
-  }
-
-  // Calculate total pages for carousel
-  const totalPages = Math.ceil(executors.length / EXECUTORS_PER_PAGE)
-
-  // Get current page executors
-  const currentExecutors = useMemo(() => {
-    const startIndex = currentPage * EXECUTORS_PER_PAGE
-    return executors.slice(startIndex, startIndex + EXECUTORS_PER_PAGE)
-  }, [executors, currentPage])
-
-  // Handle carousel navigation
-  const handlePrevPage = () => {
-    setCurrentPage((prev) => (prev > 0 ? prev - 1 : prev))
-  }
-
-  const handleNextPage = () => {
-    setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : prev))
-  }
-
-  if (loading) {
+  if (state.loading) {
     return (
       <div className="flex h-[400px] items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
@@ -403,455 +59,102 @@ export default function SchedulePage() {
         <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <Button variant={viewMode === "day" ? "default" : "outline"} size="sm" onClick={() => setViewMode("day")}>
-              {t('viewMode.day')}
-            </Button>
-            <Button variant={viewMode === "week" ? "default" : "outline"} size="sm" onClick={() => setViewMode("week")}>
-              {t('viewMode.week')}
-            </Button>
+            <Button variant={state.viewMode === "day" ? "default" : "outline"} size="sm" onClick={() => api.setViewMode("day")}>{t('viewMode.day')}</Button>
+            <Button variant={state.viewMode === "week" ? "default" : "outline"} size="sm" onClick={() => api.setViewMode("week")}>{t('viewMode.week')}</Button>
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={viewMode === "day" ? handlePrevDay : handlePrevWeek}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" onClick={handleToday}>
-              {t('navigation.today')}
-            </Button>
-            <Button variant="outline" size="sm" onClick={viewMode === "day" ? handleNextDay : handleNextWeek}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            <Button variant="outline" size="sm" onClick={state.viewMode === "day" ? api.prevDay : api.prevWeek}><ChevronLeft className="h-4 w-4" /></Button>
+            <Button variant="outline" onClick={api.today}>{t('navigation.today')}</Button>
+            <Button variant="outline" size="sm" onClick={state.viewMode === "day" ? api.nextDay : api.nextWeek}><ChevronRight className="h-4 w-4" /></Button>
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-center">
-        {viewMode === "day" ? (
-          <h3 className="text-xl font-medium">
-            {format(selectedDate, "EEEE, d MMMM yyyy", { locale: dateLocale })}
-          </h3>
+        {state.viewMode === "day" ? (
+          <h3 className="text-xl font-medium">{state.selectedDate.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</h3>
         ) : (
-          <h3 className="text-xl font-medium">
-            {format(weekDates[0], "d MMMM", { locale: dateLocale })} - {format(weekDates[6], "d MMMM yyyy", { locale: dateLocale })}
-          </h3>
+          <h3 className="text-xl font-medium">{weekDates[0].toLocaleDateString(undefined, { day: 'numeric', month: 'long' })} - {weekDates[6].toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}</h3>
         )}
       </div>
 
-      {/* Executor Carousel Navigation */}
-      {executors.length > EXECUTORS_PER_PAGE && (
+      {state.executors.length > constants.EXECUTORS_PER_PAGE && (
         <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className="flex items-center gap-1"
-          >
-            <ChevronLeft className="h-4 w-4" /> {t('navigation.previous')}
-          </Button>
-          <div className="text-sm text-muted-foreground">
-            {t('navigation.page', { number: currentPage + 1, total: totalPages })}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNextPage}
-            disabled={currentPage >= totalPages - 1}
-            className="flex items-center gap-1"
-          >
-            {t('navigation.next')} <ChevronRight className="h-4 w-4" />
-          </Button>
+          <Button variant="outline" size="sm" onClick={api.prevPage} disabled={state.currentPage === 0} className="flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> {t('navigation.previous')}</Button>
+          <div className="text-sm text-muted-foreground">{t('navigation.page', { number: state.currentPage + 1, total: totalPages })}</div>
+          <Button variant="outline" size="sm" onClick={api.nextPage} disabled={state.currentPage >= totalPages - 1} className="flex items-center gap-1">{t('navigation.next')} <ChevronRight className="h-4 w-4" /></Button>
         </div>
       )}
 
       <div className="relative overflow-x-auto">
         <div className="min-w-[800px]">
-          {/* Header with executors */}
           <div className="flex border-b">
-            {/* Time column */}
             <div className="w-16 flex-shrink-0"></div>
-
-            {/* Executor columns */}
             {currentExecutors.map((executor) => (
               <div key={executor.guid} className="flex-1 p-2 text-center border-l">
                 <div className="flex flex-col items-center">
                   <div className="h-12 w-12 rounded-full overflow-hidden bg-muted mb-2">
-                    {executor.imgPath ? (
-                      <img
-                        src={`${config.apiUrl}${executor.imgPath}`}
-                        alt={executor.name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-full w-full p-2 text-muted-foreground" />
-                    )}
+                    {executor.imgPath ? (<img src={`${config.apiUrl}${executor.imgPath}`} alt={executor.name} className="h-full w-full object-cover" />) : (<User className="h-full w-full p-2 text-muted-foreground" />)}
                   </div>
                   <div className="font-medium truncate w-full">{executor.name}</div>
-                  <div className="text-xs text-muted-foreground truncate w-full">
-                    {executor.description || "Executor"}
-                  </div>
+                  <div className="text-xs text-muted-foreground truncate w-full">{executor.description || "Executor"}</div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Calendar grid */}
-          {viewMode === "day" ? (
-            <DayView
-              executors={currentExecutors}
-              ordersByExecutor={ordersByExecutor}
-              handleOrderClick={handleOrderClick}
-              getOrderCardStyle={getOrderCardStyle}
-              getOrderCardColorClass={getOrderCardColorClass}
-              locale={locale}
-            />
+          {state.viewMode === "day" ? (
+            <DayView executors={currentExecutors} hours={constants.HOURS} ordersByExecutor={ordersByExecutor} onOrderClick={api.openOrder} getOrderCardStyle={(order) => {
+              const startTime = new Date(order.orderStart)
+              const endTime = new Date(order.orderEnd)
+              const hourHeight = 100 / constants.HOURS.length
+              const startHour = startTime.getHours()
+              const startMinute = startTime.getMinutes()
+              const top = (startHour - constants.HOURS[0] + startMinute / 60) * hourHeight
+              const height = Math.max(((endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)) * hourHeight, 10)
+              return { top: `${top}%`, height: `${height}%`, minHeight: "60px" }
+            }} getOrderCardColorClass={(order) => {
+              if (order.completed) return "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700"
+              const serviceType = order.items[0]?.serviceType || 1
+              const colorClasses = [
+                "bg-blue-100 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700",
+                "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700",
+                "bg-purple-100 border-purple-300 dark:bg-purple-900/30 dark:border-purple-700",
+                "bg-pink-100 border-pink-300 dark:bg-pink-900/30 dark:border-pink-700",
+                "bg-orange-100 border-orange-300 dark:bg-orange-900/30 dark:border-orange-700",
+                "bg-cyan-100 border-cyan-300 dark:bg-cyan-900/30 dark:border-cyan-700",
+              ]
+              return colorClasses[(serviceType - 1) % colorClasses.length]
+            }} locale={locale} />
           ) : (
-            <WeekView
-              executors={currentExecutors}
-              orders={filteredOrders}
-              weekDates={weekDates}
-              handleOrderClick={handleOrderClick}
-              getOrderCardColorClass={getOrderCardColorClass}
-              locale={locale}
-            />
+            <WeekView executors={currentExecutors} orders={filteredOrders} weekDates={weekDates} onOrderClick={api.openOrder} getOrderCardColorClass={(order) => {
+              if (order.completed) return "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700"
+              const serviceType = order.items[0]?.serviceType || 1
+              const colorClasses = [
+                "bg-blue-100 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700",
+                "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700",
+                "bg-purple-100 border-purple-300 dark:bg-purple-900/30 dark:border-purple-700",
+                "bg-pink-100 border-pink-300 dark:bg-pink-900/30 dark:border-pink-700",
+                "bg-orange-100 border-orange-300 dark:bg-orange-900/30 dark:border-orange-700",
+                "bg-cyan-100 border-cyan-300 dark:bg-cyan-900/30 dark:border-cyan-700",
+              ]
+              return colorClasses[(serviceType - 1) % colorClasses.length]
+            }} locale={locale} />
           )}
         </div>
       </div>
 
-      {/* Order Detail Drawer */}
-      <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <SheetContent className="sm:max-w-md md:max-w-lg overflow-y-auto">
-          {selectedOrder && (
-            <>
-              <SheetHeader>
-                <SheetTitle>{t('order.title')}</SheetTitle>
-                <SheetDescription>{t('order.id')}: {selectedOrder.publicId.substring(0, 8)}...</SheetDescription>
-              </SheetHeader>
-
-              <div className="mt-6 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">{t('order.status.title')}</h3>
-                  {renderStatusBadge(selectedOrder)}
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">{t('order.appointment.title')}</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">{t('order.appointment.date')}</p>
-                      <div className="flex items-center gap-2">
-                        <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                        <p>{formatDate(selectedOrder.orderStart, locale)}</p>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">{t('order.appointment.time')}</p>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <p>
-                          {formatTime(selectedOrder.orderStart)} - {formatTime(selectedOrder.orderEnd)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">{t('order.client.title')}</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <p className="font-medium">{selectedOrder.clientName}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <p>{selectedOrder.clientPhone}</p>
-                    </div>
-                    {selectedOrder.clientAddress && (
-                      <div className="flex items-start gap-2">
-                        <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                        <p>{selectedOrder.clientAddress}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">{t('order.services.title')}</h3>
-                  <div className="space-y-4">
-                    {selectedOrder.items.map((item, index) => (
-                      <div key={index} className="rounded-md border p-4">
-                        <div className="flex justify-between">
-                          <div className="space-y-1">
-                            <p className="font-medium">{item.serviceName}</p>
-                            <div className="flex items-center gap-2">
-                              <Clock className="h-4 w-4 text-muted-foreground" />
-                              <p className="text-sm text-muted-foreground">{formatTime(item.start)}</p>
-                            </div>
-                          </div>
-                          <p className="font-medium">{t('orderCard.service.price', { price: item.servicePrice })}</p>
-                        </div>
-                        <div className="mt-2 pt-2 border-t">
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <p className="text-sm">{t('order.services.executor')}: {item.executorName}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-between pt-2">
-                    <p className="font-medium">{t('order.services.total')}</p>
-                    <p className="font-bold">{t('orderCard.total', { amount: calculateOrderTotal(selectedOrder) })}</p>
-                  </div>
-                </div>
-
-                {selectedOrder.comment && (
-                  <>
-                    <Separator />
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-medium">{t('order.comment.title')}</h3>
-                      <p className="text-sm">{selectedOrder.comment}</p>
-                    </div>
-                  </>
-                )}
-
-                <Separator />
-
-                <div className="flex flex-wrap gap-2">
-                  {!selectedOrder.confirmed && (
-                    <Button onClick={handleConfirmOrder} disabled={isConfirming} className="flex-1">
-                      {isConfirming ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('order.actions.confirm.confirming')}
-                        </>
-                      ) : (
-                        <>
-                          <CheckSquare className="mr-2 h-4 w-4" />
-                          {t('order.actions.confirm.button')}
-                        </>
-                      )}
-                    </Button>
-                  )}
-
-                  {selectedOrder.confirmed && !selectedOrder.completed && (
-                    <Button onClick={handleCompleteOrder} disabled={isCompleting} className="flex-1">
-                      {isCompleting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('order.actions.complete.completing')}
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          {t('order.actions.complete.button')}
-                        </>
-                      )}
-                    </Button>
-                  )}
-
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive" className="flex-1">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        {t('order.actions.delete.button')}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>{t('order.actions.delete.title')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {t('order.actions.delete.description')}
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>{t('order.actions.delete.cancel')}</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDeleteOrder}
-                          className="bg-red-500 hover:bg-red-600"
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              {t('order.actions.delete.deleting')}
-                            </>
-                          ) : (
-                            t('order.actions.delete.confirm')
-                          )}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-    </div>
-  )
-}
-
-// Day View Component
-const DayView = ({
-  executors,
-  ordersByExecutor,
-  handleOrderClick,
-  getOrderCardStyle,
-  getOrderCardColorClass,
-  locale,
-}: {
-  executors: Executor[]
-  ordersByExecutor: Record<string, Order[]>
-  handleOrderClick: (order: Order) => void
-  getOrderCardStyle: (order: Order) => React.CSSProperties
-  getOrderCardColorClass: (order: Order) => string
-  locale: string
-}) => {
-  const dateLocale = getDateLocale(locale)
-  return (
-    <div className="flex relative">
-      {/* Time column */}
-      <div className="w-16 flex-shrink-0">
-        {HOURS.map((hour) => (
-          <div key={hour} className="h-20 border-b relative">
-            <div className="absolute -top-2.5 left-0 text-xs text-muted-foreground">{hour}:00</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Executor columns with appointments */}
-      {executors.map((executor) => (
-        <div key={executor.guid} className="flex-1 border-l relative">
-          {/* Hour grid lines */}
-          {HOURS.map((hour) => (
-            <div key={hour} className="h-20 border-b"></div>
-          ))}
-
-          {/* Appointment cards */}
-          {ordersByExecutor[executor.guid]?.map((order) => (
-            <div
-              key={order.publicId}
-              className={cn(
-                "absolute left-1 right-1 rounded-md border p-2 overflow-hidden cursor-pointer transition-opacity hover:opacity-90 z-10",
-                getOrderCardColorClass(order),
-              )}
-              style={getOrderCardStyle(order)}
-              onClick={() => handleOrderClick(order)}
-            >
-              <div className="text-xs font-medium truncate">
-                {formatTime(order.orderStart)} - {formatTime(order.orderEnd)}
-              </div>
-              <div className="font-medium truncate">{order.clientName}</div>
-              <div className="text-xs truncate">
-                {order.items
-                  .filter((item) => item.executorGuid === executor.guid)
-                  .map((item) => item.serviceName)
-                  .join(", ")}
-              </div>
-              <div className="text-xs text-muted-foreground truncate">{order.clientPhone}</div>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-// Week View Component
-const WeekView = ({
-  executors,
-  orders,
-  weekDates,
-  handleOrderClick,
-  getOrderCardColorClass,
-  locale,
-}: {
-  executors: Executor[]
-  orders: Order[]
-  weekDates: Date[]
-  handleOrderClick: (order: Order) => void
-  getOrderCardColorClass: (order: Order) => string
-  locale: string
-}) => {
-  const dateLocale = getDateLocale(locale)
-  return (
-    <div className="grid" style={{ gridTemplateColumns: "auto repeat(7, 1fr)" }}>
-      {/* Empty cell in top-left corner */}
-      <div className="border-b border-r p-2"></div>
-
-      {/* Day headers */}
-      {weekDates.map((date, index) => (
-        <div key={index} className="border-b border-r p-2 text-center">
-          <div className="font-medium">{format(date, "EEEEEE", { locale: dateLocale })}</div>
-          <div className="text-sm">{format(date, "d MMM", { locale: dateLocale }).replace('.', '')}</div>
-        </div>
-      ))}
-
-      {/* Executor rows */}
-      {executors.map((executor) => (
-        <React.Fragment key={executor.guid}>
-          {/* Executor name */}
-          <div className="border-b border-r p-2 sticky left-0 bg-background">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full overflow-hidden bg-muted">
-                {executor.imgPath ? (
-                  <img
-                    src={`${config.apiUrl}${executor.imgPath}`}
-                    alt={executor.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <User className="h-full w-full p-1 text-muted-foreground" />
-                )}
-              </div>
-              <div className="font-medium truncate">{executor.name}</div>
-            </div>
-          </div>
-
-          {/* Day cells with appointments */}
-          {weekDates.map((date, dateIndex) => {
-            // Filter orders for this executor and date
-            const dayOrders = orders.filter((order) => {
-              const orderDate = new Date(order.orderStart)
-              return isSameDay(orderDate, date) && order.items.some((item) => item.executorGuid === executor.guid)
-            })
-
-            return (
-              <div key={dateIndex} className="border-b border-r p-1 min-h-[120px] relative">
-                {dayOrders.map((order) => (
-                  <div
-                    key={order.publicId}
-                    className={cn(
-                      "mb-1 rounded-md border p-1 cursor-pointer transition-opacity hover:opacity-90 text-xs",
-                      getOrderCardColorClass(order),
-                    )}
-                    onClick={() => handleOrderClick(order)}
-                  >
-                    <div className="font-medium truncate">
-                      {formatTime(order.orderStart)} - {formatTime(order.orderEnd)}
-                    </div>
-                    <div className="truncate">{order.clientName}</div>
-                    <div className="truncate">
-                      {order.items
-                        .filter((item) => item.executorGuid === executor.guid)
-                        .map((item) => item.serviceName)
-                        .join(", ")}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          })}
-        </React.Fragment>
-      ))}
+      <OrderDetailsSheet
+        open={state.isDrawerOpen}
+        onOpenChange={api.closeDrawer}
+        order={state.selectedOrder}
+        isConfirming={false}
+        isCompleting={false}
+        isDeleting={false}
+        onConfirm={() => {}}
+        onComplete={() => {}}
+        onDelete={() => {}}
+      />
     </div>
   )
 }
